@@ -1,0 +1,30 @@
+function [similarities] = matrix_cosine_similarity(A,B)
+%   MATRIC_COSINE_SIMILARITY  measures similarity between two non-zero
+%   matrices.
+%   A is non-zero matrix of size L*N
+%   B is non-zero matrix of size M*N
+%
+%   similarity is a matrix of size L*M which represent the similarity of all dimension (L and M) of A and B
+%   ranging from [0,1]
+
+    
+    %% Error checking
+    if(length(A) ~= length(B))
+       error("The matrix A and the matrix B need tbe of same lenght.");
+    end
+    
+    %% Iterate over one dimension
+    dimension_a = size(A,1);
+    dimension_b = size(B,1);
+    similarities = zeros(dimesnion_a,dimension_b);
+    
+    for i = 1:dimension_a
+        a = A(i);
+        for j = 1:dimension_b
+            b = B(j);
+            similarity = vector_cosine_similarity(a,b)
+            similarities
+    end
+    
+    
+end
