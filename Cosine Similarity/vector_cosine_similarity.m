@@ -4,7 +4,7 @@ function [similarity] = vector_cosine_similarity(a,b)
 %   b is non-zero vector of length N
 %
 %   similarity is a scalar which represent the similarity of a and b
-%   ranging from [0,1]
+%   ranging from [-1,1]
 
     similarity = dot(a,b) / (norm(a) * norm(b));
 end
