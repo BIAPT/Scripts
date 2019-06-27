@@ -6,7 +6,7 @@ This script was developped in the context of Comparing the motif analysis freque
 - This is the definition of cosine similarity we are using:
 `cosine_similarity = (dot_product of a and b) / (norm of a * norm of b);`
 - Posterior channels are defined as `channels_location(i).X < 0.001` meaning that every channels that are posterior to CZ including CZ are posterior.
-- Anterior channels are defined as `channels_location(i).X > 0.001` meaning that every channels that are anterior to CZ including CZ are anterior.
+- Anterior channels are defined as `channels_location(i).X > -0.001` meaning that every channels that are anterior to CZ including CZ are anterior.
 
 ## How it works
 There is a script (calculate_cosine_similarity.m) that needs to run and will walk you through the data it need to calculate the cosine similarity.
