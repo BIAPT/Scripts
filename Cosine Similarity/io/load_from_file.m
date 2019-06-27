@@ -1,6 +1,9 @@
 function [data] = load_from_file(title)
-%LOAD_FROM_FILE helper function to load data from file
-%   title is used to show a title in the file explorer
+%   LOAD_FROM_FILE helper function to load data from file
+%   title: is used to show a title in the file explorer
+%
+%   data: is the loaded data from the file
+
     [file,path,~] = uigetfile('*.mat',title);
     full_path = strcat(path,file);
     

@@ -1,7 +1,8 @@
-function print(title)
-%PRINT Summary of this function goes here
-%   Detailed explanation goes here
+function print(message)
+%   PRINT SHelper fuction to clear the screen and then print the message
+%   message: message to be displayed
+    
     clc;
-    disp(title);
+    disp(message);
 end
 
