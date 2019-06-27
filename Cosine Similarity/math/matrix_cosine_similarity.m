@@ -1,11 +1,11 @@
 function [similarities] = matrix_cosine_similarity(A,B)
 %   MATRIX_COSINE_SIMILARITY  measures similarity between two non-zero
 %   matrices.
-%   A is non-zero matrix of size L*N
-%   B is non-zero matrix of size M*N
+%   A: is non-zero matrix of size L*N
+%   B: is non-zero matrix of size M*N
 %
-%   similarities is a matrix of size L*M which represent the similarity of all dimension (L and M) of A and B
-%   ranging from [0,1]
+%   similarities: is a matrix of size L*M which represent the similarity of all dimension (L and M) of A and B
+%   ranging from [-1,1]
     
     %% Variable Initalization
     number_row_a = size(A,1);
