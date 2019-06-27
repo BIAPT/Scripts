@@ -7,7 +7,7 @@
 % Selector Labels
 epoch_labels = {'EC1','IF5','EF5','EL30','EL10','EL5','EC3','EC4','EC5','EC6','EC7','EC8'};
 frequency_labels = {'Alpha','Theta'};
-motifs_label = {'M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12','M13'};
+motif_labels = {'M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12','M13'};
 regions_labels = {'Anterior','Posterior'};
 
 %% Load the data Using File Explorer
@@ -46,7 +46,7 @@ average_motifs = select_frequency(average_motifs,frequency_labels);
 
 % Select the motif to compare between participant
 print("Select the motif:");
-[average_motif,individual_motif] = select_motif(average_motifs,individual_motifs,motifs_label);
+[average_motif,individual_motif] = select_motif(average_motifs,individual_motifs,motif_labels);
 
 %% Pre-Processing before Cosine Similarity 
 
