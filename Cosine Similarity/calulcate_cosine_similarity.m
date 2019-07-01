@@ -50,6 +50,12 @@ print("Select the motif:");
 
 %% Pre-Processing before Cosine Similarity 
 
+% TODO: Put a breakpoint here and check if the individual motif is
+% normalized
+% Normalize the data of the individual motif (The averaged_data is already
+% normalized)
+individual_motif = normalize(individual_motif);
+
 % Equalize the average data to the individual participant data
 [average_motif,average_channels_location] = remove_channels(average_motif,average_channels_location,individual_channels_location);
 
