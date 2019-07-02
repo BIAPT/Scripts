@@ -13,7 +13,7 @@ There is a script (calculate_cosine_similarity.m) that needs to run and will wal
 It will call the various function that are found under the folder io, selector and math. 
 Here what it does:
 1. The script loads the average data and its channels location (located at /data)
-2. It ask for the same information for the individual participant and loads both of these information.
+2. It ask for the location of the data & location for the individual participant and loads both of these information.
 3. It ask for the epoch ('EC1','IF5','EF5','EL30','EL10','EL5','EC3','EC4','EC5','EC6','EC7','EC8') to do the analysis and extract that information from the average data.
 4. It ask for the frequency ('Alpha' or 'Theta') and pick that frequency band inside the average data structure.
 5. It ask for the motif to compare ('M1' or ... 'M13') and extract that motif from both the averaged data and the individual participant data.
