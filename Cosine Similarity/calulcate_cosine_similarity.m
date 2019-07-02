@@ -10,17 +10,17 @@ frequency_labels = {'Alpha','Theta'};
 motif_labels = {'M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12','M13'};
 regions_labels = {'Anterior','Posterior'};
 
+%Paths
+average_data_path = strcat('data',filesep,'average_data.mat');
+average_info_path = strcat('data',filesep,'EEG_info_AVG.mat');
+
 %% Load the data Using File Explorer
 
 % Average Participant
-title = "Select the average participant motif analysis structure:";
-print(title)
-data = load_from_file(title);
+data = load(average_data_path);
 average_motifs = data.data_motifs;
 
-title = "Select the average participant EEG_info structure:";
-print(title)
-data = load_from_file(title);
+data = load(average_info_path);
 average_channels_location = data.EEG_info.chanlocs;
 
 % Individual Participant
@@ -50,10 +50,7 @@ print("Select the motif:");
 
 %% Pre-Processing before Cosine Similarity 
 
-% TODO: Put a breakpoint here and check if the individual motif is
-% normalized
-% Normalize the data of the individual motif (The averaged_data is already
-% normalized)
+% Normalization of the individual motif
 individual_motif = normalize(individual_motif);
 
 % Equalize the average data to the individual participant data
