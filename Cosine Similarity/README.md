@@ -9,9 +9,9 @@ This script was developped in the context of Comparing the motif analysis freque
 - Anterior channels are defined as `channels_location(i).X > -0.001` meaning that every channels that are anterior to CZ including CZ are anterior.
 
 ## How it works
-There is a script (calculate_cosine_similarity.m) that needs to run and will walk you through the data it need to calculate the cosine similarity.
+There are different experiment scripts (calculate_cosine_similarity) that needs to run and will walk you through the data it need to calculate the cosine similarity.
 It will call the various function that are found under the folder io, selector and math. 
-Here what it does:
+Here what experiment_1_calculate_cosine_similarity_against_average.m does:
 1. The script loads the average data and its channels location (located at /data)
 2. It ask for the location of the data & location for the individual participant and loads both of these information.
 3. It ask for the epoch ('EC1','IF5','EF5','EL30','EL10','EL5','EC3','EC4','EC5','EC6','EC7','EC8') to do the analysis and extract that information from the average data.
@@ -22,6 +22,13 @@ Here what it does:
 8. Using that subset of averaged data point it does the same thing to the individual participant data in order to make sure that both frequency count vector are of the same length.
 9. It finally ask for the region ('Anterior' or 'Posterior') to do the analysis on and sift the channels from both headsets.
 10. It calculate the cosine similarity on that sifted dataset.
+
+Here what experiment_2_calculate_cosine_similarity_against_conditions.m does:
+1. The script ask for two data set from the same participant + the eeg_info location file.
+2. It ask for the motif to compare ('M1' or ... 'M13') and extract that motif from both the data points.
+3. It normalize the motif for the individual participant.
+4. It finally ask for the region ('Anterior' or 'Posterior') to do the analysis on and sift the channels from both datasets.
+5. It calculate the cosine similarity on that sifted dataset.
 
 ## Future
 The script work by going through a series of menu that will ask you for parameters while the it is running.
