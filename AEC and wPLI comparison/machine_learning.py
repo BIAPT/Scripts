@@ -5,7 +5,7 @@ import time
 # Data manipulation
 import scipy.io
 import numpy as np
-
+from data_manipulation import man
 # Machine Learning 
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
@@ -20,29 +20,7 @@ from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 from plot import viz
 
-
-
-def make_mask(I,target):
-    test_mask = np.where(I == target)
-    mask = np.ones(len(I), np.bool)
-    mask[test_mask] = 0
-    train_mask = np.where(mask == 1)
-    return (train_mask[0],test_mask[0])
-
-def get_participant_data(I,X,y,p_id):
-    rest_index, participant_index = make_mask(I,p_id)
-    X_p = X[participant_index]
-    y_p = y[participant_index]
-    return (X_p,y_p)
-
-def argmax(prob):
-    guesses = []
-    probabilities = []
-    for guess in prob:
-        probabilities.append(max(guess))
-        guesses.append(np.argmax(guess))
-    return (guesses,probabilities)
-
+# Helper function for the ensemble classification
 def get_best_estimate(y_pli,prob_pli,y_aec,prob_aec):
     y_pred = []
     amount_pli = 0
@@ -75,7 +53,7 @@ def ensemble_classification(p_id, I, y, X_pli, X_aec, C, labels):
     best_c_both = 0
 
     # Separate between training and test split
-    train_mask, test_mask = make_mask(I, p_id)
+    train_mask, test_mask = man.make_mask(I, p_id)
     target.remove(p_id)
 
     I = np.delete(I, test_mask)
@@ -91,7 +69,7 @@ def ensemble_classification(p_id, I, y, X_pli, X_aec, C, labels):
         print('Cross validation: ' + str(cross_val_index))
 
         # Get the splits
-        train_index, validation_index = make_mask(I,target_i)
+        train_index, validation_index = man.make_mask(I,target_i)
 
         # Get the training data
         training_X_pli = X_train_pli[train_index]
@@ -195,48 +173,11 @@ def ensemble_classification(p_id, I, y, X_pli, X_aec, C, labels):
 
     return (gen_acc_pli,gen_acc_aec,gen_acc_both,gen_acc_ensemble,cm_pli,cm_aec,cm_both,cm_ensemble)
 
-def split_data(X,y,split=0.1,seed=4):
-    # Randomize the dataset for the split
-
-    dataset = list(zip(X,y))
-    random.Random(seed).shuffle(dataset)
-
-    X = []
-    y = []
-    for element in dataset:
-        X_element, y_element = element
-        X.append(X_element)
-        y.append(y_element)
-
-    size_test = int(len(X)*split)
-
-    X_test = X[:size_test]
-    y_test = y[:size_test]
-    X_train = X[size_test:]
-    y_train = y[size_test:]
-
-    return (X_train,X_test, y_train, y_test)
-
-def load_data():
-    data = scipy.io.loadmat('data/X_aec.mat')
-    X_aec = np.array(data['X'])
-    data = scipy.io.loadmat('data/X_pli.mat')
-    X_pli = np.array(data['X'])
-    data = scipy.io.loadmat('data/Y.mat')
-    y = np.array(data['Y'])
-    y = y[0]
-    data = scipy.io.loadmat('data/I.mat');
-    I = np.array(data['I']);
-    I = I[0]
-    return (X_pli,X_aec,y,I)
-
-
-
 
 # Load X and Y data for classification
 # X = (number sample, number features)
 # Y = (number sample)
-X_pli, X_aec, y, I = load_data()
+X_pli, X_aec, y, I = man.load_data()
 print(X_pli.shape)
 print(X_aec.shape)
 X_both = np.concatenate((X_pli,X_aec), axis = 1)
