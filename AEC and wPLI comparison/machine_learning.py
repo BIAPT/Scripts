@@ -35,6 +35,7 @@ def get_best_estimate(y_pli,prob_pli,y_aec,prob_aec):
     print("PLI: " + str(amount_pli) + " and AEC: " + str(amount_aec))
     return y_pred
 
+# TODO: Rename this function to a better fitting name
 def ensemble_classification(p_id, I, y, X_pli, X_aec, C, labels):
     print("Participant: " + str(p_id) + '--------------------')
     # Parameters
@@ -174,69 +175,95 @@ def ensemble_classification(p_id, I, y, X_pli, X_aec, C, labels):
     return (gen_acc_pli,gen_acc_aec,gen_acc_both,gen_acc_ensemble,cm_pli,cm_aec,cm_both,cm_ensemble)
 
 
+# Classes
+class Dataset:
+    def __init__(self,C,labels):
+        # Load the data from /data
+        self.X_pli, self.X_aec, self.y, self.I = man.load_data()
+        # Create the merged dataset
+        self.X_both = np.concatenate((self.X_pli,self.X_aec), axis = 1)
+        # Set the data
+        self.C = C
+        self.labels = labels
+
+# Helper data structure to hold information about results and
+# print out a summary of the result
+class Result:
+    def __init__(self,technique,labels):
+        # Set default
+        self.accuracies = []
+        self.cm_total = []
+        # Set the data
+        self.technique = technique
+        self.labels = labels
+    
+    def add_acc(self,accuracy):
+        self.accuracies.append(accuracy)
+
+    def add_cm(self,cm):
+        if not self.cm_total:
+            self.cm_total = cm
+        else:
+            self.cm_total.add(self.cm_stotal,cm)
+
+    def print_acc(self):
+        print("[" + str(self.technique) + "]")
+        print(self.accuracies)
+        print("Mean Accuracy: " + str(np.mean(self.accuracies)))
+
+    def plot_cm(self):
+        viz.plot_confusion_matrix(self.cm_total,self.labels,normalize=True)
+        plt.show()
+    
+    def summarize(self):
+        self.print_acc()
+        self.plot_cm()
+
+
+# TODO: Remove this
 # Load X and Y data for classification
 # X = (number sample, number features)
 # Y = (number sample)
 X_pli, X_aec, y, I = man.load_data()
-print(X_pli.shape)
-print(X_aec.shape)
 X_both = np.concatenate((X_pli,X_aec), axis = 1)
-print(X_both.shape)
 
-# Iterate over the participant
+# Initialize the variables
 C = [0.01,0.1,1,10,20,30,40,50]
 labels = ['Baseline','Recovery']
 
-accuracies_pli = []
-cm_total_pli = []
+# Create the dataset
+dataset = Dataset(C,labels)
 
-accuracies_aec = []
-cm_total_aec = []
+# Initialize the Result data structures
+result_pli = Result("wPLI",labels)
+result_aec = Result("AEC",labels)
+result_both = Result("Both",labels)
+result_ensemble = Result("Ensemble",labels)
 
-accuracies_both = []
-cm_total_both = []
+# TODO: Here should just need to call ensemble_classification and give all we have
+# It should return the right stuff and we should just skip straight to the output part
+# The for loop can easily be inside the classification
 
-accuracies_ensemble = []
-cm_total_ensemble = []
+# Iterate over each participant
 for p_id in range(1,10):
 
+    # TODO: Refactor this part to do the adding inside the ensemble function
     gen_acc_pli,gen_acc_aec,gen_acc_both,gen_acc_ensemble,cm_pli,cm_aec,cm_both,cm_ensemble = ensemble_classification(p_id, I, y, X_pli, X_aec, C, labels)
 
-    #gen_acc_both,cm_both = cross_validation(p_id, I, X_both , y, 0.1)
-    accuracies_pli.append(gen_acc_pli)
-    accuracies_aec.append(gen_acc_aec)
-    accuracies_both.append(gen_acc_both)
-    accuracies_ensemble.append(gen_acc_ensemble)
 
-    if(p_id == 1):
-        cm_total_pli = cm_pli
-        cm_total_aec = cm_aec
-        cm_total_both = cm_both
-        cm_total_ensemble = cm_ensemble
-    else:
-        cm_total_pli = np.add(cm_total_pli,cm_pli)
-        cm_total_aec = np.add(cm_total_aec,cm_aec)
-        cm_total_both = np.add(cm_total_both,cm_both)
-        cm_total_ensemble = np.add(cm_total_ensemble,cm_ensemble)
+    # Add the current result to what we already have
+    result_pli.add_acc(gen_acc_pli)
+    result_aec.add_acc(gen_acc_aec)
+    result_both.add_acc(gen_acc_both)
+    result_ensemble.add_acc(gen_acc_ensemble)
 
-print(accuracies_pli)
-print("Generalization PLI: " + str(np.mean(accuracies_pli)))
-viz.plot_confusion_matrix(cm_total_pli,labels,normalize=True)
-plt.show()
+    result_pli.add_cm(cm_pli)
+    result_aec.add_cm(cm_aec)
+    result_both.add_cm(cm_both)
+    result_ensemble.add_cm(cm_ensemble)
 
-print(accuracies_aec)
-print("Generalization AEC: " + str(np.mean(accuracies_aec)))
-viz.plot_confusion_matrix(cm_total_aec,labels,normalize=True)
-plt.show()
-
-
-print(accuracies_both)
-print("Generalization BOTH: " + str(np.mean(accuracies_both)))
-viz.plot_confusion_matrix(cm_total_both,labels,normalize=True)
-plt.show()
-
-
-print(accuracies_ensemble)
-print("Generalization ENSEMBLE: " + str(np.mean(accuracies_ensemble)))
-viz.plot_confusion_matrix(cm_total_ensemble,labels,normalize=True)
-plt.show()
+# Summarize the data and plot it to the command line
+result_pli.summarize()
+result_aec.summarize()
+result_both.summarize()
+result_ensemble.summarize()

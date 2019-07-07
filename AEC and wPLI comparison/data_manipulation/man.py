@@ -13,6 +13,8 @@ def make_mask(I,target):
     train_mask = np.where(mask == 1)
     return (train_mask[0],test_mask[0])
 
+# Loader function to get the data out from the .mat structure and into numpy array
+# data are located /data folder
 def load_data():
     data = scipy.io.loadmat('data/X_aec.mat')
     X_aec = np.array(data['X'])
