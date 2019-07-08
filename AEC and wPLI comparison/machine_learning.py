@@ -23,14 +23,62 @@ from plot import viz
 
 # Classes
 class Dataset:
-    def __init__(self,C,labels):
-        # Load the data from /data
-        self.X_pli, self.X_aec, self.y, self.I = man.load_data()
-        # Create the merged dataset
-        self.X_both = np.concatenate((self.X_pli,self.X_aec), axis = 1)
-        # Set the data
+    def __init__(self, technique, C, labels, num_participant):
+        # Load the data
+        X_pli, X_aec, y, I = man.load_data()
+        X_both = np.concatenate((X_pli,X_aec), axis = 1)
+        
+        # Set dataset specific variable
+        if technique == "wPLI":
+            self.X = X_pli
+        elif technique == "AEC":
+            self.X = X_aec
+        elif technique == "BOTH":
+            self.X = X_both
+        else:
+            exit("Error with technique label!")
+
+        self.y = y
+        self.I = I
+        # Set static variables for output
         self.C = C
         self.labels = labels
+        self.num_participant = num_participant
+
+        # Set working variables
+        self.all_id = [id for id in range(1,num_participant+1)]
+        # Set the training/validation/test instances
+        self.X_train = []
+        self.X_validation = []
+        self.X_test = []
+        
+        self.y_train = []
+        self.y_validation = []
+        self.y_test = []
+
+    def prepare_training_test(self, test_id):
+        # Make the mask for the training and test dataset
+        train_mask, test_mask = man.make_mask(self.I, test_id)
+
+        # Setup the trianing and test dataset
+        self.X_train = self.X[train_mask]
+        self.X_test = self.X[test_mask]
+        self.y_train = self.y[train_mask]
+        self.y_test = self.y[test_mask]
+
+        # Set the training ids
+        training_id = self.all_id.copy()
+        training_id.remove(test_id)
+
+        # Create the training I
+        training_I = self.I.copy()
+        training_I = np.delete(self.training_I, test_mask)
+        return (training_id, training_I)
+
+    def prepare_training_validation(self, training_I, validation_id):
+        # Get the splits
+        train_index, validation_index = man.make_mask(self.training_I,validation_id)
+        # TODO: FINISIH THIS PART
 
 # Helper data structure to hold information about results and
 # print out a summary of the result
@@ -215,27 +263,41 @@ def full_classification(p_id, I, y, X_pli, X_aec, C, labels):
 
     return (gen_acc_pli,gen_acc_aec,gen_acc_both,gen_acc_ensemble,cm_pli,cm_aec,cm_both,cm_ensemble)
 
+def classify(dataset):
 
+    # Initialize the Result data structures
+    result = Result(dataset.technique, dataset.labels)
 
-X_pli, X_aec, y, I = man.load_data()
-X_both = np.concatenate((X_pli,X_aec), axis = 1)
+    # TODO: Check in the MATLAB file how to not have to do this + 1
+    for test_id in range(1,dataset.num_participant+1):
+        print("Participant: " + str(test_id) + " in hold-out set:")
+        
+        # Split the data in a leave one subject out manner
+        (training_id, training_I) = dataset.prepare_training_test(test_id)
+
+        for validation_id in training_id:
+            print("This is where the hyperparameters optimization happens")
+        
+        # This is where we test the classifier and where we set our results
+    
+    return result
 
 # Initialize the variables
-C = [0.01,0.1,1,10,20,30,40,50]
+# Doesn't make much sense to try C higher than 1 as we have noisy data
+C = [0.01,0.1,1,10,20,30,40,50] 
 labels = ['Baseline','Recovery']
+num_participant = 9
+technique = "wPLI"
 
 # Create the dataset
-dataset = Dataset(C,labels)
+dataset = Dataset(technique, C, labels, num_participant)
 
-# Initialize the Result data structures
-result_pli = Result("wPLI",labels)
-result_aec = Result("AEC",labels)
-result_both = Result("Both",labels)
-result_ensemble = Result("Ensemble",labels)
+# Classify the dataset and gather the result
+result = classify(dataset)
 
-# TODO: Here should just need to call ensemble_classification and give all we have
-# It should return the right stuff and we should just skip straight to the output part
-# The for loop can easily be inside the classification
+# Summarize the result
+result.summarize()
+
 
 # Iterate over each participant
 for p_id in range(1,10):
@@ -245,18 +307,9 @@ for p_id in range(1,10):
 
 
     # Add the current result to what we already have
-    result_pli.add_acc(gen_acc_pli)
-    result_aec.add_acc(gen_acc_aec)
-    result_both.add_acc(gen_acc_both)
-    result_ensemble.add_acc(gen_acc_ensemble)
+    result.add_acc(gen_acc_pli)
 
-    result_pli.add_cm(cm_pli)
-    result_aec.add_cm(cm_aec)
-    result_both.add_cm(cm_both)
-    result_ensemble.add_cm(cm_ensemble)
+    result.add_cm(cm_pli)
 
 # Summarize the data and plot it to the command line
-result_pli.summarize()
-result_aec.summarize()
-result_both.summarize()
-result_ensemble.summarize()
+result.summarize()
