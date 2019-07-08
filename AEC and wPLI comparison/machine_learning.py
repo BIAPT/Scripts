@@ -6,6 +6,7 @@ import time
 import scipy.io
 import numpy as np
 from data_manipulation import man
+
 # Machine Learning 
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
@@ -19,6 +20,50 @@ from sklearn.ensemble import RandomForestClassifier
 # Visualization
 import matplotlib.pyplot as plt
 from plot import viz
+
+# Classes
+class Dataset:
+    def __init__(self,C,labels):
+        # Load the data from /data
+        self.X_pli, self.X_aec, self.y, self.I = man.load_data()
+        # Create the merged dataset
+        self.X_both = np.concatenate((self.X_pli,self.X_aec), axis = 1)
+        # Set the data
+        self.C = C
+        self.labels = labels
+
+# Helper data structure to hold information about results and
+# print out a summary of the result
+class Result:
+    def __init__(self,technique,labels):
+        # Set default
+        self.accuracies = []
+        self.cm_total = []
+        # Set the data
+        self.technique = technique
+        self.labels = labels
+    
+    def add_acc(self,accuracy):
+        self.accuracies.append(accuracy)
+
+    def add_cm(self,cm):
+        if not self.cm_total:
+            self.cm_total = cm
+        else:
+            self.cm_total.add(self.cm_total,cm)
+
+    def print_acc(self):
+        print("[" + str(self.technique) + "]")
+        print(self.accuracies)
+        print("Mean Accuracy: " + str(np.mean(self.accuracies)))
+
+    def plot_cm(self):
+        viz.plot_confusion_matrix(self.cm_total,self.labels,normalize=True)
+        plt.show()
+    
+    def summarize(self):
+        self.print_acc()
+        self.plot_cm()
 
 # Helper function for the ensemble classification
 def get_best_estimate(y_pli,prob_pli,y_aec,prob_aec):
@@ -35,16 +80,14 @@ def get_best_estimate(y_pli,prob_pli,y_aec,prob_aec):
     print("PLI: " + str(amount_pli) + " and AEC: " + str(amount_aec))
     return y_pred
 
-# TODO: Rename this function to a better fitting name
-def ensemble_classification(p_id, I, y, X_pli, X_aec, C, labels):
+def full_classification(p_id, I, y, X_pli, X_aec, C, labels):
     print("Participant: " + str(p_id) + '--------------------')
+
     # Parameters
     target = [1,2,3,4,5,6,7,8,9]
 
     # Variables setup
-    scores = list()
     cross_val_index = 0
-    best_accuracy = -1
 
     best_accuracy_pli = -1
     best_accuracy_aec = -1
@@ -81,8 +124,6 @@ def ensemble_classification(p_id, I, y, X_pli, X_aec, C, labels):
         X_validation_pli = X_train_pli[validation_index]
         X_validation_aec = X_train_aec[validation_index]
         y_validation = y_train[validation_index]
-
-
 
         # train a one vs rest SVM
         # Create the model of SVM
@@ -175,55 +216,7 @@ def ensemble_classification(p_id, I, y, X_pli, X_aec, C, labels):
     return (gen_acc_pli,gen_acc_aec,gen_acc_both,gen_acc_ensemble,cm_pli,cm_aec,cm_both,cm_ensemble)
 
 
-# Classes
-class Dataset:
-    def __init__(self,C,labels):
-        # Load the data from /data
-        self.X_pli, self.X_aec, self.y, self.I = man.load_data()
-        # Create the merged dataset
-        self.X_both = np.concatenate((self.X_pli,self.X_aec), axis = 1)
-        # Set the data
-        self.C = C
-        self.labels = labels
 
-# Helper data structure to hold information about results and
-# print out a summary of the result
-class Result:
-    def __init__(self,technique,labels):
-        # Set default
-        self.accuracies = []
-        self.cm_total = []
-        # Set the data
-        self.technique = technique
-        self.labels = labels
-    
-    def add_acc(self,accuracy):
-        self.accuracies.append(accuracy)
-
-    def add_cm(self,cm):
-        if not self.cm_total:
-            self.cm_total = cm
-        else:
-            self.cm_total.add(self.cm_stotal,cm)
-
-    def print_acc(self):
-        print("[" + str(self.technique) + "]")
-        print(self.accuracies)
-        print("Mean Accuracy: " + str(np.mean(self.accuracies)))
-
-    def plot_cm(self):
-        viz.plot_confusion_matrix(self.cm_total,self.labels,normalize=True)
-        plt.show()
-    
-    def summarize(self):
-        self.print_acc()
-        self.plot_cm()
-
-
-# TODO: Remove this
-# Load X and Y data for classification
-# X = (number sample, number features)
-# Y = (number sample)
 X_pli, X_aec, y, I = man.load_data()
 X_both = np.concatenate((X_pli,X_aec), axis = 1)
 
@@ -248,7 +241,7 @@ result_ensemble = Result("Ensemble",labels)
 for p_id in range(1,10):
 
     # TODO: Refactor this part to do the adding inside the ensemble function
-    gen_acc_pli,gen_acc_aec,gen_acc_both,gen_acc_ensemble,cm_pli,cm_aec,cm_both,cm_ensemble = ensemble_classification(p_id, I, y, X_pli, X_aec, C, labels)
+    gen_acc_pli,gen_acc_aec,gen_acc_both,gen_acc_ensemble,cm_pli,cm_aec,cm_both,cm_ensemble = full_classification(p_id, I, y, X_pli, X_aec, C, labels)
 
 
     # Add the current result to what we already have
