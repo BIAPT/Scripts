@@ -21,10 +21,11 @@ There are two main scripts that need to be run in order:
 
 ## How to run?
 - To install the required package you need to have python and MATLAB installed.
-- Once installed run `pip install requirements.txt` to install the required python packages
+- Once installed run `pip install -r requirements.txt` to install the required python packages
 
 ## Future
-Transform all of this into a python script, there is no real need for MATLAB here.
+- Transform all of this into a python script, there is no real need for MATLAB here.
+- Use visbrain for the visualization?
 
 ## Author
 Yacine Mahdid 2019-07-06.
