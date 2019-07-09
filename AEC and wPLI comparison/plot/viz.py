@@ -22,6 +22,8 @@ def plot_confusion_matrix(cm, classes, normalize=False, title=None, cmap= plt.cm
 
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        
+        
         print("Normalized confusion matrix")
     else:
         print('Confusion matrix, without normalization')
@@ -31,6 +33,11 @@ def plot_confusion_matrix(cm, classes, normalize=False, title=None, cmap= plt.cm
     fig, ax = plt.subplots()
     im = ax.imshow(cm, interpolation='nearest', cmap=cmap)
     ax.figure.colorbar(im, ax=ax)
+    
+    # Set the colorbar
+    if normalize:
+        im.set_clim(vmin=0, vmax=1)
+
     # We want to show all ticks...
     ax.set(xticks=np.arange(cm.shape[1]),
            yticks=np.arange(cm.shape[0]),

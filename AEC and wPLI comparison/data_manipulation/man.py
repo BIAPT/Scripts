@@ -7,11 +7,12 @@ import numpy as np
 import pickle
 
 # Visualization
-from ../plot import viz
+import matplotlib.pyplot as plt
+from plot import viz
 
 # Classes
 class Dataset:
-    def __init__(self, technique, C, labels, num_participant, saving_path="/data/result.pickle"):
+    def __init__(self, technique, C, labels, num_participant, saving_path="./data/dataset.pickle"):
         # Load the data
         X_pli, X_aec, y, I = load_data()
         X_both = np.concatenate((X_pli,X_aec), axis = 1)
@@ -29,6 +30,7 @@ class Dataset:
         self.y = y
         self.I = I
         # Set static variables for output
+        self.technique = technique
         self.C = C
         self.labels = labels
         self.num_participant = num_participant
@@ -37,6 +39,9 @@ class Dataset:
         # Set working variables
         self.all_id = [id for id in range(1,num_participant+1)]
         # Set the training/validation/test instances
+        self.train_mask = []
+        self.test_mask = []
+        
         self.X_train = []
         self.X_validation = []
         self.X_test = []
@@ -45,28 +50,46 @@ class Dataset:
         self.y_validation = []
         self.y_test = []
 
+
+
     def prepare_training_test(self, test_id):
         # Make the mask for the training and test dataset
         train_mask, test_mask = make_mask(self.I, test_id)
 
-        # Setup the trianing and test dataset
+        self.train_mask = train_mask
+        self.test_mask = test_mask
+
+        # Setup the training and test dataset
         self.X_train = self.X[train_mask]
         self.X_test = self.X[test_mask]
         self.y_train = self.y[train_mask]
         self.y_test = self.y[test_mask]
 
         # Set the training ids
-        training_id = self.all_id.copy()
+        training_id = list(self.all_id)
         training_id.remove(test_id)
 
         # Create the training I
-        training_I = self.I.copy()
-        training_I = np.delete(self.training_I, test_mask)
+        training_I = list(self.I)
+        training_I = np.delete(training_I, test_mask)
         return (training_id, training_I)
 
     def prepare_training_validation(self, training_I, validation_id):
         # Get the splits
-        train_index, validation_index = man.make_mask(self.training_I,validation_id)
+        train_mask, validation_mask = man.make_mask(self.training_I,validation_id)
+
+        # Setup the training data
+        self.X_train = self.X[self.train_mask]
+        self.y_train = self.y[self.train_mask]
+
+        # Get the validation data
+        self.X_validation = self.X_train[validation_mask]
+        self.y_validation = self.y_train[validation_mask]
+
+        # Get the real training data
+        self.X_train = self.X_train[train_mask]
+        self.y_train = self.y_train[train_mask]
+
         # TODO: FINISIH THIS PART
 
     def save(self):
@@ -82,7 +105,7 @@ class Dataset:
 # Helper data structure to hold information about results and
 # print out a summary of the result
 class Result:
-    def __init__(self,technique,labels,saving_path="/data/result.pickle"):
+    def __init__(self,technique,labels,saving_path="./data/result.pickle"):
         # Set default
         self.accuracies = []
         self.cm_total = []
@@ -95,10 +118,10 @@ class Result:
         self.accuracies.append(accuracy)
 
     def add_cm(self,cm):
-        if not self.cm_total:
+        if len(self.cm_total) == 0:
             self.cm_total = cm
         else:
-            self.cm_total.add(self.cm_total,cm)
+            self.cm_total = np.add(self.cm_total,cm)
 
     def print_acc(self):
         print("[" + str(self.technique) + "]")

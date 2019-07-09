@@ -1,0 +1,18 @@
+Different classifier:
+To check that our result still hold with different classifier we will use LDA, Linear SVM and RBF SVM.
+
+
+Thomas Thiery answer for the permutation:
+1) I permute the label before I do any steps of the classification,
+then I use the exact same pipeline and try to classify with random labels.
+
+But your classes are not too unbalanced, you actually use AUC (Area Under the Curve) as a measure instead of decoding accuracy.
+In theory, this measure is insensitive to unbalanced classes. However, it only works for binary classification.
+
+-> This doesn't help that much. I'll need to do the permutation anyway.
+
+
+STEP 1:
+- Run the analysis with linear kernel again with good C values
+- Run the analysis with rbf linear kernel with good C values + gamma
+- Run the analysis with the LDA (might not need to do hyperparameters tuning)

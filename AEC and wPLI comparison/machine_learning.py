@@ -15,25 +15,22 @@ from classification import ai
 from plot import viz
 
 # Initialize the variables
-# Doesn't make much sense to try C higher than 1 as we have noisy data
-C = [0.01,0.1,1,10,20,30,40,50] 
+C = [0.001, 0.05, 0.1, 0.15, 0.20, 0.25, 0.5, 0.75, 1, 2] 
 labels = ['Baseline','Recovery']
 num_participant = 9
 technique = "wPLI"
+classifier_types = ['linear svm', 'rbf svm', 'poly svm']
+classifier_type = 'rbf svm'
 
 # Create the dataset
 dataset = man.Dataset(technique, C, labels, num_participant)
 
 # Classify the dataset and gather the result
-result = ai.classify(dataset)
+result = ai.classify(dataset, classifier_type)
 
 # Save the result and the dataset into the data folder
-result.save()
-dataset.save()
+#result.save()
+#dataset.save()
 
 # Summarize the result
 result.summarize()
-
-# TODO: Make the brain visualization
-
-# TODO: Pickle the result datastructure into the data folder
