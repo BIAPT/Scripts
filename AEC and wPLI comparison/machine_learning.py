@@ -1,3 +1,10 @@
+'''
+Yacine Mahdid 2019-07-09 (yyyy/mm/dd)
+This script was created in the context of the comparison of source localized aec and wpli performance in classifying various conscious state in healthy subject.
+This python script purpose is to run the classification, the preprocessing is currently done in the MATLAB script name 'preprocess.m'
+This script make use of sklearn, scipy, numpy, matplotlib and pickle. The import are being carried on in their relative module. 
+'''
+
 # Data manipulation
 from data_manipulation import man
 
@@ -19,6 +26,10 @@ dataset = man.Dataset(technique, C, labels, num_participant)
 
 # Classify the dataset and gather the result
 result = ai.classify(dataset)
+
+# Save the result and the dataset into the data folder
+result.save()
+dataset.save()
 
 # Summarize the result
 result.summarize()

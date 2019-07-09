@@ -4,13 +4,14 @@ import random
 # Data manipulation
 import scipy.io
 import numpy as np
+import pickle
 
 # Visualization
 from ../plot import viz
 
 # Classes
 class Dataset:
-    def __init__(self, technique, C, labels, num_participant):
+    def __init__(self, technique, C, labels, num_participant, saving_path="/data/result.pickle"):
         # Load the data
         X_pli, X_aec, y, I = load_data()
         X_both = np.concatenate((X_pli,X_aec), axis = 1)
@@ -31,6 +32,7 @@ class Dataset:
         self.C = C
         self.labels = labels
         self.num_participant = num_participant
+        self.saving_path = saving_path
 
         # Set working variables
         self.all_id = [id for id in range(1,num_participant+1)]
@@ -67,17 +69,28 @@ class Dataset:
         train_index, validation_index = man.make_mask(self.training_I,validation_id)
         # TODO: FINISIH THIS PART
 
+    def save(self):
+        pickle_out = open(self.saving_path,"wb")
+        pickle.dump(self, pickle_out)
+        pickle_out.close()
+
+    def load(loading_path):
+        pickle_in = open(loading_path,"rb")
+        dataset = pickle.load(pickle_in)
+        return dataset
+
 # Helper data structure to hold information about results and
 # print out a summary of the result
 class Result:
-    def __init__(self,technique,labels):
+    def __init__(self,technique,labels,saving_path="/data/result.pickle"):
         # Set default
         self.accuracies = []
         self.cm_total = []
         # Set the data
         self.technique = technique
         self.labels = labels
-    
+        self.saving_path = saving_path
+
     def add_acc(self,accuracy):
         self.accuracies.append(accuracy)
 
@@ -99,6 +112,16 @@ class Result:
     def summarize(self):
         self.print_acc()
         self.plot_cm()
+
+    def save(self):
+        pickle_out = open(self.saving_path,"wb")
+        pickle.dump(self, pickle_out)
+        pickle_out.close()
+
+    def load(loading_path):
+        pickle_in = open(loading_path,"rb")
+        dataset = pickle.load(pickle_in)
+        return dataset
 
 # Make a mask to separate training from test participant
 def make_mask(I,target):

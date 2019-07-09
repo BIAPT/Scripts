@@ -6,6 +6,14 @@ This script was developed to compare the decoding performance of source localize
 - [TODO: define AEC]
 - [TODO: define wPLI]
 
+## Data used
+The data used in this experiment can be found in the server. Here is the data points repartition across classes:
+- Baseline = 495
+- Induction = 519
+- Unconscious = 522
+- Pre-ROC = 519
+- Recovery = 483
+
 ## How it works?
 There are two main scripts that need to be run in order:
 - preprocessing.m, which is a MATLAB script to preprocess the data in order to re-organize the already computed source localized AEC and wPLI and to calculate normalized features set. At the end of the program the data will be located in the /data folder. There will be a X.mat matrix which corresponds to the feature set for every data point, a Y.mat matrix which corresponds to the label of each of these data point and a I.mat matrix which corresponds to the the identity of the participants.
