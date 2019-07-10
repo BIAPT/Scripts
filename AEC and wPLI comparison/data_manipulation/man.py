@@ -106,22 +106,30 @@ class Dataset:
 # print out a summary of the result
 class Result:
     def __init__(self,technique,labels,saving_path="./data/result.pickle"):
+        
         # Set default
         self.accuracies = []
         self.cm_total = []
+
+        self.baseline_f1 = []
+        self.other_f1 = []
+        
         # Set the data
         self.technique = technique
         self.labels = labels
         self.saving_path = saving_path
 
-    def add_acc(self,accuracy):
-        self.accuracies.append(accuracy)
 
     def add_cm(self,cm):
         if len(self.cm_total) == 0:
             self.cm_total = cm
         else:
             self.cm_total = np.add(self.cm_total,cm)
+
+    def add_report(self, report):
+        self.baseline_f1.append(report['0']['f1-score'])
+        self.other_f1.append(report['1']['f1-score'])
+        self.accuracies.append(report['accuracy'])
 
     def print_acc(self):
         print("[" + str(self.technique) + "]")

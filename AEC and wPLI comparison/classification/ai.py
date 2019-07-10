@@ -4,14 +4,11 @@ import numpy as np
 from data_manipulation import man
 
 # Machine Learning 
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import KFold
 from sklearn import svm
-from sklearn import preprocessing
+from sklearn import discriminant_analysis
+
+from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
-from sklearn.utils.multiclass import unique_labels
-from sklearn.ensemble import RandomForestClassifier
 
 def classify(dataset, classifier_type):
     # Initialize the Result data structures
@@ -29,26 +26,30 @@ def classify(dataset, classifier_type):
         # This is where we test the classifier and where we set our results
         
         # Creating our model
-        if classifier_type == 'linear svm':
-            clf = svm.SVC(kernel='linear', verbose=True)
+        if classifier_type == 'lda':
+            clf = discriminant_analysis.LinearDiscriminantAnalysis(solver='svd')
+        elif classifier_type == 'linear svm':
+            clf = svm.SVC(kernel='linear', verbose=False)
         elif classifier_type == 'rbf svm':
-            clf = svm.SVC(kernel='rbf', verbose=True)
+            clf = svm.SVC(kernel='rbf', verbose=False)
         elif classifier_type == 'poly svm':
-            clf = svm.SVC(kernel='poly', verbose=True)
+            clf = svm.SVC(kernel='poly', verbose=False)
         else:
             exit("Classifier type not supported")
+
         # Fitting our model
         clf.fit(dataset.X_train, dataset.y_train)
 
         # predicting
         y_pred = clf.predict(dataset.X_test)
-        acc = accuracy_score(dataset.y_test, y_pred) # This might need to change we'll see
         cm = confusion_matrix(dataset.y_test, y_pred)
+
+        report = classification_report(dataset.y_test, y_pred, output_dict=True)
         
-        print("Generalization accuracy: " + str(acc))
+        print("Generalization accuracy: " + str(report['accuracy']))
 
         # Saving the results
-        result.add_acc(acc)
         result.add_cm(cm)
+        result.add_report(report)
 
     return result

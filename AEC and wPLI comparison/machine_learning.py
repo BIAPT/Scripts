@@ -19,8 +19,8 @@ C = [0.001, 0.05, 0.1, 0.15, 0.20, 0.25, 0.5, 0.75, 1, 2]
 labels = ['Baseline','Recovery']
 num_participant = 9
 technique = "wPLI"
-classifier_types = ['linear svm', 'rbf svm', 'poly svm']
-classifier_type = 'rbf svm'
+classifier_types = ['lda','linear svm', 'rbf svm', 'poly svm']
+classifier_type = 'lda'
 
 # Create the dataset
 dataset = man.Dataset(technique, C, labels, num_participant)
