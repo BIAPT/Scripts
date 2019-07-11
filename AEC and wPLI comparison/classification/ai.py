@@ -3,10 +3,12 @@ import scipy.io
 import numpy as np
 from data_manipulation import man
 
+
 # Machine Learning 
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import permutation_test_score
+from sklearn.utils import resample
 
 def classify(dataset, clf):
     # Initialize the Result data structures
@@ -41,7 +43,34 @@ def classify(dataset, clf):
 
     return result
 
+# Will run the classification num_permutation times to create a distribution in order to get
+# a p_value for the score value of the classifier clf
 def permutation_test(dataset, clf, num_permutation):
     train_test_splits = man.generate_train_test_splits(dataset)
     (accuracy, permutation_scores, p_value) = permutation_test_score(clf, dataset.X, dataset.y, groups=dataset.I, cv=train_test_splits, n_permutations=num_permutation, verbose=num_permutation)
     return (accuracy, permutation_scores, p_value)
+
+# Iterate num_bootstrap times and create a classifier with the resampled data
+# Then create confidence interval for the and the accuracy, f_1 score
+def generate_confidence_interval(dataset, clf, num_bootstrap):
+
+    # Here we overwrite the dataset X, y and I and run the classify function
+    # for each bootstrap samples
+    for id in range(num_bootstrap):
+        print("Bootstrap sample #" + str(id))
+
+        # Get the sampled with replacement dataset
+        sample_X, sample_y, sample_I = resample(dataset.X, dataset.y, dataset.I)
+
+        # Overiding dataset
+        dataset.X = sample_X 
+        dataset.y = sample_y
+        dataset.I = sample_I 
+
+        # Classify and get the results
+        result = classify(dataset, clf)
+
+        # TODO: append the result together
+
+        result.summarize()
+        

@@ -5,6 +5,7 @@ import random
 import scipy.io
 import numpy as np
 import pickle
+from data_manipulation import man
 
 # Visualization
 import matplotlib.pyplot as plt
@@ -37,6 +38,7 @@ class Dataset:
 
         # Set working variables
         self.all_id = [id for id in range(1,num_participant+1)]
+
         # Set the training/validation/test instances
         self.train_mask = []
         self.test_mask = []
@@ -75,7 +77,7 @@ class Dataset:
 
     def prepare_training_validation(self, training_I, validation_id):
         # Get the splits
-        train_mask, validation_mask = man.make_mask(self.training_I,validation_id)
+        train_mask, validation_mask = man.make_mask(training_I,validation_id)
 
         # Setup the training data
         self.X_train = self.X[self.train_mask]
@@ -96,7 +98,7 @@ class Dataset:
         pickle.dump(self, pickle_out)
         pickle_out.close()
 
-    def load(loading_path):
+    def load(self, loading_path):
         pickle_in = open(loading_path,"rb")
         dataset = pickle.load(pickle_in)
         return dataset
@@ -136,8 +138,8 @@ class Result:
 
     def print_f1(self):
         print("F1 Score :")
-        print("Mean F1" + self.labels[0] + ": " + str(np.mean(self.baseline_f1)))
-        print("Mean F1" + self.labels[1] + ": " + str(np.mean(self.other_f1)))
+        print("Mean F1 " + self.labels[0] + ": " + str(np.mean(self.baseline_f1)))
+        print("Mean F1 " + self.labels[1] + ": " + str(np.mean(self.other_f1)))
 
 
     def plot_cm(self, make_figure=False):

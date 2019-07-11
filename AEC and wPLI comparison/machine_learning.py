@@ -20,6 +20,7 @@ from plot import viz
 labels = ['Baseline','Recovery']
 num_participant = 9
 num_permutation = 20
+num_bootstrap = 1000
 technique = "wPLI"
 clfs = [LinearDiscriminantAnalysis(solver='svd'), SVC(kernel='linear'), SVC(kernel='rbf'), SVC(kernel='poly')]
 
@@ -30,10 +31,13 @@ dataset = man.Dataset(technique, labels, num_participant)
 #result = ai.classify(dataset, clfs[0])
 
 # Do permutation testing on the chosen classifier
-(accuracy, permutation_scores,p_value) = ai.permutation_test(dataset, clfs[0], num_permutation)
-print("Accuracy: " + str(accuracy))
-print("All scores: " + str(permutation_scores))
-print("Best p_value: " + str(p_value))
+#(accuracy, permutation_scores,p_value) = ai.permutation_test(dataset, clfs[0], num_permutation)
+#print("Accuracy: " + str(accuracy))
+#print("All scores: " + str(permutation_scores))
+#print("Best p_value: " + str(p_value))
+
+# Generate confidence interval for the classifier
+ai.generate_confidence_interval(dataset, clfs[0], num_bootstrap)
 
 # Save the result and the dataset into the data folder
 #result.save()
