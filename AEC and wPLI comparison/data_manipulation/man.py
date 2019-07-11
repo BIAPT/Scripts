@@ -38,7 +38,9 @@ class Dataset:
 
         # Set working variables
         self.all_id = [id for id in range(1,num_participant+1)]
+        self.reset_variables()
 
+    def reset_variables(self):
         # Set the training/validation/test instances
         self.train_mask = []
         self.test_mask = []
@@ -50,8 +52,6 @@ class Dataset:
         self.y_train = []
         self.y_validation = []
         self.y_test = []
-
-
 
     def prepare_training_test(self, test_id):
         # Make the mask for the training and test dataset
@@ -65,15 +65,7 @@ class Dataset:
         self.X_test = self.X[test_mask]
         self.y_train = self.y[train_mask]
         self.y_test = self.y[test_mask]
-
-        # Set the training ids
-        training_id = list(self.all_id)
-        training_id.remove(test_id)
-
-        # Create the training I
-        training_I = list(self.I)
-        training_I = np.delete(training_I, test_mask)
-        return (training_id, training_I)
+        
 
     def prepare_training_validation(self, training_I, validation_id):
         # Get the splits
@@ -132,14 +124,23 @@ class Result:
         self.other_f1.append(report['1']['f1-score'])
         self.accuracies.append(report['accuracy'])
 
+    def get_mean_acc(self):
+        return np.mean(self.accuracies)
+
+    def get_mean_baseline_f1(self):
+        return np.mean(self.baseline_f1)
+
+    def get_mean_other_f1(self):
+        return np.mean(self.other_f1)
+
     def print_acc(self):
         print("Accuracy :")
-        print("Mean Accuracy: " + str(np.mean(self.accuracies)))
+        print("Mean Accuracy: " + str(self.get_mean_acc()))
 
     def print_f1(self):
         print("F1 Score :")
-        print("Mean F1 " + self.labels[0] + ": " + str(np.mean(self.baseline_f1)))
-        print("Mean F1 " + self.labels[1] + ": " + str(np.mean(self.other_f1)))
+        print("Mean F1 " + self.labels[0] + ": " + str(self.get_mean_baseline_f1()))
+        print("Mean F1 " + self.labels[1] + ": " + str(self.get_mean_other_f1()))
 
 
     def plot_cm(self, make_figure=False):
@@ -158,7 +159,7 @@ class Result:
         pickle.dump(self, pickle_out)
         pickle_out.close()
 
-    def load(loading_path):
+    def load(self, loading_path):
         pickle_in = open(loading_path,"rb")
         dataset = pickle.load(pickle_in)
         return dataset

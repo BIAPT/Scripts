@@ -37,7 +37,11 @@ dataset = man.Dataset(technique, labels, num_participant)
 #print("Best p_value: " + str(p_value))
 
 # Generate confidence interval for the classifier
-ai.generate_confidence_interval(dataset, clfs[0], num_bootstrap)
+(conf_interval_accuracy, conf_interval_baseline_f1, conf_interval_other_f1) = ai.generate_confidence_interval(dataset, clfs[0], num_bootstrap)
+
+print("Confidence interval for Accuracy: " + str(conf_interval_accuracy))
+print("Confidence interval for Baseline F1: " + str(conf_interval_baseline_f1))
+print("Confidence interval for Other F1: " + str(conf_interval_other_f1))
 
 # Save the result and the dataset into the data folder
 #result.save()
