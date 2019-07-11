@@ -4,13 +4,11 @@ import numpy as np
 from data_manipulation import man
 
 # Machine Learning 
-from sklearn import svm
-from sklearn import discriminant_analysis
-
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import permutation_test_score
 
-def classify(dataset, classifier_type):
+def classify(dataset, clf):
     # Initialize the Result data structures
     result = man.Result(dataset.technique, dataset.labels)
 
@@ -24,18 +22,7 @@ def classify(dataset, classifier_type):
         # TODO: Missing hyperparameters tuning
 
         # This is where we test the classifier and where we set our results
-        
-        # Creating our model
-        if classifier_type == 'lda':
-            clf = discriminant_analysis.LinearDiscriminantAnalysis(solver='svd')
-        elif classifier_type == 'linear svm':
-            clf = svm.SVC(kernel='linear', verbose=False)
-        elif classifier_type == 'rbf svm':
-            clf = svm.SVC(kernel='rbf', verbose=False)
-        elif classifier_type == 'poly svm':
-            clf = svm.SVC(kernel='poly', verbose=False)
-        else:
-            exit("Classifier type not supported")
+    
 
         # Fitting our model
         clf.fit(dataset.X_train, dataset.y_train)
@@ -53,3 +40,8 @@ def classify(dataset, classifier_type):
         result.add_report(report)
 
     return result
+
+def permutation_test(dataset, clf, num_permutation):
+    train_test_splits = man.generate_train_test_splits(dataset)
+    (accuracy, permutation_scores, p_value) = permutation_test_score(clf, dataset.X, dataset.y, groups=dataset.I, cv=train_test_splits, n_permutations=num_permutation, verbose=num_permutation)
+    return (accuracy, permutation_scores, p_value)

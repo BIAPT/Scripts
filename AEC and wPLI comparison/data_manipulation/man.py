@@ -12,7 +12,7 @@ from plot import viz
 
 # Classes
 class Dataset:
-    def __init__(self, technique, C, labels, num_participant, saving_path="./data/dataset.pickle"):
+    def __init__(self, technique, labels, num_participant, saving_path="./data/dataset.pickle"):
         # Load the data
         X_pli, X_aec, y, I = load_data()
         X_both = np.concatenate((X_pli,X_aec), axis = 1)
@@ -31,7 +31,6 @@ class Dataset:
         self.I = I
         # Set static variables for output
         self.technique = technique
-        self.C = C
         self.labels = labels
         self.num_participant = num_participant
         self.saving_path = saving_path
@@ -132,16 +131,24 @@ class Result:
         self.accuracies.append(report['accuracy'])
 
     def print_acc(self):
-        print("[" + str(self.technique) + "]")
-        print(self.accuracies)
+        print("Accuracy :")
         print("Mean Accuracy: " + str(np.mean(self.accuracies)))
 
-    def plot_cm(self):
+    def print_f1(self):
+        print("F1 Score :")
+        print("Mean F1" + self.labels[0] + ": " + str(np.mean(self.baseline_f1)))
+        print("Mean F1" + self.labels[1] + ": " + str(np.mean(self.other_f1)))
+
+
+    def plot_cm(self, make_figure=False):
         viz.plot_confusion_matrix(self.cm_total,self.labels,normalize=True)
-        plt.show()
+        if make_figure:
+            plt.show()
     
     def summarize(self):
+        print("Analysis Technique: " + str(self.technique))
         self.print_acc()
+        self.print_f1()
         self.plot_cm()
 
     def save(self):
@@ -176,3 +183,22 @@ def load_data():
     I = np.array(data['I'])
     I = I[0]
     return (X_pli,X_aec,y,I)
+
+# Helper function to create a tuple list of train and test splits
+def generate_train_test_splits(dataset):
+    train_test_splits = []
+
+    # Create the train test split for all LOSO participant
+    for test_id in range(1,dataset.num_participant+1):
+
+        # Split the data into a LOSO cross validated train/test split
+        dataset.prepare_training_test(test_id)
+
+        # Get the train and test split
+        train_split = dataset.train_mask
+        test_split = dataset.test_mask
+
+        # Add them to the return list
+        train_test_splits.append((train_split,test_split))
+
+    return train_test_splits

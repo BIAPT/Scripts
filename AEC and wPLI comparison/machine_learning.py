@@ -9,28 +9,35 @@ This script make use of sklearn, scipy, numpy, matplotlib and pickle. The import
 from data_manipulation import man
 
 # Machine Learning 
+from sklearn.svm import SVC
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from classification import ai
 
 # Visualization
 from plot import viz
 
 # Initialize the variables
-C = [0.001, 0.05, 0.1, 0.15, 0.20, 0.25, 0.5, 0.75, 1, 2] 
 labels = ['Baseline','Recovery']
 num_participant = 9
+num_permutation = 20
 technique = "wPLI"
-classifier_types = ['lda','linear svm', 'rbf svm', 'poly svm']
-classifier_type = 'lda'
+clfs = [LinearDiscriminantAnalysis(solver='svd'), SVC(kernel='linear'), SVC(kernel='rbf'), SVC(kernel='poly')]
 
 # Create the dataset
-dataset = man.Dataset(technique, C, labels, num_participant)
+dataset = man.Dataset(technique, labels, num_participant)
 
 # Classify the dataset and gather the result
-result = ai.classify(dataset, classifier_type)
+#result = ai.classify(dataset, clfs[0])
+
+# Do permutation testing on the chosen classifier
+(accuracy, permutation_scores,p_value) = ai.permutation_test(dataset, clfs[0], num_permutation)
+print("Accuracy: " + str(accuracy))
+print("All scores: " + str(permutation_scores))
+print("Best p_value: " + str(p_value))
 
 # Save the result and the dataset into the data folder
 #result.save()
 #dataset.save()
 
 # Summarize the result
-result.summarize()
+#result.summarize()
