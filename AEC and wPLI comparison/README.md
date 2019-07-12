@@ -12,7 +12,7 @@ There are two main scripts that need to be run in order:
 - machine_learning.py, which is a python script that will use the X,Y and I matrices to run various machine learning analysis. 
 
 ## How to run?
-- To install the required package you need to have python and MATLAB installed.
+- To install the required package you need to have python 3.7 > and MATLAB installed.
 - Once installed run `pip install requirements.txt` to install the required python packages
 
 ## Future
