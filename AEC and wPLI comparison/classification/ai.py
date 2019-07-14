@@ -13,7 +13,7 @@ from sklearn.utils import resample
 from sklearn.base import clone
 
 
-def classify(dataset, original_clf):
+def classify(dataset, original_clf, other_index):
     clf = clone(original_clf)
     # Initialize the Result data structures
     result = man.Result(dataset.technique, dataset.labels)
@@ -38,7 +38,7 @@ def classify(dataset, original_clf):
 
         # Saving the results
         result.add_cm(cm)
-        result.add_report(report)
+        result.add_report(report, other_index)
 
     return result
 

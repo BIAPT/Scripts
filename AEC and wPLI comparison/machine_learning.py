@@ -17,18 +17,18 @@ from classification import ai
 from plot import viz
 
 # Initialize the variables
-labels = ['Baseline','Recovery']
+labels = ['Baseline','pre-ROC']
 num_participant = 9
 num_permutation = 20
 num_bootstrap = 1000
-technique = "wPLI"
-clfs = [LinearDiscriminantAnalysis(solver='svd'), SVC(kernel='linear'), SVC(kernel='rbf'), SVC(kernel='poly')]
+technique = "AEC"
+clfs = [LinearDiscriminantAnalysis(solver='svd'), SVC(kernel='linear', C=0.1),SVC(kernel='linear', C=0.5), SVC(kernel='linear', C=1.0), SVC(kernel='rbf', C=0.1), SVC(kernel='rbf',C=1.0)]
 
 # Create the dataset
 dataset = man.Dataset(technique, labels, num_participant)
 
 # Classify the dataset and gather the result
-#result = ai.classify(dataset, clfs[0])
+result = ai.classify(dataset, clfs[2], 3)
 
 # Do permutation testing on the chosen classifier
 #(accuracy, permutation_scores,p_value) = ai.permutation_test(dataset, clfs[0], num_permutation)
@@ -37,15 +37,15 @@ dataset = man.Dataset(technique, labels, num_participant)
 #print("Best p_value: " + str(p_value))
 
 # Generate confidence interval for the classifier
-(conf_interval_accuracy, conf_interval_baseline_f1, conf_interval_other_f1) = ai.generate_confidence_interval(dataset, clfs[0], num_bootstrap)
+#(conf_interval_accuracy, conf_interval_baseline_f1, conf_interval_other_f1) = ai.generate_confidence_interval(dataset, clfs[0], num_bootstrap)
 
-print("Confidence interval for Accuracy: " + str(conf_interval_accuracy))
-print("Confidence interval for Baseline F1: " + str(conf_interval_baseline_f1))
-print("Confidence interval for Other F1: " + str(conf_interval_other_f1))
+#print("Confidence interval for Accuracy: " + str(conf_interval_accuracy))
+#print("Confidence interval for Baseline F1: " + str(conf_interval_baseline_f1))
+#print("Confidence interval for Other F1: " + str(conf_interval_other_f1))
 
 # Save the result and the dataset into the data folder
 #result.save()
 #dataset.save()
 
 # Summarize the result
-#result.summarize()
+result.summarize()

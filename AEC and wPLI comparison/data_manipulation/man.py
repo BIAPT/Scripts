@@ -5,7 +5,6 @@ import random
 import scipy.io
 import numpy as np
 import pickle
-from data_manipulation import man
 
 # Visualization
 import matplotlib.pyplot as plt
@@ -119,9 +118,9 @@ class Result:
         else:
             self.cm_total = np.add(self.cm_total,cm)
 
-    def add_report(self, report):
+    def add_report(self, report, other_index):
         self.baseline_f1.append(report['0']['f1-score'])
-        self.other_f1.append(report['1']['f1-score'])
+        self.other_f1.append(report[str(other_index)]['f1-score'])
         self.accuracies.append(report['accuracy'])
 
     def get_mean_acc(self):
