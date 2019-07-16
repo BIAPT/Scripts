@@ -142,16 +142,16 @@ class Result:
         print("Mean F1 " + self.labels[1] + ": " + str(self.get_mean_other_f1()))
 
 
-    def plot_cm(self, make_figure=False):
-        viz.plot_confusion_matrix(self.cm_total,self.labels,normalize=True)
-        if make_figure:
+    def plot_cm(self, print_figure=False):
+        viz.plot_confusion_matrix(self.cm_total,self.labels,normalize=True, print_figure=print_figure)
+        if print_figure:
             plt.show()
-    
-    def summarize(self):
+            
+    def summarize(self, print_figure):
         print("Analysis Technique: " + str(self.technique))
         self.print_acc()
         self.print_f1()
-        self.plot_cm()
+        self.plot_cm(print_figure=print_figure)
 
     def save(self):
         pickle_out = open(self.saving_path,"wb")

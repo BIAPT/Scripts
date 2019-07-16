@@ -17,7 +17,7 @@ from classification import ai
 from plot import viz
 
 # Initialize the variables
-labels = ['Baseline','pre-ROC']
+labels = ['Baseline','Recovery']
 num_participant = 9
 num_permutation = 20
 num_bootstrap = 1000
@@ -28,10 +28,10 @@ clfs = [LinearDiscriminantAnalysis(solver='svd'), SVC(kernel='linear', C=0.1),SV
 dataset = man.Dataset(technique, labels, num_participant)
 
 # Classify the dataset and gather the result
-result = ai.classify(dataset, clfs[2], 3)
+result = ai.classify(dataset, clfs[2], 4)
 
 # Do permutation testing on the chosen classifier
-#(accuracy, permutation_scores,p_value) = ai.permutation_test(dataset, clfs[0], num_permutation)
+#(accuracy, permutation_scores, p_value) = ai.permutation_test(dataset, clfs[0], num_permutation)
 #print("Accuracy: " + str(accuracy))
 #print("All scores: " + str(permutation_scores))
 #print("Best p_value: " + str(p_value))
@@ -48,4 +48,4 @@ result = ai.classify(dataset, clfs[2], 3)
 #dataset.save()
 
 # Summarize the result
-result.summarize()
+result.summarize(print_figure=False)

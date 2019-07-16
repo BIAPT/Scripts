@@ -7,8 +7,9 @@ import numpy as np
 
 # Visualization
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-def plot_confusion_matrix(cm, classes, normalize=False, title=None, cmap= plt.cm.Blues, print_figure=False):
+def plot_confusion_matrix(cm, classes, normalize=False, title=None, cmap=plt.cm.Blues, print_figure=False):
     '''
     This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
@@ -22,21 +23,21 @@ def plot_confusion_matrix(cm, classes, normalize=False, title=None, cmap= plt.cm
 
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        
-        
         print("Normalized confusion matrix")
     else:
         print('Confusion matrix, without normalization')
 
     print(cm)
-    
     if not print_figure:
         return    
 
     fig, ax = plt.subplots()
     im = ax.imshow(cm, interpolation='nearest', cmap=cmap)
-    ax.figure.colorbar(im, ax=ax)
     
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="5%", pad=0.05)
+    ax.figure.colorbar(im, cax=cax)
+
     # Set the colorbar
     if normalize:
         im.set_clim(vmin=0, vmax=1)
@@ -51,8 +52,8 @@ def plot_confusion_matrix(cm, classes, normalize=False, title=None, cmap= plt.cm
            xlabel='Predicted label')
 
     # Rotate the tick labels and set their alignment.
-    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
-             rotation_mode="anchor")
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+    
 
     # Loop over data dimensions and create text annotations.
     fmt = '.2f' if normalize else 'd'
