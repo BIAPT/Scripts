@@ -133,11 +133,9 @@ class Result:
         return np.mean(self.other_f1)
 
     def print_acc(self):
-        print("Accuracy :")
         print("Mean Accuracy: " + str(self.get_mean_acc()))
 
     def print_f1(self):
-        print("F1 Score :")
         print("Mean F1 " + self.labels[0] + ": " + str(self.get_mean_baseline_f1()))
         print("Mean F1 " + self.labels[1] + ": " + str(self.get_mean_other_f1()))
 
@@ -146,7 +144,7 @@ class Result:
         viz.plot_confusion_matrix(self.cm_total,self.labels,normalize=True, print_figure=print_figure)
         if print_figure:
             plt.show()
-            
+
     def summarize(self, print_figure):
         print("Analysis Technique: " + str(self.technique))
         self.print_acc()

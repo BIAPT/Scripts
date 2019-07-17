@@ -46,7 +46,7 @@ def classify(dataset, original_clf, other_index):
 # a p_value for the score value of the classifier clf
 def permutation_test(dataset, clf, num_permutation):
     train_test_splits = man.generate_train_test_splits(dataset)
-    (accuracy, permutation_scores, p_value) = permutation_test_score(clf, dataset.X, dataset.y, groups=dataset.I, cv=train_test_splits, n_permutations=num_permutation, verbose=num_permutation)
+    (accuracy, permutation_scores, p_value) = permutation_test_score(clf, dataset.X, dataset.y, groups=dataset.I, cv=train_test_splits, n_permutations=num_permutation, verbose=num_permutation,n_jobs=-1)
     return (accuracy, permutation_scores, p_value)
 
 # Iterate num_bootstrap times and create a classifier with the resampled data
@@ -54,7 +54,7 @@ def permutation_test(dataset, clf, num_permutation):
 # The p value used here is 0.05
 # This means that the lower bound = math.floor((num_bootstrap/100)*2.5)
 #                     upper bound = math.floor((num_bootstrap/100)*97.5)
-def generate_confidence_interval(original_dataset, clf, num_bootstrap):
+def generate_confidence_interval(original_dataset, clf, num_bootstrap,other_index):
     lb_index = floor((num_bootstrap/100)*(2.5))
     ub_index = floor((num_bootstrap/100)*(97.5))
 
@@ -84,13 +84,13 @@ def generate_confidence_interval(original_dataset, clf, num_bootstrap):
         dataset.reset_variables()
 
         # Classify and get the results
-        result = classify(dataset, clf)
+        result = classify(dataset, clf,other_index)
 
         accuracies.append(result.get_mean_acc())
         baseline_f1s.append(result.get_mean_baseline_f1())
         other_f1s.append(result.get_mean_other_f1())
         
-        result.summarize()
+        result.summarize(print_figure=False)
     
     # Sort the results
     accuracies.sort()
