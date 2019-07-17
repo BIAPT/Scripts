@@ -40,7 +40,7 @@ make_bar_plot(mean_acc_wpli, conf_acc_wpli, mean_acc_aec, conf_acc_aec, 'Mean Ac
 
 # data for LDA with svg
 mean_acc_wpli = [0.5206583420355466, 0.7930148717993689, 0.7809757871472132, 0.616840516323644]
-conf_acc_wpli = [0, 0, 0, 0]
+conf_acc_wpli = [0, (0.7963 - 0.7162) / 2  ,  (0.7912 - 0.7129)/2, 0]
 mean_acc_aec = [0.5247893150701697, 0.821774689973807, 0.6796940565270906, 0.5335461132479048]
-conf_acc_aec = [0, 0, 0, 0]
+conf_acc_aec = [0, (0.8399 - 0.7633)/2, (0.7007 - 0.6098)/2, 0]
 make_bar_plot(mean_acc_wpli, conf_acc_wpli, mean_acc_aec, conf_acc_aec, 'Mean Accuracy Against Baseline Decoding LDA')

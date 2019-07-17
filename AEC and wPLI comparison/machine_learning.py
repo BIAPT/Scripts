@@ -30,7 +30,12 @@ selected_classifier = clfs[0]
 dataset = man.Dataset(technique, labels, num_participant)
 
 # Classify the dataset and gather the result
-#result = ai.classify(dataset, selected_classifier, 4)
+result = ai.classify(dataset, selected_classifier, 1)
+# Get full weights
+weights = ai.get_weight(dataset, selected_classifier, 1)
+print(len(weights))
+print(weights)
+
 
 # Do permutation testing on the chosen classifier
 #(accuracy, permutation_scores, p_value) = ai.permutation_test(dataset, selected_classifier, num_permutation)
@@ -39,11 +44,11 @@ dataset = man.Dataset(technique, labels, num_participant)
 #print("Best p_value: " + str(p_value))
 
 # Generate confidence interval for the classifier
-(conf_interval_accuracy, conf_interval_baseline_f1, conf_interval_other_f1) = ai.generate_confidence_interval(dataset, selected_classifier, num_bootstrap,3)
+#(conf_interval_accuracy, conf_interval_baseline_f1, conf_interval_other_f1) = ai.generate_confidence_interval(dataset, selected_classifier, num_bootstrap,3)
 
-print("Confidence interval for Accuracy: " + str(conf_interval_accuracy))
-print("Confidence interval for Baseline F1: " + str(conf_interval_baseline_f1))
-print("Confidence interval for Other F1: " + str(conf_interval_other_f1))
+#print("Confidence interval for Accuracy: " + str(conf_interval_accuracy))
+#print("Confidence interval for Baseline F1: " + str(conf_interval_baseline_f1))
+#print("Confidence interval for Other F1: " + str(conf_interval_other_f1))
 
 # Save the result and the dataset into the data folder
 #result.save()
