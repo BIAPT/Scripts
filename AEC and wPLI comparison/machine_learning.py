@@ -30,7 +30,11 @@ selected_classifier = clfs[2]
 dataset = man.Dataset(technique, labels, num_participant)
 
 # Classify the dataset and gather the result
-result = ai.classify(dataset, selected_classifier, 4)
+result = ai.classify(dataset, selected_classifier, 1)
+# Get full weights
+weights = ai.get_weight(dataset, selected_classifier, 1)
+print(len(weights))
+print(weights)
 
 # Do permutation testing on the chosen classifier
 #(accuracy, permutation_scores, p_value) = ai.permutation_test(dataset, selected_classifier, num_permutation)

@@ -42,6 +42,21 @@ def classify(dataset, original_clf, other_index):
 
     return result
 
+
+def get_weight(dataset, original_clf, other_index):
+    clf = clone(original_clf)
+    # Initialize the Result data structures
+    result = man.Result(dataset.technique, dataset.labels)
+
+    # Fitting our model
+    clf.fit(dataset.X, dataset.y)
+
+    # get weights
+    weights = clf.coef
+
+    return weights
+
+
 # Will run the classification num_permutation times to create a distribution in order to get
 # a p_value for the score value of the classifier clf
 def permutation_test(dataset, clf, num_permutation):
