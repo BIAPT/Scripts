@@ -1,18 +1,70 @@
-Different classifier:
-To check that our result still hold with different classifier we will use LDA, Linear SVM and RBF SVM.
+Linear SVM C=0.5:
+Baseline vs Pre-ROC:
+wPLI 
+Confidence interval for Accuracy: (0.7509682062917591, 0.8225845724293551)
+Confidence interval for Baseline F1: (0.7111842876577446, 0.8032308078166756)
+Confidence interval for Other F1: (0.7544375456913798, 0.8330333585053279)
+AEC
+Confidence interval for Accuracy: (0.6706255447023519, 0.7552839932256463)
+Confidence interval for Baseline F1: (0.6499528162246304, 0.7499854442658109)
+Confidence interval for Other F1: (0.6552318524689262, 0.7454031180173927)
 
+--------------------------------------------------------------------------
+Linear Discriminant Analysis Singular Value Decomposition
+Baseline vs Induction:
+wPLI (p=0.14585414585414586 NS)
+Mean Accuracy: 0.5206583420355466
+Mean F1 Baseline: 0.48213293243854644
+Mean F1 pre-ROC: 0.5436475178129591
+AEC (p=0.08291708291708291 NS)
+Mean Accuracy: 0.5247893150701697
+Mean F1 Baseline: 0.5190105674542383
+Mean F1 pre-ROC: 0.5214539508706519
 
-Thomas Thiery answer for the permutation:
-1) I permute the label before I do any steps of the classification,
-then I use the exact same pipeline and try to classify with random labels.
+Baseline vs Unconscious:
+wPLI (p < 0.001 SIG)
+Mean Accuracy: 0.7930148717993689
+Mean F1 Baseline: 0.7828611412344549
+Mean F1 pre-ROC: 0.7906770862328987
 
-But your classes are not too unbalanced, you actually use AUC (Area Under the Curve) as a measure instead of decoding accuracy.
-In theory, this measure is insensitive to unbalanced classes. However, it only works for binary classification.
+Confidence interval for Accuracy: (0.7162828103650907, 0.7963441663065913)
+Confidence interval for Baseline F1: (0.7004942396250871, 0.7912636734896328)
+Confidence interval for Other F1: (0.7048066596468147, 0.7953564296581448)
 
--> This doesn't help that much. I'll need to do the permutation anyway.
+AEC  (p < 0.001 SIG)
+Mean Accuracy: 0.821774689973807
+Mean F1 Baseline: 0.8004816679168054
+Mean F1 pre-ROC: 0.8359630633110621
 
+Confidence interval for Accuracy: (0.7633005163883367, 0.8399733521304021)
+Confidence interval for Baseline F1: (0.7327284803016231, 0.8230373741505235)
+Confidence interval for Other F1: (0.7737487990179179, 0.8519885171766057)
 
-STEP 1:
-- Run the analysis with linear kernel again with good C values
-- Run the analysis with rbf linear kernel with good C values + gamma
-- Run the analysis with the LDA (might not need to do hyperparameters tuning)
+Baseline vs pre-ROC:
+wPLI (p < 0.001 SIG)
+Mean Accuracy: 0.7809757871472132
+Mean F1 Baseline: 0.7612645173718856
+Mean F1 pre-ROC: 0.7915294846441012
+
+Confidence interval for Accuracy: (0.712961549508382, 0.791251497332435)
+Confidence interval for Baseline F1: (0.683538331177605, 0.775080296535667)
+Confidence interval for Other F1: (0.7189692013734986, 0.8028478256521692)
+
+AEC  (p < 0.001 SIG)
+Mean Accuracy: 0.6796940565270906
+Mean F1 Baseline: 0.6645765219451446
+Mean F1 pre-ROC: 0.6707688614122292
+
+Confidence interval for Accuracy: (0.6098634458535062, 0.7007514070233011)
+Confidence interval for Baseline F1: (0.5820222010316827, 0.6922003525210186)
+Confidence interval for Other F1: (0.598463058384188, 0.6973491724746093)
+
+Baseline vs Recovery:
+wPLI (p < 0.001 SIG)
+Mean Accuracy: 0.616840516323644
+Mean F1 Baseline: 0.6159726413339602
+Mean F1 pre-ROC: 0.5997697235856045
+AEC  (p = 0.04795204795204795 NS)
+Mean Accuracy: 0.5335461132479048
+Mean F1 Baseline: 0.5226784539173717
+Mean F1 pre-ROC: 0.5295979972470972
