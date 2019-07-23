@@ -184,6 +184,10 @@ def load_data():
     I = I[0]
     return (X_pli,X_aec,y,I)
 
+def save_data(mean,std, filename):
+    data = {'weights_mean':mean,'weights_std':std}
+    scipy.io.savemat(filename,data)
+
 # Helper function to create a tuple list of train and test splits
 def generate_train_test_splits(dataset):
     train_test_splits = []

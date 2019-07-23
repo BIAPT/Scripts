@@ -11,8 +11,11 @@ from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import permutation_test_score
 from sklearn.utils import resample
 from sklearn.base import clone
+from sklearn.pipeline import Pipeline
+from sklearn.feature_selection import RFE
+from sklearn.svm import LinearSVC
 
-
+# Original classification with LOSO cross validation
 def classify(dataset, original_clf, other_index):
     clf = clone(original_clf)
     # Initialize the Result data structures
@@ -42,7 +45,15 @@ def classify(dataset, original_clf, other_index):
 
     return result
 
+# Added classification for reduced set classifier 
+# This might be used when we want to merge the features coming from two different analysis technique.
+# Might consider using only the means and not the standard deviation.
+def sparse_classify(dataset, original_clf, other_index):
+    selector = RFE(original_clf, 100, step=1) # TODO: Need to change this for the cross validated version so that we have an empiracally driven number of features to keep
+    result = classify(dataset, selector, other_index)
+    return result
 
+# Fucntion to get the weights out of the SVM
 def get_weight(dataset, original_clf, other_index):
     clf = clone(original_clf)
     # Initialize the Result data structures
@@ -52,9 +63,13 @@ def get_weight(dataset, original_clf, other_index):
     clf.fit(dataset.X, dataset.y)
 
     # get weights
-    weights = clf.coef
+    weights = clf.coef_
+    weights = weights[0]
 
-    return weights
+    weights_mean = weights[0:82]
+    weights_std = weights[82:]
+
+    return weights_mean,weights_std
 
 
 # Will run the classification num_permutation times to create a distribution in order to get
