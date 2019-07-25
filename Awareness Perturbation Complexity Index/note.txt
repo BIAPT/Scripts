@@ -1,0 +1,4 @@
+# What we need to do is to first gather all the .SET file and have a functionality to concatenate them
+# We need to concatenate the cleaned file in chronological order.
+# Then we calculate whatever we need to calculate in slice to get a tensor which we flatten and turn into a matrix
+# It's on this matrix that we calculate the APCI
