@@ -1,0 +1,11 @@
+# What we need to do is to first gather all the .SET file and have a functionality to concatenate them
+# We need to concatenate the cleaned file in chronological order.
+# Then we calculate whatever we need to calculate in slice to get a tensor which we flatten and turn into a matrix
+# It's on this matrix that we calculate the APCI
+
+# Steps: 
+# 1: Download all cleaned .SET files from one participant.
+# 2: Use MNE python to load the files and concatenate them together in chronological order (we need also to have the same number of channels throughout)
+# 3: Calculate an SOMETHING on a given window of data, where SOMETHING can be topographic map at alpha, to create a tensor (129,129,time) (here 129 is the number of channels)
+# 4: Threshold these maps at a given percentage (say 10% of highest values) and binarized them between 0 and 1
+# 5: Create a matrix of (129*129, T) and feed that to the pci algorithm
