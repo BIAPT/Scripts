@@ -2,7 +2,7 @@
 % This code is used to work with a square instead of a EEG head
 
 %% Variable initalization
-number_square = 10; % This you can modify
+number_square = 67; % This you can modify
 X = 1:number_square;
 Y = 1:number_square;
 number_channels = number_square*number_square;
