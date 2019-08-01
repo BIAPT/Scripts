@@ -21,7 +21,7 @@ end
 
 %% Normalization with min max
 weight_matrix = min_max_normalization(weight_matrix); % This give use normalized distance
-weight_matrix = abs(1 - weight_matrix); % This give us normalized proximity
+
 
 
 %% Helper functions
@@ -30,12 +30,14 @@ function distance = euclidean_distance(first_point, second_point)
 end
 
 function normalized_matrix = min_max_normalization(matrix)
-    normalized_matrix = (matrix - min(matrix)) ./ (max(matrix) - min(matrix));
+    normalized_matrix = (matrix - min(matrix)) ./ (max(matrix) - min(matrix)); % This gives us result bounded by [0 and 1]
+    normalized_matrix = abs(1 - normalized_matrix); % This give us normalized proximity
     
-    % Restore the symmetry
+    % Restore the symmetry and make sure the row and column sum to 1
     for i = 1:length(matrix)
+       total = sum(normalized_matrix(i,:));
        for j = 1:length(matrix)
-          normalized_matrix(i,j) = normalized_matrix(j,i); 
+          normalized_matrix(j,i) = normalized_matrix(i,j)/total; 
        end
     end
 end
