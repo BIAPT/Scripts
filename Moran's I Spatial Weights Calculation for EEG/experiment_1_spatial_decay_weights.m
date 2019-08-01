@@ -3,7 +3,7 @@
 % To start we will calcualte it on one eeg location file
 
 %% Load the data
-data = load('EEG_info_WSAS13.mat');
+data = load('EEG_info_WSAS15.mat');
 channel_location = data.EEG_info.chanlocs;
 
 %% Init the weight matrix
@@ -37,7 +37,8 @@ function normalized_matrix = min_max_normalization(matrix)
     for i = 1:length(matrix)
        total = sum(normalized_matrix(i,:));
        for j = 1:length(matrix)
-          normalized_matrix(j,i) = normalized_matrix(i,j)/total; 
+          normalized_matrix(i,j) = normalized_matrix(i,j)/total;
+          normalized_matrix(j,i) = normalized_matrix(i,j);
        end
     end
 end
