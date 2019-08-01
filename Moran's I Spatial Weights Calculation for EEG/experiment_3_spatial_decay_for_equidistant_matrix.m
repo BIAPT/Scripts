@@ -1,28 +1,34 @@
-%% Spatial Weights Matrix Calculation
-% Here we will use euclidian spatial decay to create our weight matrix
-% To start we will calcualte it on one eeg location file
+%% Equidistant matrix
+% This code is used to work with a square instead of a EEG head
 
-%% Load the data
-data = load('EEG_info_WSAS15.mat');
-channel_location = data.EEG_info.chanlocs;
+%% Variable initalization
+number_square = 10; % This you can modify
+X = 1:number_square;
+Y = 1:number_square;
+number_channels = number_square*number_square;
+weight_matrix = zeros(number_channels,number_channels);
+channel_location = [];
 
-%% Init the weight matrix
-num_channels = length(channel_location);
-weight_matrix = zeros(num_channels,num_channels);
+for i = 1:number_square
+    for j = 1:number_square        
+        location = struct();
+        location.X = X(i);
+        location.Y = Y(j);
+        channel_location = [channel_location, location];
+    end
+end
 
 %% Populating the Weights matrix
-for i = 1:num_channels
-    first_point = [channel_location(i).X, channel_location(i).Y, channel_location(i).Z];
-    for j = 1:num_channels
-        second_point = [channel_location(j).X, channel_location(j).Y, channel_location(j).Z];
+for i = 1:number_channels
+    first_point = [channel_location(i).X, channel_location(i).Y];
+    for j = 1:number_channels
+        second_point = [channel_location(j).X, channel_location(j).Y];
         weight_matrix(i,j) = euclidean_distance(first_point,second_point);
     end
 end
 
-%% Normalization with min max
+%% Normalization
 weight_matrix = min_max_normalization(weight_matrix); % This give use normalized distance
-
-
 
 %% Helper functions
 function distance = euclidean_distance(first_point, second_point)
