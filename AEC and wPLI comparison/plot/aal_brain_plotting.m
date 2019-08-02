@@ -1,5 +1,5 @@
 %% Variables initialization
-% Weigts
+% Weights
 data = load('weights_colors.mat');
 weights_pli_pre_ROC = data.weights_pli_pre_ROC;
 weights_aec_pre_ROC = data.weights_aec_pre_ROC;
@@ -9,6 +9,8 @@ weights_aec_unconscious = data.weights_aec_unconscious;
 % Colormap [nothing = 1, mean = 2, std = 3, both= 4]
 color_map = [ 1 1 1 ; 0.4660, 0.6740, 0.1880 ; 0.9290, 0.6940, 0.1250; 0, 0.4470, 0.7410]; % This is the colormap for the not important, mean, std, both
 
+%% Weights vector initialization and USER INPUT
+weights = weights_aec_unconscious; %To change using the values above
 % Side of brain to map (left or right)
 side = 'right';
 if(strcmp(side,'left'))
@@ -16,9 +18,6 @@ if(strcmp(side,'left'))
 elseif(strcmp(side,'right'))
     roi_range = 42:82;
 end
-
-%% Weights vector initialization
-weights = weights_pli_unconscious; %To change using the values above
 
 %% Load the necessary variables
 load('ROI_MNI_V5_nii.mat'); % AALreg = volume image of 120 ROIs
