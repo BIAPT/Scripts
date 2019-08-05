@@ -6,9 +6,9 @@ function I = morans_I(grid,weight_matrix)
         x = grid;
     end
     
-    % TODO change these two to not take the NAN into consideration
-    N = size(weight_matrix,1);
-    W = sum(sum(weight_matrix));
+    ind = find(~isnan(x)); %indices of non-NaN elements in grid
+    N = size(ind,2);
+    W = 0;
     
     Xbar = nanmean(x);
     num = 0;
@@ -16,6 +16,9 @@ function I = morans_I(grid,weight_matrix)
     for i = 1:size(weight_matrix,1)
         for j = 1:size(weight_matrix,2)
             num = nansum([num weight_matrix(i,j)*(x(i)-Xbar)*(x(j)-Xbar)]);
+            if ~isnan(x(i)) && ~isnan(x(j))
+                W = W + weight_matrix(i,j);
+            end
         end
         denom = nansum([denom (x(i)-Xbar)^2]);
     end
