@@ -6,8 +6,8 @@
 % nearest neighbor based approach to map one headset into another.
 
 %% Load the two headset to compare
-path_egi = "C:\Users\Fabien Dal Maso\Documents\eeg_headset_comparison\_revision\exported_data\egi\egi_closed_1.mat";
-path_dsi = "C:\Users\Fabien Dal Maso\Documents\eeg_headset_comparison\_revision\exported_data\dsi\dsi_closed_1.mat";
+path_egi = "C:\Users\Fabien Dal Maso\Documents\eeg_headset_comparison\_revision\exported_data\egi\egi_open_1.mat";
+path_dsi = "C:\Users\Fabien Dal Maso\Documents\eeg_headset_comparison\_revision\exported_data\dsi\dsi_open_1.mat";
 
 egi_location = load_headset_location(path_egi);
 dsi_location = load_headset_location(path_dsi);
@@ -24,17 +24,36 @@ plot_eeg_location(dsi_location,'red','o');
 hold on;
 plot_eeg_location(filtered_egi_location,'green','*');
 
+%% Filter both the headset location and the data
+% Load the full EEG data
+egi_eeg = load_eeg(path_egi);
+dsi_eeg = load_eeg(path_dsi);
+
+% Filter using the same idea as filter_location
+filtered_egi_eeg = filter_eeg(egi_eeg, dsi_eeg);
+
+% Create the all uppercase data structure that is expected in EEGapp
+EEG = filtered_egi_eeg;
+
+
 %% Helper function
-% will load the headset location given a path
+% Will load the headset location given a path
 function [eeg_location] = load_headset_location(path)
     data = load(path);
     eeg_location = data.EEG.chanlocs;
 end
 
+% Will load the headset location given a path
+function [eeg] = load_eeg(path)
+    data = load(path);
+    eeg = data.EEG;
+end
+
+
 % Will scan through each of the location filter to find its nearest
 % neighbor in the eeg location to be filtered. It will output a filtered
 % version of te eeg location.
-function [filtered_eeg_location] = filter_location(eeg_location, filter)
+function [filtered_eeg_location, closest_location] = filter_location(eeg_location, filter)
     
     % Create the location 3D matrix (X,Y,Z) for each electrodes
     location = zeros(length(eeg_location),3);
@@ -57,6 +76,7 @@ function [filtered_eeg_location] = filter_location(eeg_location, filter)
     filtered_eeg_location = eeg_location(closest_location);
 end
 
+% Wrapper function to plot as a scatter plot the 3d data of the location
 function plot_eeg_location(location, color,type)
     X = zeros(1,length(location));
     Y = zeros(1,length(location));
@@ -70,5 +90,22 @@ function plot_eeg_location(location, color,type)
     end
     
     scatter3(X,Y,Z,type,'MarkerFaceColor',color)
+    
+end
+
+% Will scan through each of the location filter to find its nearest
+% neighbor in the eeg location to be filtered. It will output a filtered
+% version of te eeg data with the location updated.
+function [filtered_eeg] = filter_eeg(eeg, filter)
+    
+    % Filter the eeg with the filter eeg to find the id that match the two
+    % dataset
+    [~, filter_mask] = filter_location(eeg.chanlocs, filter.chanlocs);
+    
+    % Make the change in nbchan, data and chanlocs using filter_mask
+    filtered_eeg = eeg;
+    filtered_eeg.nbchan = length(filter.chanlocs);
+    filtered_eeg.data = eeg.data(filter_mask,:);
+    filtered_eeg.chanlocs = eeg.chanlocs(filter_mask);
     
 end
