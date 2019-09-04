@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 def make_bar_plot(data1,conf1,data2,conf2,title):
 
     # Static data
-    classes = ['Induction', 'Unconscious', 'Pre-ROC', 'Recovery']
+    classes = ['Unconscious', 'Pre-ROC']
 
     ind = np.arange(len(data1))  # the x locations for the groups
     width = 0.35  # the width of the bars
@@ -25,6 +25,7 @@ def make_bar_plot(data1,conf1,data2,conf2,title):
     ax.set_title(title)
     ax.set_xticks(ind)
     ax.set_xticklabels(classes)
+    ax.set_ylim([0,1])
     ax.legend()
 
     fig.tight_layout()
@@ -37,6 +38,12 @@ mean_acc_aec = [0.5394, 0.8641, 0.7276, 0.5602]
 conf_acc_aec = [0, (0.8966 - 0.8367)/2, (0.7535 - 0.6691)/2, 0]
 make_bar_plot(mean_acc_wpli, conf_acc_wpli, mean_acc_aec, conf_acc_aec, 'Mean Accuracy Against Baseline Decoding SVM')
 
+# data for Linear SVM with C=0.5
+mean_acc_wpli = [0.7849, 0.8041]
+conf_acc_wpli = [(0.8116 - 0.7354)/2, (0.8241-0.7515)/2]
+mean_acc_aec = [0.8641, 0.7276]
+conf_acc_aec = [(0.8966 - 0.8367)/2, (0.7535 - 0.6691)/2]
+make_bar_plot(mean_acc_wpli, conf_acc_wpli, mean_acc_aec, conf_acc_aec, 'Mean Accuracy Against Baseline Decoding SVM')
 
 # data for LDA with svg
 mean_acc_wpli = [0.5206583420355466, 0.7930148717993689, 0.7809757871472132, 0.616840516323644]
