@@ -132,4 +132,4 @@ def generate_confidence_interval(original_dataset, clf, num_bootstrap,other_inde
     conf_interval_baseline_f1 = (baseline_f1s[lb_index],baseline_f1s[ub_index])
     conf_interval_other_f1 = (other_f1s[lb_index],other_f1s[ub_index])
 
-    return (conf_interval_accuracy, conf_interval_baseline_f1, conf_interval_other_f1)
+    return (accuracies,conf_interval_accuracy, conf_interval_baseline_f1, conf_interval_other_f1)

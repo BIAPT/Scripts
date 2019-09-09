@@ -6,8 +6,8 @@
 % nearest neighbor based approach to map one headset into another.
 
 %% Load the two headset to compare
-path_egi = "C:\Users\Fabien Dal Maso\Documents\eeg_headset_comparison\_revision\exported_data\egi\egi_open_1.mat";
-path_dsi = "C:\Users\Fabien Dal Maso\Documents\eeg_headset_comparison\_revision\exported_data\dsi\dsi_open_1.mat";
+path_egi = "data/egi_open.mat";
+path_dsi = "data/openbci/open_bci_open.mat";
 
 egi_location = load_headset_location(path_egi);
 dsi_location = load_headset_location(path_dsi);

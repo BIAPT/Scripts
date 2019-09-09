@@ -58,6 +58,8 @@ function [data,data_pli,data_aec,label,identity] = get_both_data(epoch,frequency
         number_label = 3;
     elseif(strcmp(epoch,"ec3"))
         number_label = 4;
+    elseif(strcmp(epoch,"ec8"))
+        number_label = 5;
     end
     
     label = repelem(number_label,size(merged_data,1));
