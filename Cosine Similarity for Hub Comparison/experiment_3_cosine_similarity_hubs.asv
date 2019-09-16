@@ -1,0 +1,42 @@
+%Yacine Mahdid 2019-06-26 
+% modified by Danielle Nadin 2019-09-13
+
+% Analysis done in the context of Network Hub Analysis to compare node degree from DOC patient
+% with average healthy participants and across different states using cosine similarity. 
+%% Static Variables
+% Selector Labels
+regions_labels = {'Anterior','Posterior'};
+
+%% Load the data Using File Explorer
+
+% Individual Participant data 1
+title = "Select the single participant hub structure:";
+print(title)
+data = load_from_file(title);
+individual_motif_1 = data.result_pre;
+
+% Individual Participant data 2
+title = "Select another single participant hub structure:";
+print(title)
+data = load_from_file(title);
+individual_motif_2 = data.result_post;
+
+
+title = "Select the single participant EEG_info structure:";
+print(title)
+data = load_from_file(title);
+individual_channels_location = data.EEG_info.chanlocs;
+
+
+%% Pre-Processing before Cosine Similarity 
+
+% Select the anterior or the posterior part of the brain for analysis
+[individual_motif_1, individual_motif_2] = select_region(individual_motif_1,individual_motif_2,individual_channels_location,regions_labels);
+
+%% Cosine Similarity
+cosine_similarity = vector_cosine_similarity(individual_motif_1,individual_motif_2);
+
+print("Cosine similarity: ");
+disp(cosine_similarity);
+
+
