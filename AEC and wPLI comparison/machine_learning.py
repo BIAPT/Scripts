@@ -18,11 +18,11 @@ from classification import ai
 from plot import viz
 
 # Initialize the variables
-labels = ['Baseline','Recovery']
+labels = ['Baseline','Induction']
 num_participant = 9
 num_permutation = 1000
 num_bootstrap = 5000
-technique = "AEC"
+technique = "wPLI"
 clfs = [LinearDiscriminantAnalysis(solver='svd'), SVC(kernel='linear', C=0.1),SVC(kernel='linear', C=0.5), SVC(kernel='linear', C=1.0), SVC(kernel='rbf', C=0.1), SVC(kernel='rbf',C=1.0)]
 
 selected_classifier = SVC(kernel='linear', C=0.50)
@@ -31,7 +31,10 @@ selected_classifier = SVC(kernel='linear', C=0.50)
 dataset = man.Dataset(technique, labels, num_participant)
 
 # Classify the dataset and gather the result
-#result = ai.classify(dataset, selected_classifier, 5)
+result = ai.classify(dataset, selected_classifier, 2)
+
+# Summarize the result
+result.summarize(print_figure=False)
 
 # Get full weights
 #weights_mean, weights_std = ai.get_weight(dataset, selected_classifier, 3)
@@ -43,10 +46,10 @@ dataset = man.Dataset(technique, labels, num_participant)
 
 #man.save_data(weights_mean, weights_std, 'aec_pre_roc.mat')
 # Do permutation testing on the chosen classifier
-(accuracy, permutation_scores, p_value) = ai.permutation_test(dataset, selected_classifier, num_permutation)
-print("Accuracy: " + str(accuracy))
-print("All scores: " + str(permutation_scores))
-print("Best p_value: " + str(p_value))
+#(accuracy, permutation_scores, p_value) = ai.permutation_test(dataset, selected_classifier, num_permutation)
+#print("Accuracy: " + str(accuracy))
+#print("All scores: " + str(permutation_scores))
+#print("Best p_value: " + str(p_value))
 
 # Generate confidence interval for the classifier
 #(accuracies,conf_interval_accuracy, conf_interval_baseline_f1, conf_interval_other_f1) = ai.generate_confidence_interval(dataset, selected_classifier, num_bootstrap,3)
@@ -58,10 +61,3 @@ print("Best p_value: " + str(p_value))
 #pickle_out = open("data/accuracies_"+technique,"wb")
 #pickle.dump(accuracies, pickle_out)
 #pickle_out.close()
-
-# Save the result and the dataset into the data folder
-#result.save()
-#dataset.save()
-
-# Summarize the result
-#result.summarize(print_figure=False)

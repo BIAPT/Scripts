@@ -2,8 +2,8 @@
 [filepath,name,ext] = fileparts(mfilename('fullpath'));
 
 
-participant_name = 'test_data';
-participant_path = strcat(filepath,'/data');
+participant_name = 'wsas09_sedation';
+participant_path = strcat('/home/yacine/Documents/DOC Features Over Time/data');
 
 recording = load_set(strcat(participant_name,'.set'),participant_path);
 

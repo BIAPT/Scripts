@@ -121,7 +121,10 @@ class Result:
     def add_report(self, report, other_index):
         self.baseline_f1.append(report['0']['f1-score'])
         self.other_f1.append(report[str(other_index)]['f1-score'])
-        self.accuracies.append(report['accuracy'])
+        #self.accuracies.append(report['accuracy'])
+
+    def add_acc(self, accuracy):
+        self.accuracies.append(accuracy)
 
     def get_mean_acc(self):
         return np.mean(self.accuracies)

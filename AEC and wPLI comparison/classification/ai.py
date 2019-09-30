@@ -6,7 +6,7 @@ from math import floor
 import copy
 
 # Machine Learning 
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import permutation_test_score
 from sklearn.utils import resample
@@ -36,12 +36,13 @@ def classify(dataset, original_clf, other_index):
         cm = confusion_matrix(dataset.y_test, y_pred)
 
         report = classification_report(dataset.y_test, y_pred, output_dict=True)
-        
-        print("Generalization accuracy: " + str(report['accuracy']))
+        accuracy = accuracy_score(dataset.y_test, y_pred)
+        print("Generalization accuracy: " + str(accuracy))
 
         # Saving the results
         result.add_cm(cm)
         result.add_report(report, other_index)
+        result.add_acc(accuracy)
 
     return result
 

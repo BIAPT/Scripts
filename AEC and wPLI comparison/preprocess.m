@@ -1,12 +1,12 @@
 %% Variable Initialization
 %
 % Data file paths
-data_path = "C:\Users\Fabien Dal Maso\Documents\Machine Learning Yacine 2018-2019\AEC vs PLI\data";
-scout_path = "C:\Users\Fabien Dal Maso\Documents\Machine Learning Yacine 2018-2019\AEC vs PLI\scouts.mat";
+data_path = "/home/yacine/Documents/AEC vs PLI/data";
+scout_path = "/home/yacine/Documents/AEC vs PLI/scouts.mat";
 % Experiment Parameters
 target_frequency = "alpha";
 target_type = "both";
-target_epoch = {'ec1','ec8'};%{'ec1','if5','emf5','eml5','ec3'};
+target_epoch = {'ec1','emf5'};%{'ec1','if5','emf5','eml5','ec3','ec8'};
 is_pca = 0;
 pca_threshold = 90;
 
