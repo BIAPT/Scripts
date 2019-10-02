@@ -2,7 +2,7 @@
 [filepath,name,ext] = fileparts(mfilename('fullpath'));
 
 
-participant_name = 'wsas09_baseline';
+participant_name = 'wsas13_recovery';
 participant_path = strcat('/home/yacine/Documents/DOC Features Over Time/data');
 
 recording = load_set(strcat(participant_name,'.set'),participant_path);
