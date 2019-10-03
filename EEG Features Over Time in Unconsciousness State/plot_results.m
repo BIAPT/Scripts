@@ -1,5 +1,5 @@
-legend_tags = ['Baseline'; 'Sedation'; 'Recovery'];
-wsas = [load('wsas13_baseline.mat'), load('wsas13_sedation.mat'), load('wsas13_recovery.mat')];
+legend_tags = ['Baseline'];
+wsas = [load('wsas07_baseline.mat')];
 
 sampling_rate = wsas(1).result_wpli.metadata.sampling_rate;
 number_points = 75001; % got that from the recording class (assigned an issue ot have it in result)
