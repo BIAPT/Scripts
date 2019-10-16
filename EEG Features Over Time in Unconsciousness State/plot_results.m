@@ -2,7 +2,7 @@ legend_tags = ['Baseline'];
 wsas = [load('wsas07_baseline.mat')];
 
 sampling_rate = wsas(1).result_wpli.metadata.sampling_rate;
-number_points = 75001; % got that from the recording class (assigned an issue ot have it in result)
+number_points = wsas(1).result.length_recording; % got that from the recording class (assigned an issue ot have it in result)
 
 %% Plot the Results
 total_x = number_points/sampling_rate; % 150 recording of 5 seconds each
