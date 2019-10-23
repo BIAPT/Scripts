@@ -8,7 +8,7 @@ function [features, labels] = pre_process_participant(filename,path)
     window_size = 10; % in second
     step = 10; % in second
     % wpli calculation
-    number_surrogates = 10;
+    number_surrogates = 20;
     p_value = 0.05;
     
     %% Loading the participant
@@ -22,6 +22,7 @@ function [features, labels] = pre_process_participant(filename,path)
     %% Setup for dataset specific variables
     sampling_frequency = 128; % in Hz
     baseline_length = 3; % in seconds
+    num_left_over_connection = 496; % this is removing redundant information + diagonal
     baseline_length = baseline_length*sampling_frequency + 1; % in points
     [num_trial, num_channels, num_points] = size(data);
     num_eeg_channels = 32;
@@ -53,14 +54,14 @@ function [features, labels] = pre_process_participant(filename,path)
 
     %% Calculating functional Connectivity
     % wPLI calculation
-    participant_wpli = zeros(num_trial, num_window, num_eeg_channels);
+    participant_wpli = zeros(num_trial, num_window, num_left_over_connection);
     for t_index = 1:num_trial
        disp(strcat("Analyzing trial #",string(t_index)));
        for w_index = 1:num_window
             disp(strcat("at window #",string(w_index)));
             % Calculating wpli on each window of every trial
             current_data = squeeze(augmented_data(t_index,w_index,:,:));
-            participant_wpli(t_index,w_index,:,:) = mean(wpli(current_data, number_surrogates, p_value));
+            participant_wpli(t_index,w_index,:) = reduce_matrix(wpli(current_data, number_surrogates, p_value));
        end
     end
 
@@ -74,3 +75,13 @@ function [features, labels] = pre_process_participant(filename,path)
     labels = labels;
 end
 
+% Helper function to filter some redundant information in the 32*32 matrix
+function [non_redundant_result] = reduce_matrix(data)
+    [num_channels, ~] = size(data);
+    non_redundant_result = [];
+    for channel_i = 1:num_channels
+       for channel_j = (channel_i+1):num_channels
+          non_redundant_result = [non_redundant_result, data(channel_i,channel_j)]; 
+       end
+    end
+end

@@ -8,15 +8,16 @@
 
 %% Variable setup
 data_filename = "data.csv";
-number_participants = 32;
+number_participants = 1;
+num_non_redundant_connection = 496;
 
 
-data_location = "/home/yacine/Documents/DEAP/data";
-header = ["participant_id", "trial_number", "window_number","valence", "arousal", "dominance", "liking"];
+data_location = "C:\Users\biapt\Documents\GitHub\Scripts\IEEE Brain Challenge";
+header = ["participant_id", "trial_number", "window_number","valence", "arousal"];
 
-for channel_i = 1:32
-        feature_id = strcat("channel ", string(channel_i));
-        header = [header,feature_id];      
+for connection_i = 1:num_non_redundant_connection
+    feature_id = strcat("connection ", string(connection_i));
+    header = [header,feature_id];      
 end
 
 
@@ -41,10 +42,27 @@ for p_index = 1:number_participants
     % Here we append the features to the csv file
     for t_index = 1:num_trials
        current_labels = squeeze(participant_labels(t_index,:));
+       % Get only the two labels that we care about
+       valence = current_labels(1);
+       arousal = current_labels(2);
+       
+       % Thresholding
+       if(valence < 5)
+          valence = 0;
+       else
+           valence = 1;
+       end
+       
+       if(arousal < 5)
+          arousal = 0;
+       else
+           arousal = 1;
+       end
+       
        for w_index = 1:num_windows            
            % Write the features and labels
            current_features = squeeze(participant_features(t_index,w_index,:))';
-           dlmwrite(data_filename, [p_index, t_index, w_index, current_labels, current_features], '-append');
+           dlmwrite(data_filename, [p_index, t_index, w_index, valence, arousal, current_features], '-append');
        end
     end
 end
