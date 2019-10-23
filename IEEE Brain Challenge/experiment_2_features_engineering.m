@@ -8,10 +8,10 @@
 
 %% Variable setup
 data_filename = "data.csv";
-number_participants = 3;
+number_participants = 32;
 
 
-data_location = "C:\Users\biapt\Documents\GitHub\Scripts\IEEE Brain Challenge";
+data_location = "/home/yacine/Documents/DEAP/data";
 header = ["participant_id", "trial_number", "window_number","valence", "arousal", "dominance", "liking"];
 
 for channel_i = 1:32
