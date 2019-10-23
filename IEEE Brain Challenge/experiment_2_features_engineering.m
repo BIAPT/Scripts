@@ -8,11 +8,11 @@
 
 %% Variable setup
 data_filename = "data.csv";
-number_participants = 1;
+number_participants = 32;
 num_non_redundant_connection = 496;
 
 
-data_location = "C:\Users\biapt\Documents\GitHub\Scripts\IEEE Brain Challenge";
+data_location = "/home/yacine/Documents/DEAP/data";
 header = ["participant_id", "trial_number", "window_number","valence", "arousal"];
 
 for connection_i = 1:num_non_redundant_connection

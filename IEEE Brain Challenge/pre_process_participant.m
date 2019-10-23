@@ -6,7 +6,7 @@ function [features, labels] = pre_process_participant(filename,path)
     %% Analysis static variables
     % window segmentation
     window_size = 10; % in second
-    step = 10; % in second
+    step = 1; % in second
     % wpli calculation
     number_surrogates = 20;
     p_value = 0.05;
