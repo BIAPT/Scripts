@@ -1,0 +1,5 @@
+<chain>
+	<filter>
+		<item create="PythonFilter" script="exponential_decay" syspath="./filters"/>
+	</filter>
+</chain>

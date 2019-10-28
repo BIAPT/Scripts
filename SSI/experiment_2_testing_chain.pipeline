@@ -22,25 +22,22 @@
 	-->
 	
 	<!-- output cursor position to console/file -->
-	<transformer create="PythonFilter" script="exponential_decay" syspath="./filters" optsstr="alpha=1">
-		<input pin="cursor" frame="0.2s"/>
-		<output pin="noise"/>
-	</transformer>
-	
-	<transformer create="PythonFeature" script="energy" syspath=".">
-		<input pin="cursor" frame="0.1s" delta="0.4s"/>
-		<output pin="energy"/>
-	</transformer>
+	<transformer create="Chain" path="filter_chain">
+    	<input pin="cursor" frame="0.2s"/>
+    	<output pin="exp_decay_filter"/>
+	</transformer>  
+
+	<transformer create="Chain" path="feature_chain">
+    	<input pin="cursor" frame="0.1s" delta="0.4s"/>
+    	<output pin="energy"/>
+	</transformer>  
 	
 	<!-- visualization 	 -->
 	<consumer create="SignalPainter:plot" title="CURSOR" size="10.0">
 		<input pin="cursor" frame="0.2s" />		
 	</consumer>
-	<consumer create="SignalPainter:plot-energy" title="Cursor + Random Noise Added" size="10.0">
-		<input pin="noise" frame="0.2s" />		
-	</consumer>
-		<consumer create="SignalPainter:plot-energy" title="Cursor Energy" size="10.0">
-		<input pin="energy" frame="0.1s" />		
+	<consumer create="SignalPainter:plot-energy" title="exp decay filter" size="10.0">
+		<input pin="exp_decay_filter" frame="0.2s" />		
 	</consumer>
 	
 	<!-- decoration -->
