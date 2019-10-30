@@ -1,0 +1,2 @@
+The deadline for preliminary result for this experiment is November 3-4 2019.
+Will be re-using code from the AEC vs PLI study and create graphs using NeuroAlgo
