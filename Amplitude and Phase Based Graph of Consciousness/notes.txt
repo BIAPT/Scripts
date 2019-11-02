@@ -1,2 +1,6 @@
 The deadline for preliminary result for this experiment is November 3-4 2019.
 Will be re-using code from the AEC vs PLI study and create graphs using NeuroAlgo
+
+How to use:
+Step 1: Go in preprocess.m and run that script (you can change the variables on the top)
+Step 2: Go into the python script and run that in the command line (you may need to add in dependencies).
