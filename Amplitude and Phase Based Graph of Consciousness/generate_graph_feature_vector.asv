@@ -1,0 +1,15 @@
+function [X] = generate_graph_feature_vector(graph, num_null_network, bin_swaps, weight_frequency, t_level)
+%GENERATE_FEATURE_VECTOR calculate graph theory feature
+%   This is based on experiment_1 and will calculate the following feature
+%   vector:
+% -> clust_coeff 82x1
+% -> norm_avg_clust_coeff 1x1
+% -> norm_g_eff 1x1
+% -> community 1x1
+% -> small_worldness 1x1
+% X is a 86x1 feature vector and the first 82 map to the source localized
+% regions
+%
+% graph
+end
+
