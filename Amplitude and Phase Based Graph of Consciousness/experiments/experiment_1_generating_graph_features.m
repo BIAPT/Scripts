@@ -96,10 +96,12 @@ disp("Clustering coefficient");
 
 
 %% Features vector construction
+% -> clust_coeff 82x1
+% -> norm_avg_clust_coeff 1x1
 % -> norm_g_eff 1x1
 % -> community 1x1
 % -> small_worldness 1x1
-% -> norm_avg_clust_coeff 1x1
-% -> clust_coeff 82x1
+
+
 % total feature vector = 1+1+1+1+82 x 1 = 86x1 vector
-X = [norm_g_eff;community;b_small_worldness; norm_avg_clust_coeff;clust_coeff];
+X = [clust_coeff; norm_avg_clust_coeff; norm_g_eff;community;b_small_worldness];
