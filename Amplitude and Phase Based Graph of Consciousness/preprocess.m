@@ -10,106 +10,74 @@
     project)
     -> We will keep all the target epochs, there is no need to limit
     ourselves here
+    -> In the same vein we will extract all the frequency and not codify
+    the labels
+    -> We will also write directly to a CSV file like we did for the IEEE
+    challenge
+
 %}
 
 %% Variable Initialization
-%% TODO: KEEP ON CLEANING THIS, you might need to bring stuff from the other sripts
-
-%
 % Data file paths
-data_path = "/home/yacine/Documents/AEC vs PLI/data";
-scout_path = "/home/yacine/Documents/AEC vs PLI/scouts.mat";
+data_path = "/home/yacine/Documents/AEC vs PLI/data/";
 
 % Experiment Parameters
-target_frequency = "alpha";
-target_type = "both";
-target_epoch = {'ec1','emf5','ec1','if5','emf5','eml5','ec3','ec8'};
+frequencies = {"alpha","beta","delta","theta","gamma"};
+epochs = {'ec1','emf5','ec1','if5','emf5','eml5','ec3','ec8'};
+% Graph theory paramters
+num_regions = 82; % Number of source localized regions
+num_null_network = 10; % Number of null network to create 
+bin_swaps = 10;  % used to create the null network
+weight_frequency = 0.1; % used to create the null network
+t_level = 0.1; % Threshold level (keep 10%)
 
-%% Data Loading
-disp('Load data');
+%% Write the header of the CSV file
 
-% Scouts
-scout = load(scout_path);
-scout = scout.scout;
+%% Write the body of the CSV file containing the data
+% We iterate over all the possible permutation and create our filename to
+% load
+for f_i = 1:length(frequencies)
+   for e_i = 1:length(epochs)
+       % Get our variables
+       frequency = frequencies(f_i);
+       epoch = epochs(e_i);
 
-regions_mask = zeros(1,length(scout));
-
-for i=1:length(scout)
-    regions_mask(i) = scout(i).isKeep;
-end
-
-% Data (PLI or/and AEC) 
-files = dir(data_path);
-full_dataset = [];
-full_dataset_pli = [];
-full_dataset_aec = [];
-full_label = [];
-for file = files'
-    if(~strcmp(file.name,'.') && ~strcmp(file.name,'..'))
-        data_path = strcat(file.folder,filesep,file.name);
-        
-        [type,epoch,frequency] = get_content(file.name);
-        if(strcmp(target_type,"both") && strcmp(type,"pli") && strcmp(frequency,target_frequency) && any(strcmp(target_epoch,epoch)))
-           [data,data_pli,data_aec,label,current_identity] = get_both_data(epoch,frequency,regions_mask,file.folder); 
-           
-           if(isempty(full_dataset))
-              full_dataset = data; 
-              full_dataset_pli = data_pli;
-              full_dataset_aec = data_aec;
-              full_label = label;
-              identity = current_identity;
-           else
-              full_dataset = [full_dataset;data];
-              full_dataset_pli = [full_dataset_pli;data_pli];
-              full_dataset_aec = [full_dataset_aec;data_aec];
-              full_label = [full_label,label];
-              identity = [identity,current_identity];
-           end
-        elseif(strcmp(type,target_type) && strcmp(frequency,target_frequency) && any(strcmp(target_epoch,epoch)))
-           data = load(data_path);
-           [data,label,current_identity] = get_data(data,type,regions_mask,epoch);
-
-           if(isempty(full_dataset))
-              full_dataset = data; 
-              full_label = label;
-              identity = current_identity;
-           else
-              full_dataset = [full_dataset;data];
-              full_label = [full_label,label];
-              identity = [identity,current_identity];
-           end
-       end
+       % Here we process one file and we need to create the filename
+       % Need to process both aec and pli at the same time to equalize them
+       aec_filename = strcat(data_path,"aec_",epoch,"_",frequency,".mat");
+       pli_filename = strcat(data_path,"pli_",epoch,"_",frequency,".mat");
        
+       % we load it
+       aec_data = load(aec_filename);
+       aec_data = aec_data.AEC_OUT;
+       pli_data = load(pli_filename);
+       pli_data = pli_data.PLI_OUT;
+       
+       num_participant = length(aec_data);
+       
+       % Iterate on each participants
+       for p_i = 1:number_participant
+            % fix aec reverse orientation compared to pli
+            aec_data{p_i} = permute(aec_data{p_i},[3 2 1]);
+            
+            % match the size of the two datasets
+            pli_window_length = size(pli_data{p_i},1);
+            aec_window_length = size(aec_data{p_i},1);
+
+            min_window_length = min([pli_window_length aec_window_length]);
+            pli_data{p_i} = pli_data{p_i}(1:min_window_length,:,:);
+            aec_data{p_i} = aec_data{p_i}(1:min_window_length,:,:);
+            
+            % calculate the feature for both aec and pli
+            for w_i = 1:min_window_length
+                aec_graph = squeeze(aec_data{p_i}(w_i,:,:));
+                pli_graph = squeeze(pli_data{p_i}(w_i,:,:));
+                
+                X_aec = generate_graph_feature_vector(aec_data, num_null_network, bin_swaps, weight_frequency, t_level);
+                X_pli = generate_graph_feature_vector(pli_data, num_null_network, bin_swaps, weight_frequency, t_level);
+                
+                % Write both of them into the csv file
+            end
+       end
     end
 end
-
-%% Classification (Training and Validation)
-% Data preparation
-X = full_dataset;
-Y = full_label;
-I = identity;
-
-disp('Saving Data');
-if(strcmp(target_type,"both"))
-    % Save the data for further processing in Python
-    save('data/Y','Y');
-    save('data/I','I');
-    
-    X = full_dataset_pli;
-    X = (X - min(X)) ./ (max(X) - min(X));
-    target_type = 'pli';
-    save(strcat('data/X_',target_type),'X');
-    
-    X = full_dataset_aec;
-    X = (X - min(X)) ./ (max(X) - min(X));
-    target_type = 'aec';
-    save(strcat('data/X_',target_type),'X'); 
-else  
-    % Save the data for further processing in Python
-    save(strcat('data/X_',target_type),'X');
-    save(strcat('data/Y_',target_type),'Y');
-    save(strcat('data/I_',target_type),'I');   
-end
-
-
-disp('Done!')
