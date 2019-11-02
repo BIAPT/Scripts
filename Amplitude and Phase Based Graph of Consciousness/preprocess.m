@@ -20,6 +20,7 @@
 %% Variable Initialization
 % Data file paths
 data_path = "/home/yacine/Documents/AEC vs PLI/data/";
+output_path = "/home/yacine/Documents/AEC vs PLI/data.csv";
 
 % Experiment Parameters
 frequencies = {"alpha","beta","delta","theta","gamma"};
@@ -32,6 +33,24 @@ weight_frequency = 0.1; % used to create the null network
 t_level = 0.1; % Threshold level (keep 10%)
 
 %% Write the header of the CSV file
+
+header = ["p_id", "frequency", "epoch","graph","window"];
+for r_i = 1:num_regions
+    clust_coeff = strcat("clust_coeff_ ", string(r_i));
+    header = [header,clust_coeff];      
+end
+header = [header,"norm_avg_clust_coeff","norm_g_eff","community","small_worldness"];
+
+% Overwrite the file
+delete(output_path);
+
+% Write header to the features file
+fileId = fopen(data_filename,'w');
+for i = 1:(length(header)-1)
+    fprintf(fileId,'%s,',header(i));
+end
+fprintf(fileId,"%s\n",header(length(header)));
+fclose(fileId);
 
 %% Write the body of the CSV file containing the data
 % We iterate over all the possible permutation and create our filename to
@@ -77,6 +96,9 @@ for f_i = 1:length(frequencies)
                 X_pli = generate_graph_feature_vector(pli_data, num_null_network, bin_swaps, weight_frequency, t_level);
                 
                 % Write both of them into the csv file
+                dlmwrite(output_path, [p_i, frequency, epoch, "aec", w_i, X], '-append');
+                dlmwrite(output_path, [p_i, frequency, epoch, "pli", w_i, X], '-append');
+       
             end
        end
     end
