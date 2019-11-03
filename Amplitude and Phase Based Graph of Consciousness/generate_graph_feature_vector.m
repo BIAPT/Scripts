@@ -2,6 +2,8 @@ function [X] = generate_graph_feature_vector(graph, num_null_network, bin_swaps,
 %GENERATE_FEATURE_VECTOR calculate graph theory feature
 %   This is based on experiment_1 and will calculate the following feature
 %   vector:
+% -> mean 82x1
+% -> std 82x1
 % -> clust_coeff 82x1
 % -> norm_avg_clust_coeff 1x1
 % -> norm_g_eff 1x1
@@ -12,6 +14,11 @@ function [X] = generate_graph_feature_vector(graph, num_null_network, bin_swaps,
 %
 % graph here is a functional connectivity matrix
 
+    % Calculate the unbinarized features
+    % Mean 
+    mean_graph = mean(graph,2);
+    std_graph = std(graph,0,2);
+    
     % Threshold the matrix
     t_grap = threshold_matrix(graph,t_level);
     % Binarize the matrix
@@ -33,6 +40,6 @@ function [X] = generate_graph_feature_vector(graph, num_null_network, bin_swaps,
     [clust_coeff, norm_avg_clust_coeff] = undirected_clustering_coefficient(b_graph,null_networks);
     
     %% Features vector construction
-    X = [clust_coeff; norm_avg_clust_coeff; norm_g_eff;community;b_small_worldness];
+    X = [mean_graph;std_graph;clust_coeff; norm_avg_clust_coeff; norm_g_eff;community;b_small_worldness];
 end
 
