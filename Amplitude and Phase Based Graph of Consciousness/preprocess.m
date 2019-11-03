@@ -24,7 +24,7 @@ output_path = "/home/yacine/Documents/AEC vs PLI/data.csv";
 
 % Experiment Parameters
 frequencies = {'alpha'}; %{'alpha','beta','delta','theta'};
-epochs = {'ec1','emf5','eml5'}; %{'ec1','if5','emf5','eml5','ec3'}; % we are not using ec8 here because only alpha has it
+epochs = {'ec1','if5','emf5','eml5','ec3'}; %{'ec1','if5','emf5','eml5','ec3'}; % we are not using ec8 here because only alpha has it
 % Graph theory paramters
 num_regions = 82; % Number of source localized regions
 num_null_network = 10; % Number of null network to create 
