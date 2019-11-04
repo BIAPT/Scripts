@@ -4,3 +4,116 @@ Will be re-using code from the AEC vs PLI study and create graphs using NeuroAlg
 How to use:
 Step 1: Go in preprocess.m and run that script (you can change the variables on the top)
 Step 2: Go into the python script and run that in the command line (you may need to add in dependencies).
+
+
+# We will keep the same structure than we did in the AEC vs wPLI project for the machine learning
+
+# Machine Learning 
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.svm import SVC
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+# Sklearn utils
+from sklearn.base import clone
+from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import confusion_matrix
+
+# aec = 0 pli = 1
+analysis_type = 1
+epochs_to_keep = [1,2]
+analysis = data['graph'] == analysis_type
+baseline = data['epoch'] == epochs_to_keep[0]
+other = data['epoch'] == epochs_to_keep[1]
+subset_data = data[analysis & (baseline | other)]
+
+clfs = [LinearDiscriminantAnalysis(solver='svd'), SVC(kernel='linear', C=0.1),SVC(kernel='linear', C=0.5), SVC(kernel='linear', C=1.0), SVC(kernel='rbf', C=0.1), SVC(kernel='rbf',C=1.0)]
+selected_clf = clfs[3]
+
+def classify(dataset, original_clf):
+    clf = clone(original_clf)
+    # Initialize the Result data structures
+    cms = []
+    accuracies = []
+    reports = []
+    # TODO: Check in the MATLAB file how to not have to do this + 1
+    for test_id in range(1,10):
+        print("Participant: " + str(test_id) + " in hold-out set:")
+        
+        # Split the data in a leave one subject out manner
+        
+        # Get the training and test dataset
+        training_dataset = dataset[dataset['p_id'] != test_id]
+        test_dataset = dataset[dataset['p_id'] == test_id]
+        
+        # Get the X and Y 
+        X_train = training_dataset.iloc[:,5:]
+        y_train = training_dataset['epoch']
+        
+        # Training the min max normalizer
+        min_max_scaler = MinMaxScaler()
+        min_max_scaler.fit(X_train)
+        X_train = min_max_scaler.transform(X_train)
+        
+        X_test = test_dataset.iloc[:,5:]
+        y_test = test_dataset['epoch']
+        
+        # Normalize the test set using a training scaler
+        X_test = min_max_scaler.transform(X_test)
+        
+        # Fitting our model
+        clf.fit(X_train, y_train)
+
+        # predicting
+        y_pred = clf.predict(X_test)
+        cm = confusion_matrix(y_test, y_pred)
+
+        report = classification_report(y_test, y_pred, output_dict=True)
+        accuracy = accuracy_score(y_test, y_pred)
+        print("Generalization accuracy: " + str(accuracy))
+        print(cm)
+        print(report)
+        
+        # Saving the results
+        cms.append(cm)
+        accuracies.append(accuracy)
+        reports.append(report)
+        
+    return (cms,accuracies,reports)
+
+(cms, accuracies, report) = classify(subset_data, selected_clf)
+print("Mean accuracy is: " + str(np.mean(accuracies)))
+
+## Result after 2nd Analysis
+### Now (with clust coeff per region)
+#### Unconscious
+- aec = 0.8710220804490129
+- pli = 0.7523399801868711
+
+#### pre-ROC
+- aec = 0.7134612273470387 
+- pli = 0.7783826838738702
+
+### Before:
+#### Unconscious
+- aec = 0.8689650608531154
+- pli = 0.7868548852868595
+
+#### Pre-ROC
+- aec = 0.7274831932263043
+- pli = 0.8041592563476617
+
+### Reduced (no clust coeff per region):
+#### Unconscious
+- aec = 0.8751687095710673
+- pli = 0.7772391411037457
+
+#### pre-ROC
+- aec = 0.7277764758615426
+- pli = 0.8092161019771724
+
+## Bottomline
+Bottom line seems to be that the mean and standard deviation are driving the classification. The new features are helping but only marginally. The clustering coefficient per region is not helping much and isn't a replacement for mean and standard deviation. If we remove the mean the wPLI gets a hit in classification accuracy while the AEC get a boost of almost 2 points. This make sense if we look at the figure though of the feature importance. However, we did this whole analysis for the graph theory using a binarized graph, the graph is not binarized for the mean and standard deviation. We also know that the small weights are contains important information as shown by the standard deviation feature which is driving most of the classification accuracy and with the motif analysis.
+## Next Steps
+- Find weighted version of your graph theory features and use them for classification
+- Add in analysis of the theta band
+- Add in more graph theory features
+- There is also very hihg fluctuation between participant, there might a feature that could help us reduce this fluctuation.

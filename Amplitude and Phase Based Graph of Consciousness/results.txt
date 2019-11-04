@@ -1,0 +1,29 @@
+Now:
+	Unconscious
+	aec = 0.8710220804490129
+	pli = 0.7523399801868711
+
+	pre-ROC
+	aec = 0.7134612273470387 
+	pli = 0.7783826838738702
+
+Before:
+	Unconscious
+	aec = 0.8689650608531154
+	pli = 0.7868548852868595
+
+	Pre-ROC
+	aec = 0.7274831932263043
+	pli = 0.8041592563476617
+
+
+This is marginally better
+Reduced:
+	Unconscious
+	aec = 0.8751687095710673
+	pli = 0.7772391411037457
+
+	pre-ROC
+	aec = 0.7277764758615426
+	pli = 0.8092161019771724
+	
