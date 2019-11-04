@@ -24,7 +24,7 @@ output_path = "/home/yacine/Documents/AEC vs PLI/data.csv";
 
 % Experiment Parameters
 frequencies = {'alpha'}; %{'alpha','beta','delta','theta'};
-epochs = {'ec1','if5','emf5','eml5','ec3'}; %{'ec1','if5','emf5','eml5','ec3'}; % we are not using ec8 here because only alpha has it
+epochs = {'ec1','emf5','eml5'}; %{'ec1','if5','emf5','eml5','ec3'}; % we are not using ec8 here because only alpha has it
 % Graph theory paramters
 num_regions = 82; % Number of source localized regions
 num_null_network = 10; % Number of null network to create 
@@ -35,6 +35,16 @@ t_level = 0.1; % Threshold level (keep 10%)
 %% Write the header of the CSV file
 
 header = ["p_id", "frequency", "epoch","graph","window"];
+for r_i = 1:num_regions
+   mean_header = strcat("mean_",string(r_i));
+   header = [header, mean_header];
+end
+
+for r_i = 1:num_regions
+    std_header = strcat("std_",string(r_i));
+    header = [header,std_header];
+end
+
 for r_i = 1:num_regions
     clust_coeff = strcat("clust_coeff_ ", string(r_i));
     header = [header,clust_coeff];      
