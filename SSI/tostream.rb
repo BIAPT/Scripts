@@ -6,8 +6,8 @@
 # Get the timestamp of when the script was run 
 # We do this here so that all file created when this is run 
 # will have the same timestamp
-tnow = Time.now.strftime ("%Y/%m/%d %H:%M:%S:%L").to_s
-tutc = Time.now.getgm.strftime ("%Y/%m/%d %H:%M:%S:%L").to_s
+tnow = Time.now.strftime("%Y/%m/%d %H:%M:%S:%L")
+tutc = Time.now.getgm.strftime("%Y/%m/%d %H:%M:%S:%L")
 
 # Iterating through each TPS folder
 for tpsid in Dir["TP00*"]
