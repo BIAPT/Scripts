@@ -22,8 +22,8 @@
 	-->
 	
 	<!-- output cursor position to console/file -->
-	<transformer create="PythonFilter" script="exponential_decay" syspath="./filters" optsstr="alpha=1">
-		<input pin="cursor" frame="0.2s"/>
+	<transformer create="PythonFilter" script="one_euro" syspath="../filters" optsstr="">
+		<input pin="cursor" frame="0.1s"/>
 		<output pin="noise"/>
 	</transformer>
 	
