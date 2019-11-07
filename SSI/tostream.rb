@@ -3,6 +3,10 @@
 # Edit: Yacine
 #the final version I am working on
 
+# Input and ouput paths (set these up so that it works with your computer)
+inputpath = "C:/Users/biapt/Downloads/ruby_script_and_sample_data"
+outputpath = "C:/Users/biapt/Documents/GitHub/Scripts/SSI"
+
 # Get the timestamp of when the script was run 
 # We do this here so that all file created when this is run 
 # will have the same timestamp
@@ -10,11 +14,13 @@ tnow = Time.now.strftime("%Y/%m/%d %H:%M:%S:%L")
 tutc = Time.now.getgm.strftime("%Y/%m/%d %H:%M:%S:%L")
 
 # Iterating through each TPS folder
-for tpsid in Dir["TP00*"]
+for tpspath in Dir[inputpath + "/TP00*"]
+  # get the last foldername which is the name of the TPS
+  tpsid = tpspath.split('/')[-1] 
   puts "TPS id: " + tpsid
 
   # Iterating through each files in the TPS folder
-  for filename in Dir[tpsid + "/2019-*.csv"]
+  for filename in Dir[tpspath + "/2019-*.csv"]
 
     # skip the setting file
     if filename.include? "setting"
@@ -30,8 +36,9 @@ for tpsid in Dir["TP00*"]
     raise "big problem" if filename == streamname
 
     # open our input and output file
+    outputfilename = outputpath + "/" + streamname
     rawfile = File.open(filename, "r")
-    streamfile = File.open(tpsid + "/" + streamname, "w")
+    streamfile = File.open(outputfilename, "w")
     
     # Read the input file line by line 
     # and copy the data in the stream~ file in the right format
@@ -51,8 +58,9 @@ for tpsid in Dir["TP00*"]
     rawfile.close
   
     # Creating the header stream file (no tilda ~)
-    headername=streamname.sub(/stream~/,"stream")
-    headerfile = File.open(tpsid + "/" + headername,"w")
+    headername = streamname.sub(/stream~/,"stream")
+    outputfilemame = outputpath + "/" + headername
+    headerfile = File.open(outputfilemame,"w")
 
     # Selecting right sample rate given the signal
     if filename.include? "BVP"
