@@ -54,10 +54,10 @@ for foldername in Dir["TP00*"]
 
 
         
-    s.puts "<meta />
-    <time ms=\"0\" local=\"" + tnow + "\" system=\"" + tutc + "\"/>
-    <chunk from=\"0.000000\" to=\"" + (rown/samplerate).to_s + "\" byte=\"0\" num=\"" + rown.to_s + "\"/>
-    </stream>"
+    s.puts "<meta />\n
+    \t<time ms=\"0\" local=\"" + tnow + "\" system=\"" + tutc + "\"/>\n
+    \t<chunk from=\"0.000000\" to=\"" + (rown/samplerate).to_s + "\" byte=\"0\" num=\"" + rown.to_s + "\"/>\n
+    </stream>\n"
 
     s.close
     f.close
