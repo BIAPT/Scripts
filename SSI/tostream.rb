@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# Author: Parisa and Mathieu
 #the final version I am working on
 
 role = "user"

@@ -22,7 +22,7 @@
 	-->
 	
 	<!-- output cursor position to console/file -->
-	<transformer create="PythonFilter" script="one_euro" syspath="../filters" optsstr="">
+	<transformer create="PythonFilter" script="one_euro" syspath="./filters" optsstr="">
 		<input pin="cursor" frame="0.1s"/>
 		<output pin="noise"/>
 	</transformer>

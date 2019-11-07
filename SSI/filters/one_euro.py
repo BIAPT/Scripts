@@ -1,78 +1,56 @@
-import os
-import sys
-import random
 import math
-sys.path.append(os.environ.get('PYTHONPATH', ''))
 
-def smoothing_factor(cutoff):
-    r = 2 * math.pi * cutoff
+'''
+    This code was taken from: https://github.com/jaantollander/OneEuroFilter
+    and written by Jaan Tollander de Balsch 
+    We first need to init the OneEuroFilter with the base parameters and one data point.
+    Then we repeatedly call OneEuroFilter(t,x) on the data points to filter
+    i.e.
+    oneEuro = OneEuroFilter(t0,x0,min_cutoff=50.0,beta=4.0)
+    ...
+    x_filt = oneEuro(ti,xi)
+'''
+
+def smoothing_factor(t_e, cutoff):
+    r = 2 * math.pi * cutoff * t_e
     return r / (r + 1)
+
 
 def exponential_smoothing(a, x, x_prev):
     return a * x + (1 - a) * x_prev
 
-def one_euro(input_data, output_data, min_cutoff=1.0, beta=0.0, d_cutoff=1.0):
-    '''
-    Filter recommended by Dr. Florian Grond for the filtering of signals in realtime.
-    '''
 
-    # Parameters initalization
-    min_cutoff = float(min_cutoff)
-    beta = float(beta)
-    d_cutoff = float(d_cutoff)
- 
-    # Running this algorithm on a consecutive
-    output_data[0] = input_data[0]
-    x_previous = input_data[0]
-    dx_previous = 0.0
-    for i in range(1,input_data.num):
+class OneEuroFilter:
+    def __init__(self, t0, x0, dx0=0.0, min_cutoff=1.0, beta=0.0,
+                 d_cutoff=1.0):
+        """Initialize the one euro filter."""
+        # The parameters.
+        self.min_cutoff = float(min_cutoff)
+        self.beta = float(beta)
+        self.d_cutoff = float(d_cutoff)
+        # Previous values.
+        self.x_prev = float(x0)
+        self.dx_prev = float(dx0)
+        self.t_prev = float(t0)
 
-        # Get the data
-        x = input_data[i]
+    def __call__(self, t, x):
+        """Compute the filtered signal."""
+        t_e = t - self.t_prev
 
         # The filtered derivative of the signal.
-        a_d = smoothing_factor(d_cutoff)
-        dx = (x - x_previous)
-        dx_hat = exponential_smoothing(a_d, dx, dx_previous)
+        a_d = smoothing_factor(t_e, self.d_cutoff)
+        dx = (x - self.x_prev) / t_e
+        dx_hat = exponential_smoothing(a_d, dx, self.dx_prev)
 
         # The filtered signal.
-        cutoff = min_cutoff + beta * abs(dx_hat)    
-        a = smoothing_factor(cutoff)
-        x_hat = exponential_smoothing(a, x, x_previous)   
-        
+        cutoff = self.min_cutoff + self.beta * abs(dx_hat)
+        a = smoothing_factor(t_e, cutoff)
+        x_hat = exponential_smoothing(a, x, self.x_prev)
+
         # Memorize the previous values.
-        x_previous = x_hat
-        dx_previous = dx_hat
+        self.x_prev = x_hat
+        self.dx_prev = dx_hat
+        self.t_prev = t
 
-        output_data[i] = x_hat
+        return x_hat
 
-def getOptions(opts, vars):
-    opts['min_cutoff'] = 50.0
-    opts['beta'] = 4.0
-    opts['d_cutoff'] = 1.0
-
-def getSampleDimensionOut(dim, opts, vars):
-    return 1
-
-
-def getSampleBytesOut(bytes, opts, vars): # redundant
-    return bytes
-
-
-def getSampleTypeOut(type, types, opts, vars): # redundant
-    return type
-
-
-def transform_enter(sin, sout, sxtras, board, opts, vars): # redundant
-    pass
-
-
-def transform(info, sin, sout, sxtras, board, opts, vars):   
-    min_cutoff = opts['min_cutoff']
-    beta = opts['beta']
-    d_cutoff = opts['d_cutoff']
-    one_euro(sin, sout, min_cutoff, beta, d_cutoff)
-
-
-def transform_flush(sin, sout, sxtras, board, opts, vars):  # redundant 
-    pass
