@@ -38,7 +38,6 @@ for tpsid in Dir["TP00*"]
     rawfile.gets # skip the header of the input
     rown = 0 # keep track of the number of row written for the stream file
     while line = rawfile.gets
-
       # Not sure why we need these two manipulation (the first one seems fine)
       line = line.split(/;/)[1,2].join(';')
       datapoint = line.delete("\"").to_f
