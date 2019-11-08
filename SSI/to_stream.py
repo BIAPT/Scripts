@@ -2,11 +2,15 @@
     Code written by Yacine Mahdid using Parisa ruby code (tostream.rb)
     We are rewritting the ruby code because most of the pre-processing is already done in Python.
 '''
+
+# General Import
 import os
 import datetime
 import time
 import glob
 
+# Filters Imports
+import sys
 
 # Input and ouput paths (set these up so that it works with your computer)
 input_path = "C:/Users/biapt/Downloads/ruby_script_and_sample_data"
@@ -17,6 +21,25 @@ output_path = "C:/Users/biapt/Documents/GitHub/Scripts/SSI"
 # will have the same timestamp
 t_now = datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 t_utc = datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")
+
+
+# Pre processing function that will apply the pre-processing technique
+# based on what analysis technique we are working with.
+def pre_process(timestamps, data_pts, data_type, sample_rate):
+    print("Preprocessing: " + data_type)
+
+    # Pre-processing (if you want to tweak them change them here!)
+    if data_type == "BVP":
+        data_pts = data_pts
+    elif data_type == "EDA":
+        data_pts = data_pts
+    elif data_type == "TEMP":
+        data_pts = data_pts
+    elif data_type == "HR":
+        data_pts = data_pts
+        
+    return data_pts
+
 
 # Iterating through each TPS folder
 directory_listing = glob.glob(input_path + os.sep + "TP00*")
@@ -60,27 +83,37 @@ for tps_path in directory_listing:
         # open our input and output file
         output_filename = output_path + os.sep + stream_name
         raw_file = open(filename, "r")
-        stream_file = open(output_filename, "w")
 
-        # Read the input file line by line 
-        # and copy the data in the stream~ file in the right format
+
+        # Read the input file line by line and
         num_row = 0 # keep track of the number of row written for the stream file
         raw_file.readline()
+        
+        raw_time = []
+        raw_data = []
         for line in raw_file.readlines():
             # Strip nenwline and split the line
             line = line.replace(" ", "").rstrip()
             line = line.split(';')
 
             # get the timestamp and the data points
-            timestamp = int(line[0])
-            data_pts = float(line[1])
+            raw_time.append(int(line[0]))
+            raw_data.append(float(line[1]))
 
-            stream_file.write(str(data_pts) + '\n')
             # Increase the number of row
             num_row+=1
 
         # Closing our file pointers
         raw_file.close()
+
+        # Pre-process the data
+        processed_data = pre_process(raw_time, raw_data, data_type, sample_rate)
+
+        # write the data to the stream file
+        stream_file = open(output_filename, "w")
+        for data_pts in processed_data:
+            # Write each points on each line
+            stream_file.write(str(data_pts) + "\n")
         stream_file.close()
 
         # Creating the header stream file (no tilda ~)
