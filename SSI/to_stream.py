@@ -67,6 +67,66 @@ def exponential_decay(y, alpha=0.95):
         
     return filt_y
 
+# One Euro filtering code
+def smoothing_factor(t_e, cutoff):
+    r = 2 * math.pi * cutoff * t_e
+    return r / (r + 1)
+
+def exponential_smoothing(a, x, x_prev):
+    return a * x + (1 - a) * x_prev
+
+class OneEuroFilter:
+    '''
+    This code was taken from: https://github.com/jaantollander/OneEuroFilter
+    and written by Jaan Tollander de Balsch 
+    We first need to init the OneEuroFilter with the base parameters and one data point.
+    Then we repeatedly call OneEuroFilter(t,x) on the data points to filter
+    i.e.
+    oneEuro = OneEuroFilter(t0,x0,min_cutoff=50.0,beta=4.0)
+    ...
+    x_filt = oneEuro(ti,xi)
+    '''
+    def __init__(self, t0, x0, dx0=0.0, min_cutoff=1.0, beta=0.0,
+                 d_cutoff=1.0):
+        """Initialize the one euro filter."""
+        # The parameters.
+        self.min_cutoff = float(min_cutoff)
+        self.beta = float(beta)
+        self.d_cutoff = float(d_cutoff)
+        # Previous values.
+        self.x_prev = float(x0)
+        self.dx_prev = float(dx0)
+        self.t_prev = float(t0)
+
+    def __call__(self, t, x):
+        """Compute the filtered signal."""
+        t_e = t - self.t_prev
+
+        # The filtered derivative of the signal.
+        a_d = smoothing_factor(t_e, self.d_cutoff)
+        dx = (x - self.x_prev) / t_e
+        dx_hat = exponential_smoothing(a_d, dx, self.dx_prev)
+
+        # The filtered signal.
+        cutoff = self.min_cutoff + self.beta * abs(dx_hat)
+        a = smoothing_factor(t_e, cutoff)
+        x_hat = exponential_smoothing(a, x, self.x_prev)
+
+        # Memorize the previous values.
+        self.x_prev = x_hat
+        self.dx_prev = dx_hat
+        self.t_prev = t
+
+        return x_hat
+
+def one_euro(x,y):
+    filter = OneEuroFilter(x[0], y[0], min_cutoff=50.0, beta=4.0)
+    filt_y = [y[0]]
+    for i in range(1,len(x)):
+        filt_y.append(filter(x[i],y[i]))
+
+    return filt_y
+
 # Pre processing function that will apply the pre-processing technique
 # based on what analysis technique we are working with.
 def pre_process(timestamps, data_pts, data_type, sample_rate):
@@ -77,13 +137,14 @@ def pre_process(timestamps, data_pts, data_type, sample_rate):
 
     # Pre-processing (if you want to tweak them change them here!)
     if data_type == "EDA":
-        data_pts = data_pts
+        filt_data = one_euro(timestamps, data_pts)
+        plt.plot( timestamps, data_pts, 'o', timestamps, filt_data, '-')
+        plt.show()
     elif data_type == "TEMP":
         filt_data = exponential_decay(data_pts)
-        plt.plot( timestamps, data_pts, '-', timestamps, filt_data, '-')
+        plt.plot( timestamps, data_pts, 'o', timestamps, filt_data, '-')
         plt.show()
     elif data_type == "HR":
-
         (filt_timestamps, filt_data) = cubic_spline_smoothing(timestamps, data_pts)
         plt.plot(timestamps, data_pts, 'o', filt_timestamps, filt_data, '-')
         plt.show()

@@ -1,16 +1,5 @@
 import math
 
-'''
-    This code was taken from: https://github.com/jaantollander/OneEuroFilter
-    and written by Jaan Tollander de Balsch 
-    We first need to init the OneEuroFilter with the base parameters and one data point.
-    Then we repeatedly call OneEuroFilter(t,x) on the data points to filter
-    i.e.
-    oneEuro = OneEuroFilter(t0,x0,min_cutoff=50.0,beta=4.0)
-    ...
-    x_filt = oneEuro(ti,xi)
-'''
-
 def smoothing_factor(t_e, cutoff):
     r = 2 * math.pi * cutoff * t_e
     return r / (r + 1)
@@ -21,6 +10,16 @@ def exponential_smoothing(a, x, x_prev):
 
 
 class OneEuroFilter:
+    '''
+    This code was taken from: https://github.com/jaantollander/OneEuroFilter
+    and written by Jaan Tollander de Balsch 
+    We first need to init the OneEuroFilter with the base parameters and one data point.
+    Then we repeatedly call OneEuroFilter(t,x) on the data points to filter
+    i.e.
+    oneEuro = OneEuroFilter(t0,x0,min_cutoff=50.0,beta=4.0)
+    ...
+    x_filt = oneEuro(ti,xi)
+    '''
     def __init__(self, t0, x0, dx0=0.0, min_cutoff=1.0, beta=0.0,
                  d_cutoff=1.0):
         """Initialize the one euro filter."""
