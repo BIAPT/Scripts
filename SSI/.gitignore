@@ -118,3 +118,6 @@ dmypy.json
 .history
 
 # End of https://www.gitignore.io/api/python,visualstudiocode
+
+# SSI specific files
+*.stream*

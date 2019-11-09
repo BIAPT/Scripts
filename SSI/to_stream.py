@@ -8,6 +8,7 @@ import os
 import datetime
 import time
 import glob
+import math
 
 # Data manipulation imports
 import csaps 
@@ -32,11 +33,12 @@ def cubic_spline_smoothing(x, y, p=0.01, new_sampling_rate=300):
     '''
         We are using the csaps python package which is a port of the matlab
         using this port https://pypi.org/project/csaps/
-        
-        p is the smoothing parameter, we can decrease it for more smoothing
+        This is used for HR in the original movingwith paper
+
+        - p is the smoothing parameter, we can decrease it for more smoothing
         however 0.001 is what we used previously
         
-        new_sampling_rate is how much more data points (in Hz) we want to interpolate the gaps
+        - new_sampling_rate is how much more data points (in Hz) we want to interpolate the gaps
 
     '''
     filter = csaps.UnivariateCubicSmoothingSpline(x, y, smooth=p)
@@ -52,6 +54,19 @@ def cubic_spline_smoothing(x, y, p=0.01, new_sampling_rate=300):
     filt_y = filter(filt_x)
     return (filt_x, filt_y)
 
+def exponential_decay(y, alpha=0.95):
+    '''
+    Exponential Decay Smoothing Filter
+    This is used for Temperature in the original movingwith paper
+    Increase alpha for more filtering: uses more past data to compute an average    
+    '''
+
+    filt_y = y.copy()
+    for i in range(0,len(y)-1):
+        filt_y[i+1] = (filt_y[i]*alpha) + (filt_y[i+1] * (1-alpha))
+        
+    return filt_y
+
 # Pre processing function that will apply the pre-processing technique
 # based on what analysis technique we are working with.
 def pre_process(timestamps, data_pts, data_type, sample_rate):
@@ -64,7 +79,9 @@ def pre_process(timestamps, data_pts, data_type, sample_rate):
     if data_type == "EDA":
         data_pts = data_pts
     elif data_type == "TEMP":
-        data_pts = data_pts
+        filt_data = exponential_decay(data_pts)
+        plt.plot( timestamps, data_pts, '-', timestamps, filt_data, '-')
+        plt.show()
     elif data_type == "HR":
 
         (filt_timestamps, filt_data) = cubic_spline_smoothing(timestamps, data_pts)
@@ -134,9 +151,17 @@ for tps_path in directory_listing:
             if num_row == 0:
                 start_time = int(line[0])
 
-            # get the timestamp and the data points
-            raw_time.append(int(line[0]) - start_time)
-            raw_data.append(float(line[1]))
+            # Get the timestamp and time point
+            timestamp = int(line[0]) - start_time
+            data = float(line[1])
+
+            # Checking for nan value and replacing them with dummy value
+            if(math.isnan(data)):
+                data = 0 # Here we can set it to other thing than 0
+
+            # Store the raw data
+            raw_time.append(timestamp)
+            raw_data.append(data)
 
             # Increase the number of row
             num_row+=1
