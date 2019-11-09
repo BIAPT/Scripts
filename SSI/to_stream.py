@@ -9,8 +9,12 @@ import datetime
 import time
 import glob
 
-# Filters Imports
-import sys
+# Data manipulation imports
+import csaps 
+import numpy as np 
+
+# Visualization imports
+import matplotlib.pyplot as plt
 
 # Input and ouput paths (set these up so that it works with your computer)
 input_path = "C:/Users/biapt/Downloads/ruby_script_and_sample_data"
@@ -23,20 +27,49 @@ t_now = datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 t_utc = datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")
 
 
+# Filters
+def cubic_spline_smoothing(x, y, p=0.01, new_sampling_rate=300):
+    '''
+        We are using the csaps python package which is a port of the matlab
+        using this port https://pypi.org/project/csaps/
+        
+        p is the smoothing parameter, we can decrease it for more smoothing
+        however 0.001 is what we used previously
+        
+        new_sampling_rate is how much more data points (in Hz) we want to interpolate the gaps
+
+    '''
+    filter = csaps.UnivariateCubicSmoothingSpline(x, y, smooth=p)
+    
+    # Calculate an approximative sampling rate
+    current_sampling_rate = (x[-1] - x[0]) / (1000*len(x)) # The time is in milliseconds so we put them in seconds
+    
+    # get the ratio of augmentation
+    ratio = new_sampling_rate / current_sampling_rate
+    # Augment the data to match the wanted sampling rate
+    filt_x = np.linspace(x[0], x[-1], ratio*len(x))
+
+    filt_y = filter(filt_x)
+    return (filt_x, filt_y)
+
 # Pre processing function that will apply the pre-processing technique
 # based on what analysis technique we are working with.
 def pre_process(timestamps, data_pts, data_type, sample_rate):
     print("Preprocessing: " + data_type)
 
+    # For all of them we will average with a window size of 0.5seconds
+    # TODO: do window average
+
     # Pre-processing (if you want to tweak them change them here!)
-    if data_type == "BVP":
-        data_pts = data_pts
-    elif data_type == "EDA":
+    if data_type == "EDA":
         data_pts = data_pts
     elif data_type == "TEMP":
         data_pts = data_pts
     elif data_type == "HR":
-        data_pts = data_pts
+
+        (filt_timestamps, filt_data) = cubic_spline_smoothing(timestamps, data_pts)
+        plt.plot(timestamps, data_pts, 'o', filt_timestamps, filt_data, '-')
+        plt.show()
         
     return data_pts
 
@@ -96,8 +129,13 @@ for tps_path in directory_listing:
             line = line.replace(" ", "").rstrip()
             line = line.split(';')
 
+            # What we need to do is check when the start time is what we have seted
+            # above (however for now we didn't do it TODO!)
+            if num_row == 0:
+                start_time = int(line[0])
+
             # get the timestamp and the data points
-            raw_time.append(int(line[0]))
+            raw_time.append(int(line[0]) - start_time)
             raw_data.append(float(line[1]))
 
             # Increase the number of row

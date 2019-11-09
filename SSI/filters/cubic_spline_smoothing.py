@@ -23,6 +23,3 @@ def cubic_spline_smoothing(input_data):
     plt.legend(['data', 'linear', 'cubic'], loc='best')
     plt.show()
 
-    
-
-cubic_spline_smoothing("lol")
