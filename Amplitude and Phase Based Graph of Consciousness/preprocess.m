@@ -107,8 +107,8 @@ for f_i = 1:length(frequencies)
                 aec_graph = squeeze(aec_data{p_i}(w_i,:,:));
                 pli_graph = squeeze(pli_data{p_i}(w_i,:,:));
                 
-                X_aec = generate_graph_feature_vector(aec_graph, num_null_network, bin_swaps, weight_frequency, t_level);
-                X_pli = generate_graph_feature_vector(pli_graph, num_null_network, bin_swaps, weight_frequency, t_level);
+                X_aec = generate_weighted_graph_feature_vector(aec_graph, num_null_network, bin_swaps, weight_frequency, transform);
+                X_pli = generate_weighted_graph_feature_vector(pli_graph, num_null_network, bin_swaps, weight_frequency, transform);
                 
                 % Write both of them into the csv file
                 dlmwrite(output_path, [p_i, f_i, e_i, 0, w_i, X_aec'], '-append');
