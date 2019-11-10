@@ -29,7 +29,7 @@ t_utc = datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")
 
 
 # Filters
-def cubic_spline_smoothing(x, y, p=0.01, new_sampling_rate=300):
+def cubic_spline_smoothing(x, y, p=0.01, new_sampling_rate=2):
     '''
         We are using the csaps python package which is a port of the matlab
         using this port https://pypi.org/project/csaps/
@@ -127,29 +127,67 @@ def one_euro(x,y):
 
     return filt_y
 
+# Averaging
+# TODO: This could be improved with slicing instead of accumulating an array
+def window_average(timestamps, data, window_size=0.5):  
+    '''
+        window averaging with a jumping window (default is 0.5 seconds)
+        the bigger the size of the window the smaller the new sample rate will be
+        if we choose a window of 0.5 it will be 2Hz
+    '''
+
+    # convert the window size to be in milliseconds
+    window_size = window_size*1000 
+
+    # setting up the arrays and variables
+    avg_timestamps = []
+    avg_data = []
+    current_i = 0
+
+    # Iterating through each windows
+    for start_t in range(start=timestamp[0], stop=timestamps[-1], step=window_size):
+        
+        # Adding the timestamp to be the middle of the average window
+        avg_timestamps.append(start_t + (window_size/2))
+        curr_data = []
+        current_t = timestamp[current_i]
+        end_t = start_t + window_size
+
+        # Appending all the data within that window
+        while current_t < end_t:
+            curr_data.append(data[current_i])
+            current_i = current_i + 1
+            current_t = timestamp[current_i]
+
+        avg_data.append(math.mean(curr_data))# TODO: Here this needs to be fixed (not internet right now)
+
+    return (avg_timestamps, avg_data)
+
+
+
 # Pre processing function that will apply the pre-processing technique
 # based on what analysis technique we are working with.
-def pre_process(timestamps, data_pts, data_type, sample_rate):
+def pre_process(timestamps, data, data_type, sample_rate):
     print("Preprocessing: " + data_type)
 
-    # For all of them we will average with a window size of 0.5seconds
-    # TODO: do window average
+    # Window averaging at 2Hz (0.5seconds)
+    (avg_timestamps, avg_data) = window_average(timestamps,data)
 
     # Pre-processing (if you want to tweak them change them here!)
     if data_type == "EDA":
-        filt_data = one_euro(timestamps, data_pts)
-        plt.plot( timestamps, data_pts, 'o', timestamps, filt_data, '-')
+        filt_data = one_euro(avg_timestamps, avg_data)
+        plt.plot( timestamps, data, 'o', timestamps, filt_data, '-')
         plt.show()
     elif data_type == "TEMP":
-        filt_data = exponential_decay(data_pts)
-        plt.plot( timestamps, data_pts, 'o', timestamps, filt_data, '-')
+        filt_data = exponential_decay(avg_data)
+        plt.plot( timestamps, data, 'o', timestamps, filt_data, '-')
         plt.show()
     elif data_type == "HR":
-        (filt_timestamps, filt_data) = cubic_spline_smoothing(timestamps, data_pts)
-        plt.plot(timestamps, data_pts, 'o', filt_timestamps, filt_data, '-')
+        (filt_timestamps, filt_data) = cubic_spline_smoothing(avg_timestamps, avg_data)
+        plt.plot(timestamps, data, 'o', filt_timestamps, filt_data, '-')
         plt.show()
         
-    return data_pts
+    return filt_data
 
 
 # Iterating through each TPS folder
@@ -235,9 +273,9 @@ for tps_path in directory_listing:
 
         # write the data to the stream file
         stream_file = open(output_filename, "w")
-        for data_pts in processed_data:
+        for data in processed_data:
             # Write each points on each line
-            stream_file.write(str(data_pts) + "\n")
+            stream_file.write(str(data) + "\n")
         stream_file.close()
 
         # Creating the header stream file (no tilda ~)
