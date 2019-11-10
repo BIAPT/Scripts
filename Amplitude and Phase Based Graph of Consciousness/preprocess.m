@@ -31,6 +31,7 @@ num_null_network = 10; % Number of null network to create
 bin_swaps = 10;  % used to create the null network
 weight_frequency = 0.1; % used to create the null network
 t_level = 0.1; % Threshold level (keep 10%)
+transform = 'log'; % this is used for the weighted_global_efficiency
 
 %% Write the header of the CSV file
 

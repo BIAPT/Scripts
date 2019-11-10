@@ -1,4 +1,4 @@
-function [X] = generate_weighted_graph_feature_vector(graph, num_null_network, bin_swaps, weight_frequency)
+function [X] = generate_weighted_graph_feature_vector(graph, num_null_network, bin_swaps, weight_frequency, transform)
 %GENERATE_FEATURE_VECTOR calculate graph theory feature
 %   This is building on the experiment using binary graph classification
 %   vector:
@@ -26,13 +26,13 @@ function [X] = generate_weighted_graph_feature_vector(graph, num_null_network, b
     % Weighted Clustering Coefficient
     % Here we are using the log transform, however I'm not sure if I need
     % to use the inverse distance
-    [~,norm_g_eff,~,~] = weighted_global_efficiency(graph, null_networks, 'log');
+    [~,norm_g_eff,~,~] = weighted_global_efficiency(graph, null_networks, transform);
 
     % Modularity
     community = modularity(graph);
 
     % Weighted Smallworldness
-    w_small_worldness = undirected_weighted_small_worldness(graph,null_networks);
+    w_small_worldness = undirected_weighted_small_worldness(graph,null_networks,transform);
 
     % Binary Clustering Coefficient
     [clust_coeff, norm_avg_clust_coeff] = undirected_weighted_clustering_coefficient(graph,null_networks);
