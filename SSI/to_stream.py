@@ -107,8 +107,6 @@ for colorfolder in listdir(input_path):
                 else:
                     continue
 
-
-
                 # open our input file
                 raw_file = open(session_path + os.sep + filename, "r")
 
