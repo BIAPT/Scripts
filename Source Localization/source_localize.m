@@ -3,23 +3,24 @@
 %Brainstorm from uploading .set file to exporting scout time series matrix
 %for APCI analysis 
 
-function sData = source_localize(pData,pCov,InverseMethod,Atlas,bNorm)
+function [Value,Time,Atlas] = source_localize(pData,pCov,InverseMethod,template,bNorm)
     
     %% Variables
     % pData: INPUT, path to .set file
     % pCov: INPUT, path to the .set file used to compute the noise covariance matrix. If empty ([]), use the identity matrix. 
-    % InverseMethod: INPUT, specify inverse model you will use (implemented options: MNE)
-    % Atlas: INPUT, specify brain atlas you will use to cluster dipoles into ROIs(implemented options: Desikan-Killiany ('DK'), AAL('AAL')
-    % bNorm: INPUT, Boolean defining  whether you want to normalize the solution (for visualization) or not (for connectivity analysis)
-    % sData: OUTPUT, structure containing the time series for each ROI in the source space. Fields 'Value','Time' and 'Atlas' are important for
-    % further processing.
+    % InverseMethod: INPUT, specify inverse model you will use (implemented options: MNE ('mne')
+    % template: INPUT, specify brain atlas you will use to cluster dipoles into ROIs (implemented options: Desikan-Killiany ('dk'), AAL('aal')
+    % bNorm: INPUT, Boolean defining  whether you want to normalize the solution (for visualization, '1') or not (for connectivity analysis,'0')
+    % Value: OUTPUT, structure containing the source time series
+    % Time: OUTPUT, structure containing the time points associated with source time series
+    % Atlas: OUTPUT, labels associated with each ROI in the chosen template
     
     %Input variable definition for testing
-    pData = 'C:\Users\dn-xo\OneDrive - McGill University\Research\BIAPT Lab\Thesis\TDCS\Source localization\TDCSpilot_baseline.set';
-    pCov = [];
-    InverseMethod = 'mne';
-    Atlas = 'dk';
-    bNorm = 0;
+%     pData = 'C:\Users\dn-xo\OneDrive - McGill University\Research\BIAPT Lab\Thesis\TDCS\Source localization\TDCSpilot_baseline.set';
+%     pCov = [];
+%     InverseMethod = 'mne';
+%     template = 'dk';
+%     bNorm = 0;
     
     %% Create protocol in Brainstorm
     ProtocolName = 'AutomateSourceLocalization';
@@ -62,7 +63,7 @@ function sData = source_localize(pData,pCov,InverseMethod,Atlas,bNorm)
     %% Process: Compute head model
   
     
-    if strcmp('dk',Atlas) %DK atlas: cortex head model
+    if strcmp('dk',template) %DK atlas: cortex head model
         sFiles = bst_process('CallProcess', 'process_headmodel', sFiles, [], ...
             'sourcespace', 1, ...  % Cortex surface
             'eeg',         3, ...  % OpenMEEG BEM
@@ -76,7 +77,7 @@ function sData = source_localize(pData,pCov,InverseMethod,Atlas,bNorm)
                 'isSplit',      0, ...
                 'SplitLength',  4000));
         
-    elseif strcmp('aal',Atlas) % AAL atlas: volume head model
+    elseif strcmp('aal',template) % AAL atlas: volume head model
         sFiles = bst_process('CallProcess', 'process_headmodel', sFiles, [], ...
             'sourcespace', 2, ...  % MRI volume
             'volumegrid',  struct(... %default
@@ -163,7 +164,7 @@ function sData = source_localize(pData,pCov,InverseMethod,Atlas,bNorm)
     end
     %%  Process: Compute time series in ROIs
   
-    if strcmp('dk',Atlas)
+    if strcmp('dk',template)
         sFiles = bst_process('CallProcess', 'process_extract_scout', sFiles, [], ...
             'scouts',         {'Desikan-Killiany', {'bankssts L', 'bankssts R', 'caudalanteriorcingulate L', 'caudalanteriorcingulate R', 'caudalmiddlefrontal L', 'caudalmiddlefrontal R', 'cuneus L', 'cuneus R', 'entorhinal L', 'entorhinal R', 'frontalpole L', 'frontalpole R', 'fusiform L', 'fusiform R', 'inferiorparietal L', 'inferiorparietal R', 'inferiortemporal L', 'inferiortemporal R', 'insula L', 'insula R', 'isthmuscingulate L', 'isthmuscingulate R', 'lateraloccipital L', 'lateraloccipital R', 'lateralorbitofrontal L', 'lateralorbitofrontal R', 'lingual L', 'lingual R', 'medialorbitofrontal L', 'medialorbitofrontal R', 'middletemporal L', 'middletemporal R', 'paracentral L', 'paracentral R', 'parahippocampal L', 'parahippocampal R', 'parsopercularis L', 'parsopercularis R', 'parsorbitalis L', 'parsorbitalis R', 'parstriangularis L', 'parstriangularis R', 'pericalcarine L', 'pericalcarine R', 'postcentral L', 'postcentral R', 'posteriorcingulate L', 'posteriorcingulate R', 'precentral L', 'precentral R', 'precuneus L', 'precuneus R', 'rostralanteriorcingulate L', 'rostralanteriorcingulate R', 'rostralmiddlefrontal L', 'rostralmiddlefrontal R', 'superiorfrontal L', 'superiorfrontal R', 'superiorparietal L', 'superiorparietal R', 'superiortemporal L', 'superiortemporal R', 'supramarginal L', 'supramarginal R', 'temporalpole L', 'temporalpole R', 'transversetemporal L', 'transversetemporal R'}}, ...
             'scoutfunc',      1, ...  % Mean
@@ -173,10 +174,11 @@ function sData = source_localize(pData,pCov,InverseMethod,Atlas,bNorm)
             'save',           1, ...
             'addrowcomment',  1, ...
             'addfilecomment', 1);
-    elseif strcmp('aal',Atlas)
+    elseif strcmp('aal',template)
         disp('TODO: implement AAL atlas')
     end
   
-    %% Process: Export data
-    sData = sFiles;
+    %% Process: Load output file to populate output variables
+    p =  bst_get('BrainstormDbDir');
+    load([p '\' ProtocolName '\data\' sFiles.FileName])
 end
