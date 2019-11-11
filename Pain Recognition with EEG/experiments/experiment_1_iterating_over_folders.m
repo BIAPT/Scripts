@@ -12,7 +12,7 @@ output_dir = "/home/yacine/Documents/pain_and_eeg/results/healthy";
 
 % The participants folder are named HE001 to HE014
 % we can generate them like this  sprintf('%03d',participant_id)
-num_participant = 14;
+num_participant = 12;
 participant_label = cell(num_participant,1);
 participant_path = cell(num_participant,1);
 for p_id = 1:num_participant
@@ -49,6 +49,7 @@ function [result] = calculate_features(recording)
     % Setup the global variable for the study
     % window size will be equal to the full length of data
     alpha_band = [8 13]; % alpha will be used for most of the analysis
+    full_band = [1 50];
     
     % Spectrogram
     window_size = floor(recording.length_recording / recording.sampling_rate);
@@ -56,7 +57,7 @@ function [result] = calculate_features(recording)
     number_tapers = 3;
     spectrum_window_size = 3; % in seconds
     step_size = 0.1; % in seconds
-    result.sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, spectrum_window_size,alpha_band, step_size);
+    result.sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, spectrum_window_size,full_band, step_size);
 
     % Topographic Map
     window_size = floor(recording.length_recording / recording.sampling_rate);
@@ -69,6 +70,7 @@ function [result] = calculate_features(recording)
     result.pe = na_permutation_entropy(recording, alpha_band, window_size ,embedding_dimension, time_lag);
 
     % wPLI & dPLI
+    window_size = 10;
     number_surrogate = 10; % Number of surrogate wPLI to create
     p_value = 0.05; % the p value to make our test on
     step_size = window_size;
