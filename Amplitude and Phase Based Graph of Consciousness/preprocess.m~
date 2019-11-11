@@ -20,7 +20,7 @@
 %% Variable Initialization
 % Data file paths
 data_path = "/home/yacine/Documents/aec_vs_wpli/data/";
-output_path = "/home/yacine/Documents/aec_vs_wpli/wei_data_2.csv";
+output_path = "/home/yacine/Documents/aec_vs_wpli/data.csv";
 
 % Experiment Parameters
 frequencies = {'alpha'}; %{'alpha','beta','delta','theta'};
