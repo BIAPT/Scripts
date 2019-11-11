@@ -5,8 +5,8 @@
 %}
 %% Make a script to iterate over the healthy participants folder
 % Setting up path variables
-base_dir = "/home/yacine/Documents/Cleaned_Healthy_EEG";
-output_dir = "/home/yacine/Documents/results/healthy";
+base_dir = "/home/yacine/Documents/pain_and_eeg/Cleaned_Healthy_EEG";
+output_dir = "/home/yacine/Documents/pain_and_eeg/results/healthy";
 %% Setting up experiment variables (this will be shipped inside the helper function)
 % The variables are in the calculate_features function
 
@@ -22,7 +22,7 @@ end
 
 %% Iterate over all the participant and gather the baseline and pain
 for p_id = 1:num_participant
-    
+    disp(sprintf("Analyzing participant: %s",participant_label{p_id}));
     % Create the path
     baseline_name = sprintf('%s_nopain.set',participant_label{p_id});
     hot_pain_name = sprintf('%s_hot1.set',participant_label{p_id});
@@ -48,7 +48,7 @@ function [result] = calculate_features(recording)
 
     % Setup the global variable for the study
     % window size will be equal to the full length of data
-    window_size = floor(recording.length_recording / recording.sampling_rate);
+    window_size = 10;
     alpha_band = [8 13]; % alpha will be used for most of the analysis
     
     % Spectrogram
@@ -56,7 +56,7 @@ function [result] = calculate_features(recording)
     number_tapers = 3;
     spectrum_window_size = 3; % in seconds
     step_size = 0.1; % in seconds
-    result.sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, spectrum_window_size, step_size);
+    result.sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, spectrum_window_size,alpha_band, step_size);
 
     % Topographic Map
     step_size = window_size; % in seconds
