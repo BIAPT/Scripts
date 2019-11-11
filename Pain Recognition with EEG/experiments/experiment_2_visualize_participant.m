@@ -23,8 +23,12 @@ end
 result = struct();
 
 baseline_avg_spectrum = zeros(1,167);
+pain_avg_spectrum = zeros(1,167);
 for p_id = 1:num_participant
     disp(sprintf("Analyzing participant: %s",participant_label{p_id}));
+    if(p_id == 7)
+       continue 
+    end
     % Create the path
     data_path = sprintf('%s/%s.mat',base_dir,participant_label{p_id});
     
@@ -33,11 +37,12 @@ for p_id = 1:num_participant
     data = data.result;
     
     % Add up the spectrograms (and average them across time)
-    baseline_avg_spectrum = baseline_avg_spectrum + mean(data.healthy.sp.spectrums,1);
-    pain_avg_spectrums = pain_avg_spectrums + mean(data.hot_pain.sp.spectrums,1);
-    frequencies_spectrum = data.healthy.sp.frequencies; % this should be the same at each iteration
+    baseline_avg_spectrum = baseline_avg_spectrum + mean(data.healthy.sp.data.spectrums,1);
+    pain_avg_spectrum = pain_avg_spectrum + mean(data.hot_pain.sp.data.spectrums,1);
+    frequencies_spectrum = data.healthy.sp.data.frequencies; % this should be the same at each iteration
 end
 
+num_participant = num_participant-1;
 % Average the spectrum accumulated
 result.baseline_avg_spectrum = baseline_avg_spectrum/num_participant;
 result.pain_avg_spectrum = pain_avg_spectrum/num_participant;

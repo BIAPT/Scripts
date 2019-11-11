@@ -26,6 +26,19 @@ TPS2Dir = ""
 #all data from each participant together, even though they did not wear the same sensor
 #in each session
 
+TPSDictionary = [
+["TPS001491" , "P1"],
+["TPS001354" , "P2"],
+["TPS001689" , "P3"],
+["TPS001123" , "P4"],
+["TPS001472" , "P5"],
+["TPS001484" , "P6"],
+["TPS001822" , "P7"],
+["TPS001254" , "P8"],
+["TPS001376" , "P9"],
+["TPS001353" , "P10"],
+["TPS001884" , "P11"]]
+
 
 # Get the timestamp of when the script was run 
 # We do this here so that all file created when this is run 
@@ -73,8 +86,15 @@ for colorfolder in listdir(input_path):
                     #but this can be changed to support more
                     TPS1 = "TPS" + contents.split("TP")[1].split(",")[0]
                     TPS2 = "TPS" + contents.split("TP")[2].split(";")[0]
-                    TPS1Dir = os.path.join(output_path,TPS1)
-                    TPS2Dir = os.path.join(output_path,TPS2)
+                    for [TPSID,ParID] in TPSDictionary:
+                        if TPSID == TPS1:
+                            TPS1Dir = os.path.join(output_path,ParID)
+                            print("Sensor: " + TPS1 + " on the phone color: " + colorfolder + " for participant: " + ParID)
+                        if TPSID == TPS2:
+                            TPS2Dir = os.path.join(output_path,ParID)
+                            print("Sensor: " + TPS2 + " on the phone color: " + colorfolder + " for participant: " + ParID)
+                    
+
                     if not os.path.exists(TPS1Dir):
                         os.mkdir(TPS1Dir)
                     if not os.path.exists(TPS2Dir):
