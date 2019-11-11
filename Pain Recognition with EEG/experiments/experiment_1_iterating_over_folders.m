@@ -48,10 +48,10 @@ function [result] = calculate_features(recording)
 
     % Setup the global variable for the study
     % window size will be equal to the full length of data
-    window_size = 10;
     alpha_band = [8 13]; % alpha will be used for most of the analysis
     
     % Spectrogram
+    window_size = floor(recording.length_recording / recording.sampling_rate);
     time_bandwith_product = 2;
     number_tapers = 3;
     spectrum_window_size = 3; % in seconds
@@ -59,6 +59,7 @@ function [result] = calculate_features(recording)
     result.sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, spectrum_window_size,alpha_band, step_size);
 
     % Topographic Map
+    window_size = floor(recording.length_recording / recording.sampling_rate);
     step_size = window_size; % in seconds
     result.td = na_topographic_distribution(recording, window_size, step_size, alpha_band);
 
