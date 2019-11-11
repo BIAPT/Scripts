@@ -45,12 +45,13 @@ function [result] = calculate_features(recording)
     % Setting the output structure
     result = struct();
 
+
+    % Setup the global variable for the study
     % window size will be equal to the full length of data
     window_size = floor(recording.length_recording / recording.sampling_rate);
+    alpha_band = [8 13]; % alpha will be used for most of the analysis
     
-    alpha_band = [8 13];
     % Spectrogram
-    % TODO: Rewrite this one to have an actual spectrogram
     time_bandwith_product = 2;
     number_tapers = 3;
     spectrum_window_size = 3; % in seconds
