@@ -45,10 +45,12 @@ function [result] = calculate_features(recording)
     % Setting the output structure
     result = struct();
 
+    % window size will be equal to the full length of data
+    window_size = floor(recording.length_recording / recording.sampling_rate);
+    
     alpha_band = [8 13];
     % Spectrogram
     % TODO: Rewrite this one to have an actual spectrogram
-    window_size = 10;
     time_bandwith_product = 2;
     number_tapers = 3;
     spectrum_window_size = 3; % in seconds
@@ -56,22 +58,18 @@ function [result] = calculate_features(recording)
     result.sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, spectrum_window_size, step_size);
 
     % Topographic Map
-    window_size = 10; % in seconds
     step_size = window_size; % in seconds
     result.td = na_topographic_distribution(recording, window_size, step_size, alpha_band);
 
     % Permutation Entropy
-    window_size = 10; % This is in seconds and will be how we chunk the whole dataset
     embedding_dimension = 5;
     time_lag = 4;
     result.pe = na_permutation_entropy(recording, alpha_band, window_size ,embedding_dimension, time_lag);
 
     % wPLI & dPLI
-    window_size = 10; % This is in seconds and will be how we chunk the whole dataset
     number_surrogate = 10; % Number of surrogate wPLI to create
     p_value = 0.05; % the p value to make our test on
-    step_size = pli_window_size;
-    
+    step_size = window_size;
     result.wpli = na_wpli(recording, alpha_band, window_size, step_size, number_surrogate, p_value);
     result.dpli = na_dpli(recording, alpha_band, window_size, step_size, number_surrogate, p_value);
 end
