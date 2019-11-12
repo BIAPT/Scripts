@@ -19,6 +19,46 @@ for p_id = 1:num_participant
     participant_path{p_id} = sprintf('%s/%s',base_dir,participant_label{p_id});
 end
 
+%% make an array of channels to remove (these that don't appear for all channels)
+
+% Count all the channels presence
+labels = {};
+count = [];
+for p_id = 1:num_participant
+    if(p_id == 7)
+       continue 
+    end
+
+    % Create the path
+    data_path = sprintf('%s/%s.mat',base_dir,participant_label{p_id});
+    
+    % Load the data
+    data = load(data_path);
+    data = data.result;
+    
+    channels_location = data.healthy.sp.metadata.channels_location;
+    for l_i = 1:length(channels_location)
+        curr_channels = channels_location(l_i).labels;
+        insert_index = find_label(curr_channels, labels);
+        
+        % if index is not there we will append to what we already have
+        if(insert_index == -1)
+           labels{end+1} = curr_channels;
+           count(end+1) = 1;
+        else
+            % if its already there we increment it by one
+            count(insert_index) = count(insert_index) + 1;
+        end
+    end
+    
+end
+
+% At this point we should have 2 vector that tells us how much of each
+% labels appeared in each EEG device.
+
+%% keep only the channels that have a count less than num_participant-1
+threshold = num_participant-1; % we are excluding HE007
+
 %% Iterate over all the participant and gather the baseline and pain
 result = struct();
 
@@ -52,3 +92,15 @@ result.frequencies_spectrum = frequencies_spectrum;
 output_path = sprintf('%s/HEAVG.mat',base_dir);
 save(output_path, 'result')
 
+% Helper function to find out where the current channels is w/r to the
+% labels
+function [insert_index] = find_label(curr_channels, labels)
+    insert_index = -1;
+    for l_i = 1:length(labels)
+        % if our label is already there then we return the index
+        if(strcmp(curr_channels,labels{l_i}))
+            insert_index = l_i;
+            break;
+        end
+    end
+end
