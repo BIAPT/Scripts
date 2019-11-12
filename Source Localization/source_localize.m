@@ -16,11 +16,11 @@ function [Value,Time,Atlas] = source_localize(pData,pCov,InverseMethod,template,
     % Atlas: OUTPUT, labels associated with each ROI in the chosen template
     
     %Input variable definition for testing
-%     pData = 'C:\Users\dn-xo\OneDrive - McGill University\Research\BIAPT Lab\Thesis\TDCS\Source localization\TDCSpilot_baseline.set';
-%     pCov = [];
-%     InverseMethod = 'mne';
-%     template = 'dk';
-%     bNorm = 0;
+    pData = 'C:\Users\dn-xo\OneDrive - McGill University\Research\BIAPT Lab\Thesis\TDCS\Source localization\TDCS1_T2_baseline_NBACK.set';
+    pCov = 'C:\Users\dn-xo\OneDrive - McGill University\Research\BIAPT Lab\Thesis\TDCS\Source localization\TDCS1_T2_baseline_EC.set';
+    InverseMethod = 'mne';
+    template = 'dk';
+    bNorm = 0;
     
     %% Create protocol in Brainstorm
     ProtocolName = 'AutomateSourceLocalization';
@@ -49,8 +49,13 @@ function [Value,Time,Atlas] = source_localize(pData,pCov,InverseMethod,template,
     if ~isempty(pCov)
         db_add_subject('Noise Covariance',2,1,1); %subject id = 2
         sNoise = import_data(pCov,[],'EEG-EEGLAB',[],2);
+        
+        sNoise = bst_process('CallProcess', 'process_channel_addloc', sNoise, [], ...
+            'usedefault',  30, ...  % Colin27: GSN HydroCel 128 E1
+            'fixunits',    1, ...
+            'vox2ras',     1);
     end
-    
+    disp('Imported noise covariance data.')
     %TODO: deal with pop-ups + don't import channel file when you import data
     
     %Project electrodes to the scalp surface
@@ -59,9 +64,16 @@ function [Value,Time,Atlas] = source_localize(pData,pCov,InverseMethod,template,
     'usedefault',  30, ...  % Colin27: GSN HydroCel 128 E1
     'fixunits',    1, ...
     'vox2ras',     1);
+
     
     %% Process: Compute head model
   
+    %there are 2 dipoles not inside the skull - Edit cortical surface -
+    %force inside the inner skull
+    db_path =  bst_get('BrainstormDbDir');
+    tess_force_envelope([db_path '\' ProtocolName '\anat\@default_subject\tess_cortex_pial_low.mat'],...
+        [db_path '\' ProtocolName '\anat\@default_subject\tess_innerskull.mat']);
+    disp('Forced dipoles inside skull.')
     
     if strcmp('dk',template) %DK atlas: cortex head model
         sFiles = bst_process('CallProcess', 'process_headmodel', sFiles, [], ...
@@ -76,7 +88,7 @@ function [Value,Time,Atlas] = source_localize(pData,pCov,InverseMethod,template,
                 'isAdaptative', 1, ...
                 'isSplit',      0, ...
                 'SplitLength',  4000));
-        
+        disp('Computed cortex head model.')
     elseif strcmp('aal',template) % AAL atlas: volume head model
         sFiles = bst_process('CallProcess', 'process_headmodel', sFiles, [], ...
             'sourcespace', 2, ...  % MRI volume
@@ -97,6 +109,7 @@ function [Value,Time,Atlas] = source_localize(pData,pCov,InverseMethod,template,
                 'isAdaptative', 1, ...
                 'isSplit',      0, ...
                 'SplitLength',  4000));
+            disp('Computed volume head model.')
     end
          
     %% Process: Compute noise covariance
@@ -110,8 +123,9 @@ function [Value,Time,Atlas] = source_localize(pData,pCov,InverseMethod,template,
             'copysubj',       0, ...
             'copymatch',      0, ...
             'replacefile',    1);  % Replace
-        
-        %TODO: Copy matrix to subject file
+        disp('Computed noise covariance matrix.')
+        db_set_noisecov(5,'AllSubjects'); %i = 5 is the index of the study containing the noise cov matrix
+        disp('Copied noise covariance matrix to Subject.')
     else
         %Use identity matrix, no noise modelling
         sFiles = bst_process('CallProcess', 'process_noisecov', sFiles, [], ...
@@ -122,6 +136,7 @@ function [Value,Time,Atlas] = source_localize(pData,pCov,InverseMethod,template,
             'copysubj',       0, ...
             'copymatch',      0, ...
             'replacefile',    1);  % Replace
+        disp('Using identity matrix for noise modelling.')
     end
     %% Process: Compute inverse solution
     
@@ -179,6 +194,5 @@ function [Value,Time,Atlas] = source_localize(pData,pCov,InverseMethod,template,
     end
   
     %% Process: Load output file to populate output variables
-    p =  bst_get('BrainstormDbDir');
-    load([p '\' ProtocolName '\data\' sFiles.FileName])
+    load([db_path '\' ProtocolName '\data\' sFiles.FileName])
 end
