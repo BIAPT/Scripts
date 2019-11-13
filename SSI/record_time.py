@@ -1,4 +1,4 @@
 import time
 
-timefile = open("startrecordingtime.txt", "w+")
+timefile = open("start_recording_time.txt", "w+")
 timefile.write(str(time.time()))
