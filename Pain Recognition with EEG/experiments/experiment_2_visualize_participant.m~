@@ -192,7 +192,7 @@ end
 function [is_exist] = is_in_labels(label,good_labels)
     is_exist = 0;
     for i = 1:length(good_labels)
-       if(strcmp(label,good_labels{i}))
+       if(strcmp(label,good_label{i}))
           is_exist = 1;
           break;
        end
