@@ -81,6 +81,12 @@ pain_avg_spectrum = zeros(1,167);
 baseline_avg_td = zeros(1,min_channels);
 pain_avg_td = zeros(1,min_channels);
 
+% pe
+baseline_avg_pe = zeros(1,min_channels);
+baseline_avg_norm_pe = zeros(1,min_channels);
+pain_avg_pe = zeros(1,min_channels);
+pain_avg_norm_pe = zeros(1,min_channels);
+
 % Channels location
 reduced_location = [];
 
@@ -96,6 +102,7 @@ for p_id = 1:num_participant
     data = load(data_path);
     data = data.result;
     
+    %% Spectrogram
     % Add up the spectrograms (and average them across time)
     baseline_avg_spectrum = baseline_avg_spectrum + mean(data.healthy.sp.data.spectrums,1);
     pain_avg_spectrum = pain_avg_spectrum + mean(data.hot_pain.sp.data.spectrums,1);
@@ -104,6 +111,7 @@ for p_id = 1:num_participant
     % Get the location file for this participant
     channels_location = data.healthy.sp.metadata.channels_location;
     
+    %% Topographic Map
     % Filter the topographic map and average them through time
     baseline_td = data.healthy.td.data.power;
     pain_td = data.hot_pain.td.data.power;
@@ -114,6 +122,25 @@ for p_id = 1:num_participant
     % Accumulate the values
     baseline_avg_td = baseline_avg_td + baseline_td;
     pain_avg_td = pain_avg_td + pain_td;
+    
+    %% Permutation Entropy
+    % Filter the pe vector and average them through time
+    baseline_pe = data.healthy.pe.data.permutation_entropy;
+    baseline_norm_pe = data.healthy.pe.data.normalized_permutation_entropy;
+    pain_pe = data.hot_pain.pe.data.permutation_entropy;
+    pain_norm_pe = data.hot_pain.pe.data.normalized_permutation_entropy;
+    
+    [baseline_pe,~] = filter_vector(baseline_pe, channels_location, good_labels);
+    [baseline_norm_pe,~] = filter_vector(baseline_norm_pe, channels_location, good_labels);
+    [pain_pe, ~] = filter_vector(pain_pe, channels_location, good_labels);
+    [pain_norm_pe, ~] = filter_vector(pain_norm_pe, channels_location, good_labels);
+    
+    % Accumulate the values
+    baseline_avg_pe = baseline_avg_pe + baseline_pe;
+    baseline_avg_norm_pe = baseline_avg_norm_pe + baseline_norm_pe;
+    pain_avg_pe = pain_avg_pe + pain_pe;
+    pain_avg_norm_pe = pain_avg_norm_pe + pain_norm_pe;
+    
     
 end
 
@@ -126,6 +153,15 @@ result.frequencies_spectrum = frequencies_spectrum;
 % Average the topographic map accumulated
 result.baseline_td = baseline_avg_td/num_participant;
 result.pain_td = pain_avg_td/num_participant;
+
+% Average the permutation entropy accumulated
+result.baseline_pe = baseline_avg_pe/num_participant;
+result.baseline_norm_pe = baseline_avg_norm_pe/num_participant;
+result.pain_pe = pain_avg_pe/num_participant;
+result.pain_norm_pe = pain_avg_norm_pe/num_participant;
+
+% Add-in the location
+result.reduced_location = reduced_location;
 
 % Save these average participant to the output directory
 output_path = sprintf('%s/HEAVG.mat',base_dir);

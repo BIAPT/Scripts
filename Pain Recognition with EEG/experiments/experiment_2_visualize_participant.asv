@@ -62,16 +62,34 @@ good_labels = {};
 index = 1;
 for i = 1:length(labels)
     if(count(i) == num_participant-1)
-       good_label{index} = labels{i};
+       good_labels{index} = labels{i};
        index = index + 1;
     end
 end
 
+% Get the new num of channels
+min_channels = length(good_labels);
+
 %% Iterate over all the participant and gather the baseline and pain
 result = struct();
 
+% spectrogram
 baseline_avg_spectrum = zeros(1,167);
 pain_avg_spectrum = zeros(1,167);
+
+% topo
+baseline_avg_td = zeros(1,min_channels);
+pain_avg_td = zeros(1,min_channels);
+
+% pe
+baseline_avg_pe = zeros(1,min_channels);
+baseline_avg_norm_pe = zeros(1,min_channels);
+pain_avg_pe = zeros(1,min_channels);
+pain_avg_norm_pe = zeros(1,min_channels);
+
+% Channels location
+reduced_location = [];
+
 for p_id = 1:num_participant
     disp(sprintf("Analyzing participant: %s",participant_label{p_id}));
     if(p_id == 7)
@@ -84,17 +102,52 @@ for p_id = 1:num_participant
     data = load(data_path);
     data = data.result;
     
+    %% Spectrogram
     % Add up the spectrograms (and average them across time)
     baseline_avg_spectrum = baseline_avg_spectrum + mean(data.healthy.sp.data.spectrums,1);
     pain_avg_spectrum = pain_avg_spectrum + mean(data.hot_pain.sp.data.spectrums,1);
     frequencies_spectrum = data.healthy.sp.data.frequencies; % this should be the same at each iteration
+
+    % Get the location file for this participant
+    channels_location = data.healthy.sp.metadata.channels_location;
+    
+    %% Topographic Map
+    % Filter the topographic map and average them through time
+    baseline_td = data.healthy.td.data.power;
+    pain_td = data.hot_pain.td.data.power;
+    
+    [baseline_td, reduced_location] = filter_vector(baseline_td, channels_location, good_labels);
+    [pain_td, ~] = filter_vector(pain_td, channels_location, good_labels);
+    
+    % Accumulate the values
+    baseline_avg_td = baseline_avg_td + baseline_td;
+    pain_avg_td = pain_avg_td + pain_td;
+    
+    %% Permutation Entropy
+    % Filter the pe vector and average them through time
+    baseline_pe = data.healthy.pe.data.permutation_entropy;
+    baseline_norm_pe = data.healthy.pe.data.normalized_permutation_entropy;
+    pain_pe = data.hot_pain.pe.data.permutation_entropy;
+    pain_norm_pe = data.hot_pain.pe.data.normalized_permutation_entropy;
+    
+    [baseline_pe,~] = filter_vector(baseline_pe, channels_location, good_labels);
+    [baseline_norm_pe,~] = filter_vector(baseline_norm_pe
+    
+    
 end
 
 num_participant = num_participant-1;
 % Average the spectrum accumulated
-result.baseline_avg_spectrum = baseline_avg_spectrum/num_participant;
-result.pain_avg_spectrum = pain_avg_spectrum/num_participant;
+result.baseline_spectrum = baseline_avg_spectrum/num_participant;
+result.pain_spectrum = pain_avg_spectrum/num_participant;
 result.frequencies_spectrum = frequencies_spectrum;
+
+% Average the topographic map accumulated
+result.baseline_td = baseline_avg_td/num_participant;
+result.pain_td = pain_avg_td/num_participant;
+
+% Add-in the location
+result.reduced_location = reduced_location;
 
 % Save these average participant to the output directory
 output_path = sprintf('%s/HEAVG.mat',base_dir);
@@ -118,7 +171,17 @@ function [filt_matrix, filt_location] = filter_matrix(matrix, location, good_lab
     % get channels to remove
     to_remove = get_to_remove(location, good_labels);
     
+    % copying the value
+    filt_matrix = matrix;
+    filt_location = location;
     
+    % removing the rows 
+    filt_matrix(to_remove,:) = [];
+    % removing the cols
+    filt_matrix(:,to_remove) = [];
+    
+    % removing the location
+    filt_location(to_remove) = [];
 end
 
 % Helper function to filter a vector of data based on labels
@@ -140,9 +203,9 @@ end
 function [to_remove] = get_to_remove(location,good_labels)
     % Iterating over the vector to find the channels to remove
     to_remove = [];
-    for i = 1:length(vector)
+    for i = 1:length(location)
         if(~is_in_labels(location(i).labels,good_labels))
-            to_remove = [to_remove, i];
+            to_remove = [to_remove,i];
         end
     end
 end
@@ -151,7 +214,7 @@ end
 function [is_exist] = is_in_labels(label,good_labels)
     is_exist = 0;
     for i = 1:length(good_labels)
-       if(strcmp(label,good_label{i}))
+       if(strcmp(label,good_labels{i}))
           is_exist = 1;
           break;
        end
