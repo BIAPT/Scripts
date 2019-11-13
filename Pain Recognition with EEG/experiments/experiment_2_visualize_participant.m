@@ -87,6 +87,10 @@ baseline_avg_norm_pe = zeros(1,min_channels);
 pain_avg_pe = zeros(1,min_channels);
 pain_avg_norm_pe = zeros(1,min_channels);
 
+% wPLI
+baseline_avg_wpli = zeros(min_channels,min_channels);
+pain_avg_wpli = zeros(min_channels,min_channels);
+
 % Channels location
 reduced_location = [];
 
@@ -141,6 +145,17 @@ for p_id = 1:num_participant
     pain_avg_pe = pain_avg_pe + pain_pe;
     pain_avg_norm_pe = pain_avg_norm_pe + pain_norm_pe;
     
+    %% Weighted Phase Lag Index
+    % Filter the wpli matrix and average through time
+    baseline_wpli = data.healthy.wpli.data.avg_wpli;
+    pain_wpli = data.healthy.wpli.data.avg_wpli;
+    
+    [baseline_wpli, ~] = filter_matrix(baseline_wpli, channels_location, good_labels);
+    [pain_wpli, ~] = filter_matrix(pain_wpli, channels_location, good_labels);
+    
+    % Accumulate the values
+    baseline_avg_wpli = baseline_avg_wpli + baseline_wpli;
+    pain_avg_wpli = pain_avg_wpli + pain_wpli;
     
 end
 
