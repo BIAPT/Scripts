@@ -175,6 +175,10 @@ result.baseline_norm_pe = baseline_avg_norm_pe/num_participant;
 result.pain_pe = pain_avg_pe/num_participant;
 result.pain_norm_pe = pain_avg_norm_pe/num_participant;
 
+% Average the weighted phase lag index accumulated
+result.baseline_wpli = baseline_avg_wpli/num_participant;
+result.pain_wpli = pain_avg_wpli/num_participant;
+
 % Add-in the location
 result.reduced_location = reduced_location;
 
