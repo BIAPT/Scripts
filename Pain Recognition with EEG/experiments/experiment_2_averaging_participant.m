@@ -5,17 +5,17 @@
 %}
 %% Make a script to iterate over the healthy participants folder
 % Setting up path variables
-base_dir = "/home/yacine/Documents/pain_and_eeg/results/healthy";
+base_dir = "/home/yacine/Documents/pain_and_eeg/results/msk";
 %% Setting up experiment variables (this will be shipped inside the helper function)
 % The variables are in the calculate_features function
 
 % The participants folder are named HE001 to HE014
 % we can generate them like this  sprintf('%03d',participant_id)
-num_participant = 12; % we have 12 because after that we have different labeling
+num_participant = 18; % we have 12 because after that we have different labeling
 participant_label = cell(num_participant,1);
 participant_path = cell(num_participant,1);
 for p_id = 1:num_participant
-    participant_label{p_id} = sprintf('HE%03d',p_id);
+    participant_label{p_id} = sprintf('ME%03d',p_id);
     participant_path{p_id} = sprintf('%s/%s',base_dir,participant_label{p_id});
 end
 
@@ -25,9 +25,6 @@ end
 labels = {};
 count = [];
 for p_id = 1:num_participant
-    if(p_id == 7)
-       continue 
-    end
 
     % Create the path
     data_path = sprintf('%s/%s.mat',base_dir,participant_label{p_id});
@@ -57,11 +54,11 @@ end
 % labels appeared in each EEG device.
 
 %% keep only the channels that have a equal to num_participant-1
-threshold = num_participant-1; % we are excluding HE007
+threshold = num_participant; % we are excluding HE007
 good_labels = {};
 index = 1;
 for i = 1:length(labels)
-    if(count(i) == num_participant-1)
+    if(count(i) == num_participant)
        good_labels{index} = labels{i};
        index = index + 1;
     end
@@ -100,9 +97,7 @@ reduced_location = [];
 
 for p_id = 1:num_participant
     disp(sprintf("Analyzing participant: %s",participant_label{p_id}));
-    if(p_id == 7)
-       continue 
-    end
+
     % Create the path
     data_path = sprintf('%s/%s.mat',base_dir,participant_label{p_id});
     
@@ -152,7 +147,7 @@ for p_id = 1:num_participant
     %% Weighted Phase Lag Index
     % Filter the wpli matrix and average through time
     baseline_wpli = data.healthy.wpli.data.avg_wpli;
-    pain_wpli = data.healthy.wpli.data.avg_wpli;
+    pain_wpli = data.hot_pain.wpli.data.avg_wpli;
     
     [baseline_wpli, ~] = filter_matrix(baseline_wpli, channels_location, good_labels);
     [pain_wpli, ~] = filter_matrix(pain_wpli, channels_location, good_labels);
@@ -164,7 +159,7 @@ for p_id = 1:num_participant
     %% directed Phase Lag Index
     % Filter the dpli matrix and average through time
     baseline_dpli = data.healthy.dpli.data.avg_dpli;
-    pain_dpli = data.healthy.dpli.data.avg_dpli;
+    pain_dpli = data.hot_pain.dpli.data.avg_dpli;
     
     [baseline_dpli, ~] = filter_matrix(baseline_dpli, channels_location, good_labels);
     [pain_dpli, ~] = filter_matrix(pain_dpli, channels_location, good_labels);
@@ -203,7 +198,7 @@ result.pain_dpli = pain_avg_dpli/num_participant;
 result.reduced_location = reduced_location;
 
 % Save these average participant to the output directory
-output_path = sprintf('%s/HEAVG.mat',base_dir);
+output_path = sprintf('%s/MEAVG.mat',base_dir);
 save(output_path, 'result')
 
 % Helper function to find out where the current channels is w/r to the

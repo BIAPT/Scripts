@@ -5,11 +5,11 @@
 %}
 %% Make a script to plot the healthy participants folder
 % Setting up path variables
-result_path = "";
+result_path = "/home/yacine/Documents/pain_and_eeg/results/msk/";
 
-type = 'Healthy Participant';
+type = 'MSK Participants';
 
-data = load(strcat(result_path,'HEAVG.mat'));
+data = load(strcat(result_path,'MEAVG.mat'));
 data = data.result;
 
 %% Making the Spectrogram plot
@@ -28,7 +28,7 @@ data = data.result;
 %make_wpli(data,type);
 
 %% Making the dPLI
-%make_dpli(data,type);
+make_dpli(data,type);
 
 function make_dpli(data,type)
     figure;
@@ -96,32 +96,40 @@ end
 function make_permutation_entropy(data,type)
     figure;
     analysis_technique = "Alpha Permutation Entropy";
-    subplot(1,3,1)
-    topographic_map(data.baseline_pe,data.reduced_location,'jet');
+    axe1 = subplot(1,3,1);
+    topographic_map(data.baseline_pe,data.reduced_location);
     title(strcat(type," ",analysis_technique, " Baseline"));
-    subplot(1,3,2)
-    topographic_map(data.pain_pe, data.reduced_location,'jet');
+    axe2 = subplot(1,3,2);
+    topographic_map(data.pain_pe, data.reduced_location);
     title(strcat(type," ",analysis_technique, " Hot"));
-    subplot(1,3,3)
+    axe3 = subplot(1,3,3);
     diff_pe = log(data.baseline_pe ./ data.pain_pe);
-    topographic_map(diff_pe,data.reduced_location,'hot');
+    topographic_map(diff_pe,data.reduced_location);
     title(strcat(type," ",analysis_technique, " Log Ratio (Baseline vs Hot)"));
+    % Add in the colorbar
+    colormap(axe1,'copper');
+    colormap(axe2, 'copper');
+    colormap(axe3, 'hot');
 
 end
 
 function make_topographic_map(data,type)
     figure;
     analysis_technique = "Alpha Power";
-    subplot(1,3,1)
-    topographic_map(data.baseline_td,data.reduced_location,'jet');
+    axe1 = subplot(1,3,1);
+    topographic_map(data.baseline_td,data.reduced_location);
     title(strcat(type," ",analysis_technique, " Baseline"));
-    subplot(1,3,2)
-    topographic_map(data.pain_td, data.reduced_location,'jet');
+    axe2 = subplot(1,3,2);
+    topographic_map(data.pain_td, data.reduced_location);
     title(strcat(type," ",analysis_technique, " Hot"));
-    subplot(1,3,3)
+    axe3 = subplot(1,3,3);
     diff_td = log(data.baseline_td ./ data.pain_td);
-    topographic_map(diff_td,data.reduced_location,'hot');
+    topographic_map(diff_td,data.reduced_location);
     title(strcat(type," ",analysis_technique, " Log Ratio (Baseline vs Hot)"));
+    % Add in the colorbar
+    colormap(axe1,'jet');
+    colormap(axe2, 'jet');
+    colormap(axe3, 'hot');
 end
 
 function make_spectrogram(data,type)
@@ -146,6 +154,7 @@ function make_spectrogram(data,type)
     ylabel("Log Ratio");
     title(strcat(type," ",analysis_technique, " Log Ratio(Baseline vs Hot)"));
 end
+
 
 function topographic_map(data,location)
     topoplot(data,location,'maplimits','absmax', 'electrodes', 'off');
