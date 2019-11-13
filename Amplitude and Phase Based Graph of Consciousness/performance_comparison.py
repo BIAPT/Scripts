@@ -34,10 +34,10 @@ def make_bar_plot(data1,conf1,data2,conf2,title):
 
 # data for Linear SVM with C=0.5
 mean_acc_wpli = [0.7903, 0.8322]
-conf_acc_wpli = [(0.815 - 0.737)/2, (0.8241-0.7515)/2]
+conf_acc_wpli = [(0.815 - 0.737)/2, (0.8442-0.7775)/2]
 mean_acc_aec = [0.8922, 0.7273]
-conf_acc_aec = [(0.911-0.854)/2, (0.7535 - 0.6691)/2]
-make_bar_plot(mean_acc_wpli, conf_acc_wpli, mean_acc_aec, conf_acc_aec, 'Mean Accuracy Against Baseline Decoding Graph Theory')
+conf_acc_aec = [(0.911-0.854)/2, (0.7579 - 0.6749)/2]
+make_bar_plot(mean_acc_wpli, conf_acc_wpli, mean_acc_aec, conf_acc_aec, 'Mean Accuracy Against Baseline Decoding with Graph Theory Features')
 
 # Unconsciousness : P  = 0.002
-# pre-ROC: TODO
+# pre-ROC: P  = 0.015

@@ -12,8 +12,8 @@ def load_data(path):
 
 
 
-path_aec = "aec_unconscious"
-path_wpli = "wpli_unconscious"
+path_aec = "aec_pre_roc"
+path_wpli = "wpli_pre_roc"
 
 aec = load_data(path_aec)
 wpli = load_data(path_wpli)
@@ -35,7 +35,7 @@ for value in range(increment, stop_p_value, increment):
     bound_aec_unconscious = (aec[lb_index], aec[ub_index])
     bound_wpli_unconscious = (wpli[lb_index], wpli[ub_index])
 
-    if(aec[lb_index] > wpli[ub_index]):
+    if(wpli[lb_index] > aec[ub_index]):
         print("P  = " + str(p))
         break
     else:

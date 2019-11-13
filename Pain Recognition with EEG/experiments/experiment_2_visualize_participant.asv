@@ -62,13 +62,10 @@ good_labels = {};
 index = 1;
 for i = 1:length(labels)
     if(count(i) == num_participant-1)
-       good_labels{index} = labels{i};
+       good_label{index} = labels{i};
        index = index + 1;
     end
 end
-
-% Get the new num of channels
-min_channels = length(good_labels);
 
 %% Iterate over all the participant and gather the baseline and pain
 result = struct();
@@ -121,17 +118,7 @@ function [filt_matrix, filt_location] = filter_matrix(matrix, location, good_lab
     % get channels to remove
     to_remove = get_to_remove(location, good_labels);
     
-    % copying the value
-    filt_matrix = matrix;
-    filt_location = location;
     
-    % removing the rows 
-    filt_matrix(to_remove,:) = [];
-    % removing the cols
-    filt_matrix(:,to_remove) = [];
-    
-    % removing the location
-    filt_location(to_remove) = [];
 end
 
 % Helper function to filter a vector of data based on labels
