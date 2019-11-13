@@ -91,6 +91,10 @@ pain_avg_norm_pe = zeros(1,min_channels);
 baseline_avg_wpli = zeros(min_channels,min_channels);
 pain_avg_wpli = zeros(min_channels,min_channels);
 
+% dPLI
+baseline_avg_dpli = zeros(min_channels,min_channels);
+pain_avg_dpli = zeros(min_channels,min_channels);
+
 % Channels location
 reduced_location = [];
 
@@ -157,6 +161,18 @@ for p_id = 1:num_participant
     baseline_avg_wpli = baseline_avg_wpli + baseline_wpli;
     pain_avg_wpli = pain_avg_wpli + pain_wpli;
     
+    %% directed Phase Lag Index
+    % Filter the dpli matrix and average through time
+    baseline_dpli = data.healthy.dpli.data.avg_dpli;
+    pain_dpli = data.healthy.dpli.data.avg_dpli;
+    
+    [baseline_dpli, ~] = filter_matrix(baseline_dpli, channels_location, good_labels);
+    [pain_dpli, ~] = filter_matrix(pain_dpli, channels_location, good_labels);
+    
+    % Accumulate the values
+    baseline_avg_dpli = baseline_avg_dpli + baseline_dpli;
+    pain_avg_dpli = pain_avg_dpli + pain_dpli;
+    
 end
 
 num_participant = num_participant-1;
@@ -178,6 +194,10 @@ result.pain_norm_pe = pain_avg_norm_pe/num_participant;
 % Average the weighted phase lag index accumulated
 result.baseline_wpli = baseline_avg_wpli/num_participant;
 result.pain_wpli = pain_avg_wpli/num_participant;
+
+% Average the directed phase lag index accumulated
+result.baseline_dpli = baseline_avg_dpli/num_participant;
+result.pain_dpli = pain_avg_dpli/num_participant;
 
 % Add-in the location
 result.reduced_location = reduced_location;
