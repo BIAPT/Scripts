@@ -25,26 +25,29 @@ from utils import load_time, write_header, Experiment
 # Signal analysis import
 from signals import pre_process
 
-# #settnings for session Oct 31st
-# TPSDictionary = [
-# ["TPS001689" , "P1"],
-# ["TPS001491" , "P2"],
-# ["TPS001353" , "P3"],
-# ["TPS001123" , "P4"],
-# ["TPS001484" , "P5"],
-# ["TPS001376" , "P6"],
-# ["TPS001254" , "P7"],
-# ["TPS001822" , "P8"],
-# ["ABSENT" , "P9"],
-# ["ABSENT" , "P10"],
-# ["ABSENT" , "P11"],
-# ["TPS001472" , "P12"],
-# ["ABSENT" , "P13"]]
-# session = "Session_Oct_31"
+
+
+# #mappings for session Oct 31st
+# experiment_info = {
+#     "P1":"TPS001689",
+#     "P2":"TPS001491",
+#     "P3":"TPS001353".
+#     "P4":"TPS001123",
+#     "P5":"TPS001484",
+#     "P6":"TPS001376",
+#     "P7":"TPS001254",
+#     "P8":"TPS001822",
+#     "P9":"ABSENT",
+#     "P10":"ABSENT",
+#     "P11":"ABSENT",
+#     "P12":"TPS001472",
+#     "P13":"ABSENT",
+#     "session":"Session_Oct_31",
+#     "num_participant":13
+# }
 
 
 #mappings for session Nov 7th
-# JSON format is abit easier to work with
 experiment_info = {
     "P1":"TP001689",
     "P2":"ABSENT",
@@ -64,13 +67,33 @@ experiment_info = {
 }
 
 
-# Input and ouput paths (set these up so that it works with your computer)
-# input_path = os.path.join("C:\\","Users","biomusic","Desktop", session)
-# # output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
-# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
+# #mappings for session Nov 14th
+# experiment_info = {
+#     "P1":"TP001376",
+#     "P2":"TP001884",
+#     "P3":"TP001353",
+#     "P4":"ABSENT",
+#     "P5":"ABSENT",
+#     "P6":"TP001689",
+#     "P7":"TP001254",
+#     "P8":"TP001822",
+#     "P9":"TP001491",
+#     "P10":"TP001354",
+#     "P11":"TP001472",
+#     "P12":"TP001484",
+#     "P13":"TP001123",
+#     "session":"Session_Nov_14",
+#     "num_participant":13
+# }
 
-input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])
-output_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_out")
+
+# Input and ouput paths (set these up so that it works with your computer)
+input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
+# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
+output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
+
+# input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])
+# output_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_out")
 
 # Get the timestamp of when the script was run 
 # We do this here so that all file created when this is run 
