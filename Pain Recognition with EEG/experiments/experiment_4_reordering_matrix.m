@@ -14,13 +14,12 @@ type = 'MSK Participants';
 data = load(strcat(result_path,'HEAVG.mat'));
 data = data.result;
 
-%{
 data.baseline_wpli = reorder_matrix(data.baseline_wpli, label_order,data.reduced_location);
 data.baseline_dpli = reorder_matrix(data.baseline_dpli, label_order,data.reduced_location);
 
 data.pain_wpli = reorder_matrix(data.pain_wpli, label_order, data.reduced_location);
 data.pain_dpli = reorder_matrix(data.pain_dpli, label_order, data.reduced_location);
-%}
+
 
 make_dpli(data,type,label_order);
 make_wpli(data,type,label_order);
