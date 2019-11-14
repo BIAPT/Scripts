@@ -68,7 +68,7 @@ experiment_info = {
 # # output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
 # output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
 
-input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",session)
+input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])
 output_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_out")
 
 # Get the timestamp of when the script was run 
