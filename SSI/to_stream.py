@@ -63,18 +63,15 @@ session = "Session_Nov_7"
 
 
 # Input and ouput paths (set these up so that it works with your computer)
-<<<<<<< HEAD
 input_path = os.path.join("C:\\","Users","biomusic","Desktop", session)
 # output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
 output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
-=======
 #input_path = os.path.join("C:\\","Users","biomusic","Desktop", session)
 #output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
 #output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
 input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",session)
 output_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_out")
 
->>>>>>> 7a8f3b9f97ce4c232877817910994804760ab922
 TPS1 = ""
 TPS2 = ""
 TPS3 = ""
