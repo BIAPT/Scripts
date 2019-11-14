@@ -1,5 +1,4 @@
 <chain>
-	<meta frameStep="1s" leftContext="0ms" rightContext="1s"/>
 	<feature>
 		<item create="PythonFeature" script="find_max_change_eda.py" syspath="."/>
 	</feature>
