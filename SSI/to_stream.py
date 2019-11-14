@@ -59,18 +59,18 @@ experiment_info = {
     "P11":"TP001472",
     "P12":"TP001884",
     "P13":"TP001123",
-    "session":"Session_Nov_7",
+    "session":"test_session",
     "num_participant":13
 }
 
 
 # Input and ouput paths (set these up so that it works with your computer)
-# input_path = os.path.join("C:\\","Users","biomusic","Desktop", session)
-# # output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
-# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
+input_path = os.path.join("C:\\","Users","biomusic","Desktop", session)
+# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
+output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
 
-input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])
-output_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_out")
+# input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])
+# output_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_out")
 
 # Get the timestamp of when the script was run 
 # We do this here so that all file created when this is run 
