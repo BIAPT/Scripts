@@ -108,7 +108,6 @@ def one_euro(x,y):
     return filt_y
 
 # Averaging
-# TODO: This could be improved with slicing instead of accumulating an array
 def window_average(timestamps, data, window_size=0.5):  
     '''
         window averaging with a jumping window (default is 0.5 seconds)

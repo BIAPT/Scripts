@@ -1,0 +1,5 @@
+<chain>
+	<feature>
+		<item create="PythonFeature" script="max_abs_change_temp.py" syspath="."/>
+	</feature>
+</chain>
