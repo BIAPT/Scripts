@@ -86,13 +86,20 @@ experiment_info = {
 # }
 
 
+<<<<<<< HEAD
 # Input and ouput paths (set these up so that it works with your computer)
+# input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
+# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
+# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
+=======
+#Input and ouput paths (set these up so that it works with your computer)
 input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
 output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
-# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
+#output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
+>>>>>>> dbee7f3114752c7f7ad71db62303e867b62eeb49
 
-# input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])
-# output_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_out")
+input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])
+output_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_out")
 
 # Get the timestamp of when the script was run 
 # We do this here so that all file created when this is run 
@@ -237,6 +244,7 @@ for colorfolder in listdir(input_path):
 
             # Write the header
             # For information about the header see utils.py
+            num_row = len(processed_data)
             new_sample_rate = 2 # in Hz
             header_file = open(stream_name.replace("stream~","stream"),"w")
             write_header(header_file, new_sample_rate, t_now, t_utc, num_row)
