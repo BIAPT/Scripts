@@ -227,7 +227,7 @@ for colorfolder in listdir(input_path):
             raw_file.close()
 
             # Pre-process the data
-            processed_data = pre_process(raw_time, raw_data, data_type, sample_rate)
+            processed_data = pre_process(raw_time, raw_data, data_type)
 
             # write the data to the stream file
             for data_pts in processed_data:

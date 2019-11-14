@@ -23,13 +23,14 @@ def cubic_spline_smoothing(x, y, p=0.01, new_sampling_rate=2):
     filter = csaps.UnivariateCubicSmoothingSpline(x, y, smooth=p)
     
     # Calculate an approximative sampling rate
-    current_sampling_rate = (x[-1] - x[0]) / (1000*len(x)) # The time is in milliseconds so we put them in seconds
+    #current_sampling_rate = (x[-1] - x[0]) / (1000*len(x)) # The time is in milliseconds so we put them in seconds
     
     # get the ratio of augmentation
-    ratio = new_sampling_rate / current_sampling_rate
+    #ratio = new_sampling_rate / current_sampling_rate
 
+    new_len = new_sampling_rate * ((x[-1] - x[0])/1000)
     # Augment the data to match the wanted sampling rate
-    filt_x = np.linspace(x[0], x[-1], ratio*len(x))
+    filt_x = np.linspace(x[0], x[-1], new_len)
     filt_y = filter(filt_x)
 
     return (filt_x, filt_y)
@@ -149,7 +150,7 @@ def window_average(timestamps, data, window_size=0.5):
 
 # Pre processing function that will apply the pre-processing technique
 # based on what analysis technique we are working with.
-def pre_process(timestamps, data, data_type, sample_rate):
+def pre_process(timestamps, data, data_type):
     print("Preprocessing: " + data_type)
 
     # Window averaging at 2Hz (0.5seconds)
