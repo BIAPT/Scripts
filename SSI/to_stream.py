@@ -26,21 +26,20 @@ from utils import load_time, write_header, Experiment
 from signals import pre_process
 
 
-
 # #mappings for session Oct 31st
 # experiment_info = {
-#     "P1":"TPS001689",
-#     "P2":"TPS001491",
-#     "P3":"TPS001353".
-#     "P4":"TPS001123",
-#     "P5":"TPS001484",
-#     "P6":"TPS001376",
-#     "P7":"TPS001254",
-#     "P8":"TPS001822",
+#     "P1":"TP001689",
+#     "P2":"TP001491",
+#     "P3":"TP001353",
+#     "P4":"TP001123",
+#     "P5":"TP001484",
+#     "P6":"TP001376",
+#     "P7":"TP001254",
+#     "P8":"TP001822",
 #     "P9":"ABSENT",
 #     "P10":"ABSENT",
 #     "P11":"ABSENT",
-#     "P12":"TPS001472",
+#     "P12":"TP001472",
 #     "P13":"ABSENT",
 #     "session":"Session_Oct_31",
 #     "num_participant":13
@@ -87,10 +86,17 @@ experiment_info = {
 # }
 
 
+<<<<<<< HEAD
+# Input and ouput paths (set these up so that it works with your computer)
+# input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
+# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
+# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
+=======
 #Input and ouput paths (set these up so that it works with your computer)
-#input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
-#output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
+input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
+output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
 #output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
+>>>>>>> dbee7f3114752c7f7ad71db62303e867b62eeb49
 
 input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])
 output_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_out")
@@ -130,8 +136,6 @@ for colorfolder in listdir(input_path):
     # Here we iterate through the color path session folder
     for sessionfolder in listdir(color_path):
         session_path = color_path + os.sep + sessionfolder
-        print(session_path)
-
         sessions_path = os.path.join(session_path,"sessions.csv")
         sessionfile = open(sessions_path, "r")
         
@@ -175,13 +179,13 @@ for colorfolder in listdir(input_path):
                 continue # skip hrv too
             elif "EDA" in filename:
                 data_type = "EDA"
-                sample_rate = 15.0
+                sample_rate = 2.0
             elif "TEMP" in filename:
                 data_type = "TEMP"
-                sample_rate = 15.0
+                sample_rate = 2.0
             elif "HR" in filename:
                 data_type = "HR"
-                samplerate = 15.0
+                samplerate = 2.0
             else:
                 continue
 
