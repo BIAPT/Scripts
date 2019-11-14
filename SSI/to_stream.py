@@ -59,13 +59,13 @@ experiment_info = {
     "P11":"TP001472",
     "P12":"TP001884",
     "P13":"TP001123",
-    "session":"test_session",
+    "session":"Session_Nov_7",
     "num_participant":13
 }
 
 
 # Input and ouput paths (set these up so that it works with your computer)
-input_path = os.path.join("C:\\","Users","biomusic","Desktop", session)
+input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
 # output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
 output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
 
