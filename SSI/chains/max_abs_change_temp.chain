@@ -1,4 +1,5 @@
 <chain>
+	<meta frameStep="1s" leftContext="0ms" rightContext="1s"/>
 	<feature>
 		<item create="PythonFeature" script="max_abs_change_temp.py" syspath="."/>
 	</feature>

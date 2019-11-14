@@ -5,7 +5,7 @@ import csaps
 import numpy as np 
 
 # Visualization imports
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 # Filters
 def cubic_spline_smoothing(x, y, p=0.01, new_sampling_rate=2):
