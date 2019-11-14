@@ -2,16 +2,17 @@
 
 % The idea is to have a vector of labels that maps to the ordering we want
 % to see
-label_order = {'Fp1','Fp2','F3','F4','C3','Cz','C4','T5','T6','P3','Pz','P4','O1'};
-
+%label_order={'Fp1','Fp2','F3','F4','C3','Cz','C4','T5','T6','P3','Pz','P4','O1'}; healthy
+%
+label_order={'F3','Fz', 'F4', 'C3','C4','Pz','P4','O1'};
 % We are working with the data structure which has reduced_locations
 
 % Setting up path variables
-result_path = "";
+result_path = "/home/yacine/Documents/pain_and_eeg/results/msk/";
 
-type = 'MSK Participants';
+type = 'MSK Average Participant';
 
-data = load(strcat(result_path,'HEAVG.mat'));
+data = load(strcat(result_path,'MEAVG.mat'));
 data = data.result;
 
 data.baseline_wpli = reorder_matrix(data.baseline_wpli, label_order,data.reduced_location);
