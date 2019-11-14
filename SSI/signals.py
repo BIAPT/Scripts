@@ -27,10 +27,11 @@ def cubic_spline_smoothing(x, y, p=0.01, new_sampling_rate=2):
     
     # get the ratio of augmentation
     ratio = new_sampling_rate / current_sampling_rate
+
     # Augment the data to match the wanted sampling rate
     filt_x = np.linspace(x[0], x[-1], ratio*len(x))
-
     filt_y = filter(filt_x)
+
     return (filt_x, filt_y)
 
 def exponential_decay(y, alpha=0.95):
@@ -126,8 +127,6 @@ def window_average(timestamps, data, window_size=0.5):
     # Iterating through each windows
     for start_t in range(timestamps[0], timestamps[-1], window_size):
         
-        # Adding the timestamp to be the middle of the average window
-        avg_timestamps.append(start_t + (window_size/2))
         curr_data = []
         current_t = timestamps[current_i]
         end_t = start_t + window_size
@@ -139,8 +138,14 @@ def window_average(timestamps, data, window_size=0.5):
             if current_i >= len(timestamps):
                 break
             current_t = timestamps[current_i]
+        
+        # If there is nothing in this time window we don't add it
+        if len(curr_data) != 0:
+            avg_data.append(np.mean(curr_data))
 
-        avg_data.append(np.mean(curr_data))
+            # Adding the timestamp to be the middle of the average window
+            avg_timestamps.append(start_t + (window_size/2))
+
     return (avg_timestamps, avg_data)
 
 # Pre processing function that will apply the pre-processing technique
@@ -154,18 +159,15 @@ def pre_process(timestamps, data, data_type, sample_rate):
     # Pre-processing (if you want to tweak them change them here!)
     if data_type == "EDA":
         filt_data = one_euro(avg_timestamps, avg_data)
-        plt.plot( timestamps, data, 'o', avg_timestamps, filt_data, '-')
-        plt.show()
+        #plt.plot( timestamps, data, 'o', avg_timestamps, filt_data, '-')
+        #plt.show()
     elif data_type == "TEMP":
         filt_data = exponential_decay(avg_data)
-        plt.plot( timestamps, data, 'o', avg_timestamps, filt_data, '-')
-        plt.show()
+        #plt.plot( timestamps, data, 'o', avg_timestamps, filt_data, '-')
+        #plt.show()
     elif data_type == "HR":
-        plt.plot(avg_timestamps)
-        plt.show()
-
         (filt_timestamps, filt_data) = cubic_spline_smoothing(avg_timestamps, avg_data)
-        plt.plot(timestamps, data, 'o', filt_timestamps, filt_data, '-')
-        plt.show()
+        #plt.plot(timestamps, data, 'o', filt_timestamps, filt_data, '-')
+        #plt.show()
         
     return filt_data
