@@ -11,7 +11,7 @@ base_dir = "/home/yacine/Documents/pain_and_eeg/results/msk";
 
 % The participants folder are named HE001 to HE014
 % we can generate them like this  sprintf('%03d',participant_id)
-num_participant = 18; % we have 12 because after that we have different labeling
+num_participant = 65; % we have 12 because after that we have different labeling
 participant_label = cell(num_participant,1);
 participant_path = cell(num_participant,1);
 for p_id = 1:num_participant
