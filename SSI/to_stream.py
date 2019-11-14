@@ -184,9 +184,9 @@ for colorfolder in listdir(input_path):
                 line = line.split(';')
 
                 # Get the timestamp and time point
-                timestamp = int(line[0]) - start_time
+                
+                timestamp = int(line[0]) - start_time 
                 data = float(line[1])
-
                 # If this timestamp is negative meaning its before the time we care about
                 # we skip it
                 if timestamp < 0:
@@ -217,6 +217,7 @@ for colorfolder in listdir(input_path):
 
             # Write the header
             # For information about the header see utils.py
+            new_sample_rate = 2 # in Hz
             header_file = open(stream_name.replace("stream~","stream"),"w")
-            write_header(header_file, sample_rate, t_now, t_utc, num_row)
+            write_header(header_file, new_sample_rate, t_now, t_utc, num_row)
             header_file.close()

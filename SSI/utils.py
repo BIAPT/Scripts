@@ -5,7 +5,7 @@ def load_time(filename):
     time_file = open(filename, "r")
     time = time_file.readline()
     time_file.close()
-    return int(float(time))
+    return int(float(time))*1000 # small hack to make it fit with Mathieu's data
 
 # Write the header file, I've put it here as we don't need to parse XTML when reading the to_stream code
 def write_header(header_file, sample_rate, t_now, t_utc, num_row):
