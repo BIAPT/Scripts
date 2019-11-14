@@ -10,6 +10,7 @@ import datetime
 import time
 import glob
 import zipfile
+import math
 
 # Data management import
 import pandas as pd
@@ -147,9 +148,8 @@ for colorfolder in listdir(input_path):
                 
             participant_dir = curr_participant.saving_path
 
-            if "BVP" in filename:
-                data_type = "BVP"
-                sample_rate = 300.0
+            if "HRV" in filename or "BVP" in filename or "TEMPR" in filename or "STR" in filename: 
+                continue # skip hrv too
             elif "EDA" in filename:
                 data_type = "EDA"
                 sample_rate = 15.0
@@ -159,9 +159,6 @@ for colorfolder in listdir(input_path):
             elif "HR" in filename:
                 data_type = "HR"
                 samplerate = 15.0
-            elif "STR" in filename:
-                data_type = "STR"
-                samplerate = -1.0 # What do we do with this?
             else:
                 continue
 
@@ -186,9 +183,22 @@ for colorfolder in listdir(input_path):
                 line = line.replace(" ", "").rstrip()
                 line = line.split(';')
 
-                # get the timestamp and the data points
-                raw_time.append(int(line[0]))
-                raw_data.append(float(line[1]))
+                # Get the timestamp and time point
+                timestamp = int(line[0]) - start_time
+                data = float(line[1])
+
+                # If this timestamp is negative meaning its before the time we care about
+                # we skip it
+                if timestamp < 0:
+                    continue
+
+                # Checking for nan value and replacing them with dummy value
+                if(math.isnan(data)):
+                    data = 0 # Here we can set it to other thing than 0
+
+                # Store the raw data
+                raw_time.append(timestamp)
+                raw_data.append(data)
 
                 # Increase the number of row
                 num_row+=1
@@ -197,7 +207,7 @@ for colorfolder in listdir(input_path):
             raw_file.close()
 
             # Pre-process the data
-            processed_data = raw_data#pre_process(raw_time, raw_data, data_type, sample_rate)
+            processed_data = pre_process(raw_time, raw_data, data_type, sample_rate)
 
             # write the data to the stream file
             for data_pts in processed_data:
