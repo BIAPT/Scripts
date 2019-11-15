@@ -5,7 +5,7 @@
 %}
 %% Make a script to plot the healthy participants folder
 % Setting up path variables
-result_path = "/home/yacine/Documents/pain_and_eeg/results/msk/";
+result_path = "";
 
 type = 'MSK Participants';
 
@@ -13,7 +13,7 @@ data = load(strcat(result_path,'MEAVG.mat'));
 data = data.result;
 
 %% Making the Spectrogram plot
-%make_spectrogram(data,type);
+make_spectrogram(data,type);
 
 %% Making the topographic map plot
 %make_topographic_map(data,type);
@@ -28,4 +28,4 @@ data = data.result;
 %make_wpli(data,type);
 
 %% Making the dPLI
-make_dpli(data,type);
+%make_dpli(data,type);
