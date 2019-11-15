@@ -46,6 +46,13 @@ for p_id = 1:num_participant
         continue
     end
     
+    % There is a problem with that participant
+    if(p_id == 40)
+        
+        continue
+        
+    end
+    
     %% Spectrogram
     % Add up the spectrograms (and average them across time)
     baseline_avg_spectrum = baseline_avg_spectrum + mean(data.healthy.sp.data.spectrums,1);
@@ -59,11 +66,11 @@ for p_id = 1:num_participant
     if(first_participant == 1)
         m_location = channels_location;
         num_channel = length(m_location);
-        fist_participant = 0; % turn the switch off
+        first_participant = 0; % turn the switch off
         
         % topo
         baseline_avg_td = zeros(1, num_channel);
-        pain_avg_td = zeros(1,mnum_channel);
+        pain_avg_td = zeros(1,num_channel);
 
         % pe
         baseline_avg_pe = zeros(1,num_channel);
@@ -262,7 +269,7 @@ end
 function [is_present] = is_label_present(label,location)
     is_present = 0;
     for i = 1:length(location)
-       if(strcmp(label,location{i}))
+       if(strcmp(label,location(i).labels))
           is_present = 1;
           return
        end
