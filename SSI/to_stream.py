@@ -41,65 +41,61 @@ from signals import pre_process
 #     "P11":"ABSENT",
 #     "P12":"TP001472",
 #     "P13":"ABSENT",
+#     "P14": "TP001354", #gargabe data from this sensor
 #     "session":"Session_Oct_31",
-#     "num_participant":13
+#     "num_participant":14
 # }
 
 
-#mappings for session Nov 7th
-experiment_info = {
-    "P1":"TP001689",
-    "P2":"ABSENT",
-    "P3":"TP001353",
-    "P4":"ABSENT",
-    "P5":"ABSENT",
-    "P6":"TP001376",
-    "P7":"TP001254",
-    "P8":"TP001822",
-    "P9":"TP001491",
-    "P10":"TP001354",
-    "P11":"TP001472",
-    "P12":"TP001884",
-    "P13":"TP001123",
-    "session":"Session_Nov_7",
-    "num_participant":13
-}
-
-
-# #mappings for session Nov 14th
+# #mappings for session Nov 7th
 # experiment_info = {
-#     "P1":"TP001376",
-#     "P2":"TP001884",
+#     "P1":"TP001689",
+#     "P2":"ABSENT",
 #     "P3":"TP001353",
 #     "P4":"ABSENT",
 #     "P5":"ABSENT",
-#     "P6":"TP001689",
+#     "P6":"TP001376",
 #     "P7":"TP001254",
 #     "P8":"TP001822",
 #     "P9":"TP001491",
 #     "P10":"TP001354",
 #     "P11":"TP001472",
-#     "P12":"TP001484",
+#     "P12":"TP001884",
 #     "P13":"TP001123",
-#     "session":"Session_Nov_14",
+#     "session":"Session_Nov_7",
 #     "num_participant":13
 # }
 
 
-<<<<<<< HEAD
-# Input and ouput paths (set these up so that it works with your computer)
-# input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
-# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
-# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
-=======
+#mappings for session Nov 14th
+experiment_info = {
+    "P1":"TP001376",
+    "P2":"TP001884",
+    "P3":"TP001353",
+    "P4":"TP001123",
+    "P5":"ABSENT",
+    "P6":"TP001689",
+    "P7":"TP001254",
+    "P8":"TP001822",
+    "P9":"ABSENT",
+    "P10":"TP001354",
+    "P11":"TP001472",
+    "P12":"TP001484",
+    "P13":"TP001491",
+    "session":"Session_Nov_14",
+    "num_participant":13
+}
+
+
+
 #Input and ouput paths (set these up so that it works with your computer)
 input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
 output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
 #output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
->>>>>>> dbee7f3114752c7f7ad71db62303e867b62eeb49
 
-input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])
-output_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_out")
+
+# input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])
+# output_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_out")
 
 # Get the timestamp of when the script was run 
 # We do this here so that all file created when this is run 
@@ -174,7 +170,8 @@ for colorfolder in listdir(input_path):
                 continue
                 
             participant_dir = curr_participant.saving_path
-
+            if not os.path.exists(participant_dir):
+                os.makedirs(participant_dir)
             if "HRV" in filename or "BVP" in filename or "TEMPR" in filename or "STR" in filename: 
                 continue # skip hrv too
             elif "EDA" in filename:
@@ -191,7 +188,6 @@ for colorfolder in listdir(input_path):
 
             # open our input file
             raw_file = open(session_path + os.sep + filename, "r")
-
             #open .stream and .stream~ output files with the naming that NOVA likes (role.type.stream)
             stream_name = os.path.join(participant_dir, "user." + data_type + ".stream~")
             stream_file = open(stream_name, "w")
