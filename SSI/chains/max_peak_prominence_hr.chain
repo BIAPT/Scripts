@@ -1,5 +1,8 @@
 <chain>
-	<meta frameStep="5s"/>
+	<meta frameStep="5ms" leftContext="0ms" rightContext="5ms"/>
+	<register>
+		<item name="python"/>
+	</register>
 	<feature>
 		<item create="PythonFeature" script="max_peak_prominence_hr.py" syspath="."/>
 	</feature>
