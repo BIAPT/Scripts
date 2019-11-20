@@ -1,9 +1,9 @@
 <chain>
-	<meta frameStep="10ms" leftContext="0ms" rightContext="10ms"/>
+	<meta frameStep="500ms" leftContext="0ms" rightContext="500ms"/>
 	<register>
 		<item name="python"/>
 	</register>
 	<feature>
-		<item create="PythonFeature" script="find_max_change_eda.py" syspath="."/>
+		<item create="PythonFeature" script="max_change_eda" syspath="."/>
 	</feature>
 </chain>
