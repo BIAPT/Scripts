@@ -4,11 +4,11 @@
 % to see
 %label_order={'Fp1','Fp2','F3','F4','C3','Cz','C4','T5','T6','P3','Pz','P4','O1'}; healthy
 %
-%label_order={'F3','Fz', 'F4', 'C3','C4','Pz','P4','O1'};
+label_order={'F3','Fz', 'F4', 'C3','C4','Pz','P4','O1'};
 % We are working with the data structure which has reduced_locations
 
 % This is for the full dataset
-label_order = {'Fp1','Fp2','F3','Fz','F4','F7','F8','C3','Cz','C4','T3','T4','T5','T6','P3','Pz','P4','O1','O2'};
+%label_order = {'Fp1','Fp2','F3','Fz','F4','F7','F8','C3','Cz','C4','T3','T4','T5','T6','P3','Pz','P4','O1','O2'};
 % Setting up path variables
 result_path = "";
 
