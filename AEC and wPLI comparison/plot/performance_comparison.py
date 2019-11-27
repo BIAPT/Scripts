@@ -21,12 +21,13 @@ def make_bar_plot(data1,conf1,data2,conf2,title):
     rects2 = ax.bar(ind + width/2, data2, width, label='AEC', yerr=conf2)
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
-    ax.set_ylabel('Accuracy')
-    ax.set_title(title)
+    ax.set_ylabel('Accuracy', fontsize=16)
+    ax.set_title(title , fontsize=20)
     ax.set_xticks(ind)
-    ax.set_xticklabels(classes)
+    ax.set_xticklabels(classes,fontsize=18)
+    ax.tick_params(labelsize=18)
     ax.set_ylim([0,1])
-    ax.legend()
+    ax.legend(fontsize=14)
 
     fig.tight_layout()
     plt.show()

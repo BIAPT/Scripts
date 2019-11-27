@@ -1,5 +1,5 @@
 '''
-    Code written by Yacine Mahdid using Parisa ruby code (tostream.rb)
+    Code written by Parisa and Yacine Mahdid ruby code (tostream.rb)
     We are rewritting the ruby code because most of the pre-processing is already done in Python.
 '''
 
@@ -9,36 +9,114 @@ from os import listdir
 import datetime
 import time
 import glob
+import zipfile
+import math
+
+# Data management import
+import pandas as pd
 
 # Filters Imports
 import sys
 
-# Input and ouput paths (set these up so that it works with your computer)
-input_path = os.path.join("C:\\","Users","biomusic","Desktop","Session_Nov_7")
-output_path = os.path.join("C:\\","Users","biomusic","Desktop","Session_Nov_7_streams") #this should be changed to put straight in NOVA
-TPS1 = ""
-TPS2 = ""
-TPS1Dir = ""
-TPS2Dir = ""
+# Utils import
+# This is where most of the helper methods are, I did that to increase the readability of the code
+from utils import load_time, write_header, Experiment
 
-#to-do (Parisa)
-#Implement a way to map each TPS folder to the participant's ID number, so that it always put
-#all data from each participant together, even though they did not wear the same sensor
-#in each session
+# Signal analysis import
+from signals import pre_process
 
-TPSDictionary = [
-["TPS001491" , "P1"],
-["TPS001354" , "P2"],
-["TPS001689" , "P3"],
-["TPS001123" , "P4"],
-["TPS001472" , "P5"],
-["TPS001484" , "P6"],
-["TPS001822" , "P7"],
-["TPS001254" , "P8"],
-["TPS001376" , "P9"],
-["TPS001353" , "P10"],
-["TPS001884" , "P11"]]
 
+# #mappings for session Oct 31st
+# experiment_info = {
+#     "P1":"TP001689",
+#     "P2":"TP001491",
+#     "P3":"TP001353",
+#     "P4":"TP001123",
+#     "P5":"TP001484",
+#     "P6":"TP001376",
+#     "P7":"TP001254",
+#     "P8":"TP001822",
+#     "P9":"ABSENT",
+#     "P10":"ABSENT",
+#     "P11":"ABSENT",
+#     "P12":"TP001472",
+#     "P13":"ABSENT",
+#     "P14": "TP001354", #gargabe data from this sensor
+#     "session":"Session_Oct_31",
+#     "num_participant":14
+# }
+
+
+# #mappings for session Nov 7th
+# experiment_info = {
+#     "P1":"TP001689",
+#     "P2":"ABSENT",
+#     "P3":"TP001353",
+#     "P4":"ABSENT",
+#     "P5":"ABSENT",
+#     "P6":"TP001376",
+#     "P7":"TP001254",
+#     "P8":"TP001822",
+#     "P9":"TP001491",
+#     "P10":"TP001354",
+#     "P11":"TP001472",
+#     "P12":"TP001884",
+#     "P13":"TP001123",
+#     "session":"Session_Nov_7",
+#     "num_participant":13
+# }
+
+
+#mappings for session Nov 14th
+experiment_info = {
+    "P1":"TP001376",
+    "P2":"TP001884",
+    "P3":"TP001353",
+    "P4":"TP001123",
+    "P5":"ABSENT",
+    "P6":"TP001689",
+    "P7":"TP001254",
+    "P8":"TP001822",
+    "P9":"ABSENT",
+    "P10":"TP001354",
+    "P11":"TP001472",
+    "P12":"TP001484",
+    "P13":"TP001491",
+    "session":"Session_Nov_14",
+    "num_participant":13
+}
+
+# #mappings for session Nov 21st
+# experiment_info = {
+#     "P1":"TP001376",
+#     "P2":"TP001884",
+#     "P3":"TP001353",
+#     "P4":"ABSENT",
+#     "P5":"ABSENT",
+#     "P6":"TP001689",
+#     "P7":"TP001254",
+#     "P8":"TP001822",
+#     "P9":"TP001491",
+#     "P10":"TP001354",
+#     "P11":"TP001472",
+#     "P12":"TP001484",
+#     "P13":"TP001123",
+#     "session":"Session_Nov_21",
+#     "num_participant":13
+# }
+
+
+
+
+#Input and ouput paths (set these up so that it works with your computer)
+input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
+output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
+# input_path = os.path.join("C:\\","Users","biomusic","Desktop", "test_session")
+# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
+
+
+# input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])
+# output_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_out")
 
 # Get the timestamp of when the script was run 
 # We do this here so that all file created when this is run 
@@ -46,23 +124,12 @@ TPSDictionary = [
 t_now = datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 t_utc = datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")
 
+# In unix time, this is used to ignore some data
+start_time = load_time("start_recording_time.txt")
 
-# Pre processing function that will apply the pre-processing technique
-# based on what analysis technique we are working with.
-def pre_process(timestamps, data_pts, data_type, sample_rate):
-    print("Preprocessing: " + data_type)
-
-    # Pre-processing (if you want to tweak them change them here!)
-    if data_type == "BVP":
-        data_pts = data_pts
-    elif data_type == "EDA":
-        data_pts = data_pts
-    elif data_type == "TEMP":
-        data_pts = data_pts
-    elif data_type == "HR":
-        data_pts = data_pts
-        
-    return data_pts
+# We setup the experiment using the experiment_info defined above
+# this will take care of structuring our file structure
+experiment = Experiment(experiment_info, output_path)
 
 
 #Getting into the folder that contains the recording data.
@@ -71,113 +138,133 @@ def pre_process(timestamps, data_pts, data_type, sample_rate):
 #So each color folder, contains another folder with the session name
 #and inside that folder are the recorded data from that phone.
 for colorfolder in listdir(input_path):
+    # If we see a file that doesn't end with zip we skip it
+    if not ".zip" in colorfolder:
+        continue
+
+    # Here we unzip the file
+    print("extracting... " + colorfolder)
     color_path = input_path + os.sep + colorfolder
+    with zipfile.ZipFile(color_path, 'r') as zip_ref:
+        # we remove the .zip extension
+        color_path = color_path.replace(".zip","") 
+        #then we extract
+        zip_ref.extractall(color_path)
+    
+    
+    # Here we iterate through the color path session folder
     for sessionfolder in listdir(color_path):
         session_path = color_path + os.sep + sessionfolder
-        for root, dirs, recordingfiles in os.walk(session_path):
-            for filename in recordingfiles:
-                #the recorded files are not named based on the TPS we got recording from
-                #however, the name of the TPSs are stored in session file
-                #so we have to read inside of it and create the folders with the corresponding TPS name
-                if "session" in filename:
-                    sessionfile = open(session_path + os.sep + filename, "r")
-                    contents =sessionfile.read()
-                    #for now, we only have two TPS connected to each phone
-                    #but this can be changed to support more
-                    TPS1 = "TPS" + contents.split("TP")[1].split(",")[0]
-                    TPS2 = "TPS" + contents.split("TP")[2].split(";")[0]
-                    for [TPSID,ParID] in TPSDictionary:
-                        if TPSID == TPS1:
-                            TPS1Dir = os.path.join(output_path,ParID)
-                            print("Sensor: " + TPS1 + " on the phone color: " + colorfolder + " for participant: " + ParID)
-                        if TPSID == TPS2:
-                            TPS2Dir = os.path.join(output_path,ParID)
-                            print("Sensor: " + TPS2 + " on the phone color: " + colorfolder + " for participant: " + ParID)
-                    
+        sessions_path = os.path.join(session_path,"sessions.csv")
+        sessionfile = open(sessions_path, "r")
+        
+        # Here we are using pandas to load the data into an easy to manage
+        # dataframe
+        session_df = pd.read_csv(sessionfile, delimiter=";")
+        tps_names = session_df['deviceNames'][0].split(',')
+        TPS_to_one_phone = len(tps_names)
 
-                    if not os.path.exists(TPS1Dir):
-                        os.mkdir(TPS1Dir)
-                    if not os.path.exists(TPS2Dir):
-                        os.mkdir(TPS2Dir)
+        # Get all the participants we need for the analysis
+        # set their position too using tps_names
+        curr_participants = []
+        for i in range(0,len(tps_names)):
+            print(tps_names[i])
+            # get the participant by tps name
+            participant = experiment.get_participant(tps_names[i])
+            # set his position in the experiment
+            participant.set_position(i+1)
+            # add to current participants
+            curr_participants.append(participant)
+
+        # Iterate through each recording files
+        for filename in listdir(session_path):
+            
+            # Get the participant that match the current file
+            if filename.endswith("1.csv"):
+                curr_participant = curr_participants[0]
+            elif filename.endswith("2.csv"):
+                curr_participant = curr_participants[1]
+            elif filename.endswith("3.csv"):
+                curr_participant = curr_participants[2]
+            elif filename.endswith("4.csv"):
+                curr_participant = curr_participants[3]
+            else:
+                # We skip it if it doesn't contain data
+                continue
+                
+            participant_dir = curr_participant.saving_path
+            if not os.path.exists(participant_dir):
+                os.makedirs(participant_dir)
+            if "HRV" in filename or "BVP" in filename or "TEMPR" in filename or "STR" in filename: 
+                continue # skip hrv too
+            elif "EDA" in filename:
+                data_type = "EDA"
+                sample_rate = 2.0
+            elif "TEMP" in filename:
+                data_type = "TEMP"
+                sample_rate = 2.0
+            elif "HR" in filename:
+                data_type = "HR"
+                samplerate = 2.0
+            else:
+                continue
+
+            # open our input file
+            raw_file = open(session_path + os.sep + filename, "r")
+            #open .stream and .stream~ output files with the naming that NOVA likes (role.type.stream)
+            stream_name = os.path.join(participant_dir, "user." + data_type + ".stream~")
+            stream_file = open(stream_name, "w")
+            print("Output file: " + stream_name)
+            print("Output file: " + stream_name.replace("stream~", "stream"))
 
 
-            for filename in recordingfiles:
-                #the recorded files end either with 1 or 2 which shows the file was recorded
-                #either from the first TPS on the session file or the second TPS
-                if filename.endswith("1.csv"):
-                    tps_dir = TPS1Dir
-                elif filename.endswith("2.csv"):
-                    tps_dir = TPS2Dir
+            # Read the input file line by line and
+            num_row = 0 # keep track of the number of row written for the stream file
+            raw_file.readline()
+            
+            raw_time = []
+            raw_data = []
+            for line in raw_file.readlines():
+                # Strip nenwline and split the line
+                line = line.replace(" ", "").rstrip()
+                line = line.split(';')
 
-                if "BVP" in filename:
-                    data_type = "BVP"
-                    sample_rate = 300.0
-                elif "EDA" in filename:
-                    data_type = "EDA"
-                    sample_rate = 15.0
-                elif "TEMP" in filename:
-                    data_type = "TEMP"
-                    sample_rate = 15.0
-                elif "HR" in filename:
-                    data_type = "HR"
-                    samplerate = 15.0
-                elif "STR" in filename:
-                    data_type = "STR"
-                    samplerate = -1.0 # What do we do with this?
-                else:
+                # Get the timestamp and time point
+                
+                timestamp = int(line[0]) - start_time 
+                data = float(line[1])
+                # If this timestamp is negative meaning its before the time we care about
+                # we skip it
+                if timestamp < 0:
                     continue
 
-                # open our input file
-                raw_file = open(session_path + os.sep + filename, "r")
+                # Checking for nan value and replacing them with dummy value
+                if(math.isnan(data)):
+                    data = 0 # Here we can set it to other thing than 0
 
-                #open .stream and .stream~ output files with the naming that NOVA likes (role.type.stream)
-                stream_name = "user." + data_type + ".stream~"
-                stream_file = open(tps_dir + os.sep + stream_name, "w")
-                header_file = open(tps_dir + os.sep + stream_name.replace("stream~","stream"),"w")
-                print("Output file: " + stream_name)
-                print("Output file: " + stream_name.replace("stream~", "stream"))
+                # Store the raw data
+                raw_time.append(timestamp)
+                raw_data.append(data)
 
+                # Increase the number of row
+                num_row+=1
 
-                # Read the input file line by line and
-                num_row = 0 # keep track of the number of row written for the stream file
-                raw_file.readline()
-                
-                raw_time = []
-                raw_data = []
-                for line in raw_file.readlines():
-                    # Strip nenwline and split the line
-                    line = line.replace(" ", "").rstrip()
-                    line = line.split(';')
+            # Closing our file pointers
+            raw_file.close()
 
-                    # get the timestamp and the data points
-                    raw_time.append(int(line[0]))
-                    raw_data.append(float(line[1]))
+            # Pre-process the data
+            processed_data = pre_process(raw_time, raw_data, data_type)
 
-                    # Increase the number of row
-                    num_row+=1
+            # write the data to the stream file
+            for data_pts in processed_data:
+                # Write each points on each line
+                stream_file.write(str(data_pts) + "\n")
+            stream_file.close()
 
-                # Closing our file pointers
-                raw_file.close()
-
-                # Pre-process the data
-                processed_data = pre_process(raw_time, raw_data, data_type, sample_rate)
-
-                # write the data to the stream file
-                for data_pts in processed_data:
-                    # Write each points on each line
-                    stream_file.write(str(data_pts) + "\n")
-                stream_file.close()
-
-
-                # Write the header
-                tab = "\t" # for readability
-                header_file.write("<?xml version=\"1.0\" ?>\n")
-                header_file.write("<stream ssi-v=\"2\">\n")
-                header_file.write(tab + "<info ftype=\"ASCII\" sr=\"" + str(sample_rate) + "\" dim=\"1\" byte=\"4\" type=\"FLOAT\" delim=\";\" />\n")
-                header_file.write(tab + "<meta />\n") # Not sure why we need this XML tag?
-                header_file.write(tab + "<time ms=\"0\" local=\"" + t_now + "\" system=\"" + t_utc + "\"/>\n")
-                header_file.write(tab + "<chunk from=\"0.000000\" to=\"" + str(num_row/sample_rate) + "\" byte=\"0\" num=\"" + str(num_row) + "\"/>\n")
-                header_file.write("</stream>\n")
-
-                # Closing the file pointer
-                header_file.close()
+            # Write the header
+            # For information about the header see utils.py
+            num_row = len(processed_data)
+            new_sample_rate = 2 # in Hz
+            header_file = open(stream_name.replace("stream~","stream"),"w")
+            write_header(header_file, new_sample_rate, t_now, t_utc, num_row)
+            header_file.close()

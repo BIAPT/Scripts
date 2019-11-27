@@ -12,32 +12,18 @@
 		<output channel="cursor" pin="cursor" />
 	</sensor>
 	
-	<!-- python 
-	
-		script  = script name (omit .py)
-		optsstr = override option provided in the script (getOptions() function)
-				  e.g. "global=false" will set option "global" to false (to overide several options separate by ;) 
-		syspath = string with directories that will be added to python's syspath (by default ., if several separate by ;)
-		
-	-->
-	
 	<!-- output cursor position to console/file -->
-	<transformer create="Chain" path="filter_chain">
-    	<input pin="cursor" frame="0.2s"/>
-    	<output pin="exp_decay_filter"/>
-	</transformer>  
-
-	<transformer create="Chain" path="feature_chain">
-    	<input pin="cursor" frame="0.1s" delta="0.4s"/>
-    	<output pin="energy"/>
+	<transformer create="Chain" path="max_peak_prominence_hr">
+    	<input pin="cursor" frame="0.5s"/>
+    	<output pin="hr_pk_prominence"/>
 	</transformer>  
 	
 	<!-- visualization 	 -->
 	<consumer create="SignalPainter:plot" title="CURSOR" size="10.0">
 		<input pin="cursor" frame="0.2s" />		
 	</consumer>
-	<consumer create="SignalPainter:plot-energy" title="exp decay filter" size="10.0">
-		<input pin="exp_decay_filter" frame="0.2s" />		
+	<consumer create="SignalPainter:plot" title="HR Peak Prominence" size="10.0">
+		<input pin="hr_pk_prominence" frame="0.5s" />		
 	</consumer>
 	
 	<!-- decoration -->
