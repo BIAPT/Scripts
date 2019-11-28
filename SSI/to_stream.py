@@ -67,12 +67,31 @@ from signals import pre_process
 # }
 
 
-#mappings for session Nov 14th
+# #mappings for session Nov 14th
+# experiment_info = {
+#     "P1":"TP001376",
+#     "P2":"TP001884",
+#     "P3":"TP001353",
+#     "P4":"TP001123",
+#     "P5":"ABSENT",
+#     "P6":"TP001689",
+#     "P7":"TP001254",
+#     "P8":"TP001822",
+#     "P9":"ABSENT",
+#     "P10":"TP001354",
+#     "P11":"TP001472",
+#     "P12":"TP001484",
+#     "P13":"TP001491",
+#     "session":"Session_Nov_14",
+#     "num_participant":13
+# }
+
+#mappings for session Nov 21st
 experiment_info = {
     "P1":"TP001376",
     "P2":"TP001884",
     "P3":"TP001353",
-    "P4":"TP001123",
+    "P4":"ABSENT",
     "P5":"ABSENT",
     "P6":"TP001689",
     "P7":"TP001254",
@@ -81,38 +100,21 @@ experiment_info = {
     "P10":"TP001354",
     "P11":"TP001472",
     "P12":"TP001484",
-    "P13":"TP001491",
-    "session":"Session_Nov_14",
-    "num_participant":13
+    "P13":"TP001123",
+    "P14":"ABSENT",
+    "P15":"TP001491",
+    "session":"Session_Nov_21",
+    "num_participant":15
 }
-
-# #mappings for session Nov 21st
-# experiment_info = {
-#     "P1":"TP001376",
-#     "P2":"TP001884",
-#     "P3":"TP001353",
-#     "P4":"ABSENT",
-#     "P5":"ABSENT",
-#     "P6":"TP001689",
-#     "P7":"TP001254",
-#     "P8":"TP001822",
-#     "P9":"TP001491",
-#     "P10":"TP001354",
-#     "P11":"TP001472",
-#     "P12":"TP001484",
-#     "P13":"TP001123",
-#     "session":"Session_Nov_21",
-#     "num_participant":13
-# }
 
 
 
 
 #Input and ouput paths (set these up so that it works with your computer)
 input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
-output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
+# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
 # input_path = os.path.join("C:\\","Users","biomusic","Desktop", "test_session")
-# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
+output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
 
 
 # input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])

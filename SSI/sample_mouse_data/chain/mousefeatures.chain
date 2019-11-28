@@ -1,0 +1,9 @@
+<chain>
+	<meta frameStep="1.0s" leftContext="0" rightContext="0"/>
+	<register>		
+		<item name="python"/>
+	</register>	
+	<feature>
+		<item create="PythonFeature" script="mouse_features" syspath="." optsstr=""/>
+	</feature>
+</chain>
