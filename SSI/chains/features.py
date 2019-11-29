@@ -15,9 +15,19 @@ def find_max_peak_prominence(data):
 
 # Helper function for finding derivative numerically
 def find_derivative(x,y):
-    dy = np.zeros(y.shape,np.float)
+    print("shapes of y and x:")
+    print(y.shape)
+    print(x.shape)
+    print("shapes of dy and dx:")
+    print(np.diff(y).shape)
+    print(np.diff(x).shape)
+
+    #changed this line to create the array dy from the shape of dy
+    # dy = np.zeros(y.shape,np.float)
+    dy = np.zeros(np.diff(y).shape,np.float)
     dy[0:-1] = np.diff(y)/np.diff(x)
-    dy[-1] = (y[-1] - y[-2])/(x[-1] - x[-2])
+    #now there is this error here: IndexError: index -2 is out of bounds for axis 0 with size 1
+    dy[-1] = (y[-1] - y[-2])/(x[-1] - x[-2]) 
     return dy
 
 # Feature for temperature

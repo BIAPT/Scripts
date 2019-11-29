@@ -1,9 +1,9 @@
 <chain>
-	<meta frameStep="500ms" leftContext="0ms" rightContext="500ms"/>
+	<meta frameStep="500ms" leftContext="0" rightContext="0"/>
 	<register>
 		<item name="python"/>
 	</register>
 	<feature>
-		<item create="PythonFeature" script="max_abs_change_temp" syspath='.'/>
+		<item create="PythonFeature" script="max_abs_change_temp" syspath="." optsstr=""/>
 	</feature>
 </chain>
