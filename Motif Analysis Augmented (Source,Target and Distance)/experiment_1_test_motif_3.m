@@ -8,6 +8,7 @@
 %% Using real data to test the motif_3.m script inside the NA library
 
 % Load the data whatever it is
+%{
 data_folder = '/test_data'; % where the data is
 filename = 'test_data.set'; % which data you want to run this analysis on
 [filepath,name,ext] = fileparts(mfilename('fullpath'));
@@ -22,21 +23,30 @@ number_surrogate = 20; % Number of surrogate wPLI to create
 p_value = 0.05; % the p value to make our test on
 step_size = window_size;
 result_dpli = na_dpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
-
+%}
 % Variables initialization for motif analysis
 network = make_phase_lead(result_dpli.data.avg_dpli);
 number_rand_network = 10;
 bin_swaps = 10;
 weight_frequency = 0.1;
-[intensity, coherence, frequency] = motif_3(network, number_rand_network, bin_swaps, weight_frequency);
+[intensity, coherence, frequency, source, target, distance] = motif_3(network, number_rand_network, bin_swaps, weight_frequency);
 
 % Here we will normalize the output of this (only the frequency) and plot
 % it
 
 % We normalize by using the z score
 [norm_frequency] = normalize_motif(frequency);
+plot_motif(norm_frequency(7,:),"Motif 7 at alpha",result_dpli.metadata.channels_location,'summer');
+plot_motif(norm_frequency(1,:),"Motif 1 at alpha",result_dpli.metadata.channels_location,'summer');
+
 
 % Here we will plot a topographic map of the motif of interest
-for i = 1:13
-    plot_motif(norm_frequency(i,:),strcat("Motif ",string(i)," at alpha"),result_dpli.metadata.channels_location,'hot');
-end
+%for i = 1:13
+    %plot_motif(norm_frequency(i,:),strcat("Motif ",string(i)," at alpha"),result_dpli.metadata.channels_location,'hot');
+%end
+
+norm_source = normalize_motif(source);
+norm_target = normalize_motif(target);
+plot_motif(norm_source(7,:),"Source Location of Motif 7 at Alpha ",result_dpli.metadata.channels_location,'hot');
+plot_motif(norm_source(1,:),"Source Location of Motif 1 at Alpha ",result_dpli.metadata.channels_location,'hot');
+plot_motif(norm_target(1,:),"Target Location of Motif 1 at Alpha ",result_dpli.metadata.channels_location,'winter');
