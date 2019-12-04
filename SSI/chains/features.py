@@ -23,8 +23,8 @@ def find_derivative(x,y):
     print(np.diff(x).shape)
 
     #changed this line to create the array dy from the shape of dy
-    # dy = np.zeros(y.shape,np.float)
-    dy = np.zeros(np.diff(y).shape,np.float)
+    dy = np.zeros(y.shape,np.float)
+    # dy = np.zeros(np.diff(y).shape,np.float)
     dy[0:-1] = np.diff(y)/np.diff(x)
     #now there is this error here: IndexError: index -2 is out of bounds for axis 0 with size 1
     dy[-1] = (y[-1] - y[-2])/(x[-1] - x[-2]) 
