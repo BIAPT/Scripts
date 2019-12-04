@@ -107,14 +107,35 @@ experiment_info = {
     "num_participant":15
 }
 
+#mappings for session Nov 21st
+experiment_info = {
+    "P1":"TP001376",
+    "P2":"TP001884",
+    "P3":"TP001353",
+    "P4":"ABSENT",
+    "P5":"ABSENT",
+    "P6":"TP001689",
+    "P7":"TP001254",
+    "P8":"TP001822",
+    "P9":"TP001491",
+    "P10":"TP001354",
+    "P11":"TP001472",
+    "P12":"TP001484",
+    "P13":"TP001123",
+    "P14":"ABSENT",
+    "P15":"ABSENT",
+    "session":"Session_Dec_5",
+    "num_participant":15
+}
+
 
 
 
 #Input and ouput paths (set these up so that it works with your computer)
 input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
-# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
+output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
 # input_path = os.path.join("C:\\","Users","biomusic","Desktop", "test_session")
-output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
+# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
 
 
 # input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])
@@ -127,7 +148,7 @@ t_now = datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 t_utc = datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")
 
 # In unix time, this is used to ignore some data
-start_time = load_time("start_recording_time.txt")
+start_time = load_time(os.path.join(input_path,"start_recording_time.txt"))
 
 # We setup the experiment using the experiment_info defined above
 # this will take care of structuring our file structure
