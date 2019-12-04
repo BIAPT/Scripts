@@ -37,16 +37,8 @@ weight_frequency = 0.1;
 % We normalize by using the z score
 [norm_frequency] = normalize_motif(frequency);
 plot_motif(norm_frequency(7,:),"Motif 7 at alpha",result_dpli.metadata.channels_location,'summer');
-plot_motif(norm_frequency(1,:),"Motif 1 at alpha",result_dpli.metadata.channels_location,'summer');
-
-
-% Here we will plot a topographic map of the motif of interest
-%for i = 1:13
-    %plot_motif(norm_frequency(i,:),strcat("Motif ",string(i)," at alpha"),result_dpli.metadata.channels_location,'hot');
-%end
 
 norm_source = normalize_motif(source);
 norm_target = normalize_motif(target);
 plot_motif(norm_source(7,:),"Source Location of Motif 7 at Alpha ",result_dpli.metadata.channels_location,'hot');
-plot_motif(norm_source(1,:),"Source Location of Motif 1 at Alpha ",result_dpli.metadata.channels_location,'hot');
-plot_motif(norm_target(1,:),"Target Location of Motif 1 at Alpha ",result_dpli.metadata.channels_location,'winter');
+plot_motif(norm_target(7,:),"Target Location of Motif 7 at Alpha ",result_dpli.metadata.channels_location,'winter');
