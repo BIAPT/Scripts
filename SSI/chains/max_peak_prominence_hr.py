@@ -27,7 +27,11 @@ def transform_enter(sin, sout, sxtras, board, opts, vars): # redundant
 
 
 def transform(info, sin, sout, sxtras, board, opts, vars):   
-    sout = find_max_peak_prominence(sin)
+	y = np.asarray(sin).flatten()
+    features = find_max_peak_prominence(y)
+    print("SOUT IS: ")
+    print(features)    
+    sout = features
 
 def transform_flush(sin, sout, sxtras, board, opts, vars):  # redundant 
     pass

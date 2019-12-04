@@ -1,5 +1,5 @@
 <chain>
-	<meta frameStep="500ms" leftContext="0ms" rightContext="500ms"/>
+	<meta frameStep="15s" leftContext="0ms" rightContext="0ms"/>
 	<register>
 		<item name="python"/>
 	</register>
