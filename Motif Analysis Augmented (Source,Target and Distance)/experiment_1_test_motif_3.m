@@ -29,7 +29,8 @@ network = make_phase_lead(result_dpli.data.avg_dpli);
 number_rand_network = 10;
 bin_swaps = 10;
 weight_frequency = 0.1;
-[intensity, coherence, frequency, source, target, distance] = motif_3(network, number_rand_network, bin_swaps, weight_frequency);
+channels_location = result_dpli.metadata.channels_location;
+[intensity, coherence, frequency, source, target, distance] = motif_3(network, channels_location, number_rand_network, bin_swaps, weight_frequency);
 
 % Here we will normalize the output of this (only the frequency) and plot
 % it
@@ -38,7 +39,12 @@ weight_frequency = 0.1;
 [norm_frequency] = normalize_motif(frequency);
 plot_motif(norm_frequency(7,:),"Motif 7 at alpha",result_dpli.metadata.channels_location,'summer');
 
+% Source and target
 norm_source = normalize_motif(source);
 norm_target = normalize_motif(target);
 plot_motif(norm_source(7,:),"Source Location of Motif 7 at Alpha ",result_dpli.metadata.channels_location,'hot');
 plot_motif(norm_target(7,:),"Target Location of Motif 7 at Alpha ",result_dpli.metadata.channels_location,'winter');
+
+% distances
+norm_distance = normalize_motif(distance);
+plot_motif(norm_distance(7,:), "Connection Distance of Motif 7 at Alpha", result_dpli.metadata.channels_location,'bone');
