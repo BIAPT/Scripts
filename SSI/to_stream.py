@@ -1,6 +1,5 @@
 '''
-    Code written by Parisa and Yacine Mahdid ruby code (tostream.rb)
-    We are rewritting the ruby code because most of the pre-processing is already done in Python.
+    Code written by Parisa and Yacine Mahdid
 '''
 
 # General Import
@@ -11,6 +10,7 @@ import time
 import glob
 import zipfile
 import math
+import shutil
 
 # Data management import
 import pandas as pd
@@ -43,7 +43,8 @@ from signals import pre_process
 #     "P13":"ABSENT",
 #     "P14": "TP001354", #gargabe data from this sensor
 #     "session":"Session_Oct_31",
-#     "num_participant":14
+#     "num_participant":14,
+#     "crashed_phones": []
 # }
 
 
@@ -63,28 +64,30 @@ from signals import pre_process
 #     "P12":"TP001884",
 #     "P13":"TP001123",
 #     "session":"Session_Nov_7",
-#     "num_participant":13
+#     "num_participant":13,
+#     "crashed_phones": []    
 # }
 
 
-#mappings for session Nov 14th
-experiment_info = {
-    "P1":"TP001376",
-    "P2":"TP001884",
-    "P3":"TP001353",
-    "P4":"TP001123",
-    "P5":"ABSENT",
-    "P6":"TP001689",
-    "P7":"TP001254",
-    "P8":"TP001822",
-    "P9":"ABSENT",
-    "P10":"TP001354",
-    "P11":"TP001472",
-    "P12":"TP001484",
-    "P13":"TP001491",
-    "session":"Session_Nov_14",
-    "num_participant":13
-}
+# #mappings for session Nov 14th
+# experiment_info = {
+#     "P1":"TP001376",
+#     "P2":"TP001884",
+#     "P3":"TP001353",
+#     "P4":"TP001123",
+#     "P5":"ABSENT",
+#     "P6":"TP001689",
+#     "P7":"TP001254",
+#     "P8":"TP001822",
+#     "P9":"ABSENT",
+#     "P10":"TP001354",
+#     "P11":"TP001472",
+#     "P12":"TP001484",
+#     "P13":"TP001491",
+#     "session":"Session_Nov_14",
+#     "num_participant":13,
+#     "crashed_phones": []
+# }
 
 # #mappings for session Nov 21st
 # experiment_info = {
@@ -104,7 +107,8 @@ experiment_info = {
 #     "P14":"ABSENT",
 #     "P15":"TP001491",
 #     "session":"Session_Nov_21",
-#     "num_participant":15
+#     "num_participant":15,
+#     "crashed_phones": []   
 # }
 
 # #mappings for session Dec 5th
@@ -125,21 +129,23 @@ experiment_info = {
 #     "P14":"ABSENT",
 #     "P15":"ABSENT",
 #     "session":"Session_Dec_5",
-#     "num_participant":15
+#     "num_participant":15,
+#     "crashed_phones": []    
 # }
 
 
 
 
-#Input and ouput paths (set these up so that it works with your computer)
+crashed_phones = experiment_info["crashed_phones"]
+
 input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
 output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
-# input_path = os.path.join("C:\\","Users","biomusic","Desktop", "test_session")
+# input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
 # output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
-
 
 # input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])
 # output_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_out")
+
 
 # Get the timestamp of when the script was run 
 # We do this here so that all file created when this is run 
@@ -155,6 +161,93 @@ start_time = load_time(os.path.join(input_path,"start_recording_time.txt"))
 experiment = Experiment(experiment_info, output_path)
 
 
+
+already_glued = False
+def glue(colorpath1):
+    #find out the second part of the folder we want to glue
+    if "1" in colorpath1:
+        colorpath2 = colorpath1.replace("1","2") + ".zip"
+    elif "2" in colorpath1:
+        colorpath2 = colorpath1.replace("2","1") + ".zip"
+
+    #extract the second folder
+    with zipfile.ZipFile(colorpath2, 'r') as zip_ref:
+        print("extracting..." + colorpath2)
+        colorpath2 = colorpath2.replace(".zip","") 
+        zip_ref.extractall(colorpath2)
+
+    #create a new folder, with the name of the creashed phone to put the glued data in
+    outputcolor = os.path.join(input_path, crashed_phone)
+    if not os.path.exists(outputcolor):
+        os.makedirs(outputcolor)
+
+    for sessionfolder1 in listdir(colorpath1):
+        sessionpath1 = colorpath1 + os.sep + sessionfolder1
+        #create the session folder in the creashed phone folder
+        outputpath = os.path.join(input_path, crashed_phone, sessionfolder1)
+        if not os.path.exists(outputpath):
+            os.makedirs(outputpath)
+
+        for filename1 in listdir(sessionpath1):
+            #we only need these three data. so we run through them to glueeeee
+            if "_HR_" in filename1 or "_TEMP_" in filename1 or "_EDA_" in filename1:
+                #the name of the output glued file can be the same as the files of the first part of the data
+                outputfile = open(outputpath + os.sep + filename1, "w+")
+                inputfile1 = open(sessionpath1 + os.sep + filename1, "r")
+                #read each lines of the first part of data and write them on output file
+                for line1 in inputfile1.readlines():
+                    outputfile.write(line1)
+                #keep the last line, to calculate the time gap between the files that is to be filled with NaN
+                last_line = line1
+
+                for sessionfolder2 in listdir(colorpath2):
+                    sessionpath2 = colorpath2 + os.sep + sessionfolder2
+                    for filename2 in listdir(sessionpath2):
+                        #find the second part of the file that we are working on 
+                        if filename1[-9:] ==  filename2[-9:]:
+                            print(filename1)
+                            print(filename2)
+                            inputfile2 = open(sessionpath2 + os.sep + filename2, "r")
+                            discard = inputfile2.readline() #discard the second file's header
+                            first_line = inputfile2.readline()
+
+                            #the last timestamp of the first file
+                            timestamp1 = int(last_line.split(";")[0])
+                            #the first timestamp of the second file
+                            timestamp2 = int(first_line.split(";")[0])
+
+                            
+                            if "EDA" in filename1:
+                                SamplingRate = 15
+                            elif "TEMP" in filename1:
+                                SamplingRate = 15
+                            elif "HR" in filename1:
+                                SamplingRate = 5
+                            elif "BVP" in filename1:
+                                SamplingRate = 300
+
+                            #write NaN for the gap between two timestamps
+                            i = 1
+                            TS = timestamp1
+                            while TS < timestamp2 - (1000/15):
+                                TS = timestamp1 + round(i*1000*(1/SamplingRate))
+                                if TS < timestamp2:
+                                    outputfile.write(str(TS) + ";NaN" + '\n')
+                                    i += 1
+
+                            #continue writing the second file on the output file
+                            outputfile.write(first_line)
+                            for line2 in inputfile2.readlines():
+                                outputfile.write(line2)
+
+            #copy the session file that contains the information about TPS IDs to the output folder
+            elif "session" in filename1:
+                print("copying the session file...")
+                shutil.copyfile(sessionpath1 + os.sep + filename1, outputpath + os.sep + filename1)
+    
+    return outputcolor
+
+
 #Getting into the folder that contains the recording data.
 #When importing data from each phone, after unzipping the compressed session file,
 #it should be named as the color of the phone.
@@ -162,13 +255,13 @@ experiment = Experiment(experiment_info, output_path)
 #and inside that folder are the recorded data from that phone.
 for colorfolder in listdir(input_path):
     if ".zip" in colorfolder:
-        if "orange" in colorfolder:
-            start_time = load_time(os.path.join(input_path,"start_recording_time_orange.txt"))
-        else:
-            start_time = load_time(os.path.join(input_path,"start_recording_time.txt"))
-        print(colorfolder)
-        print("start time:")
-        print(start_time)
+        # if "orange" in colorfolder:
+        #     start_time = load_time(os.path.join(input_path,"start_recording_time_orange.txt"))
+        # else:
+        #     start_time = load_time(os.path.join(input_path,"start_recording_time.txt"))
+        # print(colorfolder)
+        # print("start time:")
+        # print(start_time)
 
 
         # Here we unzip the file
@@ -179,7 +272,25 @@ for colorfolder in listdir(input_path):
             color_path = color_path.replace(".zip","") 
             #then we extract
             zip_ref.extractall(color_path)
-        
+            
+        #if we have already glued using the first folder of this color,
+        #skip this folder entirely, because its data is already glued and became stream files
+        if already_glued:
+            #make this false, for other crashed phones that might exist
+            already_glued = False
+            continue      
+
+        for crashed_phone in crashed_phones:
+            #if this folder we are at, is either the first of second part of the crashed phone data
+            if crashed_phone in colorfolder:
+                if not already_glued:
+                    print("glueing..." + crashed_phone)
+                    #glue this file to its second folder, using "glue" function
+                    #the function returns the path where the glued data is stored as the output
+                    #so we continue creating stream files from the glued data.
+                    color_path = glue(color_path)
+                    already_glued = True
+
         
         # Here we iterate through the color path session folder
         for sessionfolder in listdir(color_path):
