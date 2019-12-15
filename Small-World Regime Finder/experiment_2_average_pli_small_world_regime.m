@@ -3,7 +3,7 @@
 % the 'small-world regime range' as defined in Basset et al (2008). 
 
 % modified by Yacine Mahdid 2019-12-12
-
+%{
 % Experiment Variables
 filename = 'MDFA17_BASELINE.set';
 filepath = 'C:\Users\biapt\Desktop\motif fix\mdfa17_data';
@@ -25,6 +25,19 @@ threshold_range = 0.01:0.005:0.60; %range of thresholds to sweep
 recording = load_set(filename,filepath);
 
 pli_matrix = result_wpli.data.avg_wpli;
+%}
+threshold_range = 0.01:0.01:0.60; %range of thresholds to sweep
+%{
+number_ranomd_network = 100;
+random_networks = zeros(number_random_network,length(pli_matrix),length(pli_matrix));
+
+parfor r = 1:number_random_network
+    disp(strcat("Random network #",string(r)));
+    % Create the random network based on the pli matrix instead of the
+    % binary network
+    [random_networks(r,:,:),~] = null_model_und_sign(pli_matrix,10,0.1);    % generate random matrix
+end
+%}
 
 
 %loop through thresholds
@@ -46,14 +59,11 @@ for j = 1:length(threshold_range)
     total_random_lambda = 0;
     total_random_clustering_coef = 0;
     for r = 1:number_random_network
-        disp(strcat("Random network #",string(r)));
         % Create the random network based on the pli matrix instead of the
         % binary network
-        [random_network,~] = null_model_und_sign(b_network,10,0.1);    % generate random matrix
-        %random_t_network = threshold_matrix(random_network, current_threshold);
-        %random_b_network = binarize_matrix(random_t_network);
-        
-        random_b_network = random_network;
+        random_network = squeeze(random_networks(r,:,:));
+        random_t_network = threshold_matrix(random_network, current_threshold);
+        random_b_network = binarize_matrix(random_t_network);
         
         [rlambda,rgeff,~,~,~] = charpath(distance_bin(random_b_network),0,0);   % charpath for random network
         random_clustering_coef = clustering_coef_bu(random_b_network); % cc for random network
@@ -71,7 +81,7 @@ for j = 1:length(threshold_range)
 end
 
 figure
-title("MDFA17 Average wPLI Binary Small Worldness with 0.5% increment");
 plot(threshold_range, bsw)
+title("MDFA17 Average wPLI Binary Small Worldness with 1% increment");
 xlabel('Network threshold (%)')
 ylabel('Binary small-worldness')
