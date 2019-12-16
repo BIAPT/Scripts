@@ -13,7 +13,7 @@
 data_location = 'C:\Users\biapt\Desktop\motif_analysis_dst\dPLI\';
 output_location = 'C:\Users\biapt\Desktop\motif_analysis_dst\motif\';
 
-participant = 'MDFA03';
+participant = 'MDFA05';
 epochs = {'EC1', 'IF5', 'EF5', 'EL30', 'EL10', 'EL5', 'EC8'};
 frequency = 'alpha';
 
@@ -46,11 +46,6 @@ for e_i = 1:length(epochs)
     % Calculate the frequency/source/target/distance of each motifs
     motifs = struct();
     [motifs.frequency, motifs.source, motifs.target, motifs.distance] = motif_3(network, channels_location, number_rand_network, bin_swaps, weight_frequency);
-    
-    % Generate all figures for this particular participant
-    plot_motif(motifs.frequency, motifs.source, motifs.target, motifs.distance,channels_location, strcat(participant,' at ',epochs{e_i}),1);
-    plot_motif(motifs.frequency, motifs.source, motifs.target, motifs.distance,channels_location, strcat(participant,' at ',epochs{e_i}),7);
-
     
     output_filename = strcat(output_location,participant,'_',epochs{e_i},'_motif.mat');
     save(output_filename,'motifs');
