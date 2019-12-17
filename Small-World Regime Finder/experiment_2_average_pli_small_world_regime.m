@@ -3,8 +3,9 @@
 % the 'small-world regime range' as defined in Basset et al (2008). 
 
 % modified by Yacine Mahdid 2019-12-12
-%{
+%
 % Experiment Variables
+
 filename = 'MDFA17_BASELINE.set';
 filepath = 'C:\Users\biapt\Desktop\motif fix\mdfa17_data';
 recording = load_set(filename, filepath);
@@ -17,28 +18,12 @@ p_value = 0.05; % the p value to make our test on
 step_size = window_size;
 result_wpli = na_wpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
 
-
 % Network Properties Parameters
-number_random_network = 10;
-threshold_range = 0.01:0.005:0.60; %range of thresholds to sweep
-
-recording = load_set(filename,filepath);
 
 pli_matrix = result_wpli.data.avg_wpli;
-%}
 threshold_range = 0.01:0.01:0.60; %range of thresholds to sweep
-%{
-number_ranomd_network = 100;
-random_networks = zeros(number_random_network,length(pli_matrix),length(pli_matrix));
 
-parfor r = 1:number_random_network
-    disp(strcat("Random network #",string(r)));
-    % Create the random network based on the pli matrix instead of the
-    % binary network
-    [random_networks(r,:,:),~] = null_model_und_sign(pli_matrix,10,0.1);    % generate random matrix
-end
-%}
-
+number_random_network = 10;
 
 %loop through thresholds
 for j = 1:length(threshold_range) 
@@ -54,6 +39,14 @@ for j = 1:length(threshold_range)
 
     % Find clustering coefficient
     clustering_coef = clustering_coef_bu(b_network);
+    
+    
+    % Calculate the null network parameters
+    random_networks = zeros(number_random_network,length(pli_matrix),length(pli_matrix));
+    parfor r = 1:number_random_network
+        disp(strcat("Random network #",string(r)));
+        [random_networks(r,:,:),~] = randmio_und(b_network,10);    % generate random matrix
+    end
 
     % Find properties for `number_random_network` random network
     total_random_lambda = 0;
@@ -61,9 +54,7 @@ for j = 1:length(threshold_range)
     for r = 1:number_random_network
         % Create the random network based on the pli matrix instead of the
         % binary network
-        random_network = squeeze(random_networks(r,:,:));
-        random_t_network = threshold_matrix(random_network, current_threshold);
-        random_b_network = binarize_matrix(random_t_network);
+        random_b_network = squeeze(random_networks(r,:,:));
         
         [rlambda,rgeff,~,~,~] = charpath(distance_bin(random_b_network),0,0);   % charpath for random network
         random_clustering_coef = clustering_coef_bu(random_b_network); % cc for random network
