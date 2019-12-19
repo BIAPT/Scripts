@@ -19,13 +19,11 @@ data = data.result;
 %make_topographic_map(data,type);
 
 %% Making the permutation entropy map plot
-%make_permutation_entropy(data,type);
-
 % normalized
 %make_norm_permutation_entropy(data,type);
 
 %% Making the wPLI
-make_wpli(data,type);
+%make_wpli(data,type);
 
 %% Making the dPLI
 %make_dpli(data,type);

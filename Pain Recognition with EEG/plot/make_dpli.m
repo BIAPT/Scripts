@@ -10,7 +10,7 @@ function make_dpli(data, type, labels)
     make_matrix(data.pain_dpli, axe_title, labels);
     
     axe3 = subplot(1,3,3);
-    diff_norm_dpli = log(data.baseline_dpli ./ data.pain_dpli);
+    diff_norm_dpli = log((data.baseline_dpli+1) ./ (data.pain_dpli+1));
     axe_title = strcat(type," ",analysis_technique, " Log Ratio (Baseline vs Hot)");
     make_matrix(diff_norm_dpli, axe_title, labels);
     

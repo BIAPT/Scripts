@@ -1,15 +1,14 @@
 function make_spectrogram(data,type)
     analysis_technique = 'Spectrogram';
+    
     figure;
-    plot(data.frequencies_spectrum,data.baseline_spectrum,'b--', 'LineWidth',2);
+    plot(data.frequencies_spectrum, data.baseline_spectrum,'--b', 'LineWidth',2);
     hold on
-    plot(data.frequencies_spectrum, data.pain_spectrum,'r--', 'LineWidth',2);
+    plot(data.frequencies_spectrum, data.pain_spectrum,'--r', 'LineWidth',2);
     grid on
-    legend('Rest','Hot');
     xlabel("Frequency (Hz)");
     ylabel("Power (dB)");
     title(strcat(type," ",analysis_technique, " Baseline vs Hot"));
-
     % the difference
     diff_spectrum = log(data.baseline_spectrum ./ data.pain_spectrum);
     figure;

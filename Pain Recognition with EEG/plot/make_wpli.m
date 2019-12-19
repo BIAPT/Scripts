@@ -10,7 +10,9 @@ function make_wpli(data,type,labels)
     make_matrix(data.pain_wpli, axe_title, labels);
     
     axe3 = subplot(1,3,3);
-    diff_norm_wpli = log(data.baseline_wpli ./ data.pain_wpli);
+    
+    
+    diff_norm_wpli = log((data.baseline_wpli+1) ./ (data.pain_wpli+1));
     axe_title = strcat(type," ",analysis_technique, " Log Ratio (Baseline vs Hot)");
     make_matrix(diff_norm_wpli, axe_title, labels);
     
