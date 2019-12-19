@@ -47,7 +47,7 @@ for p_id = 1:num_participant
     end
     
     % There is a problem with that participant
-    if(p_id == 40 || p_id == 7)
+    if(p_id == 40)
         
         continue
         
@@ -57,11 +57,8 @@ for p_id = 1:num_participant
     % Add up the spectrograms (and average them across time)
     avg_spectrum_time = squeeze(mean(data.healthy.sp.data.spectrums,1))';
     avg_spectrum_window = mean(avg_spectrum_time,1);
-    baseline_avg_spectrum = baseline_avg_spectrum + avg_spectrum_window;
-    
-    avg_spectrum_time = squeeze(mean(data.hot_pain.sp.data.spectrums,1))';
-    avg_spectrum_window = mean(avg_spectrum_time,1);
-    pain_avg_spectrum = pain_avg_spectrum + avg_spectrum_window;
+    baseline_avg_spectrum = baseline_avg_spectrum + mean(data.healthy.sp.data.spectrums,1);
+    pain_avg_spectrum = pain_avg_spectrum + mean(data.hot_pain.sp.data.spectrums,1);
     frequencies_spectrum = data.healthy.sp.data.frequencies; % this should be the same at each iteration
 
     % Get the location file for this participant
