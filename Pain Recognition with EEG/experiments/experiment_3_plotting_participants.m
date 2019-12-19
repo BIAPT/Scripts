@@ -7,13 +7,13 @@
 % Setting up path variables
 result_path = "";
 
-type = 'MSK Participants';
+type = 'Healthy Participants';
 
-data = load(strcat(result_path,'MEAVG.mat'));
+data = load(strcat(result_path,'HEAVG.mat'));
 data = data.result;
 
 %% Making the Spectrogram plot
-make_spectrogram(data,type);
+%make_spectrogram(data,type);
 
 %% Making the topographic map plot
 %make_topographic_map(data,type);
@@ -25,7 +25,7 @@ make_spectrogram(data,type);
 %make_norm_permutation_entropy(data,type);
 
 %% Making the wPLI
-%make_wpli(data,type);
+make_wpli(data,type);
 
 %% Making the dPLI
 %make_dpli(data,type);

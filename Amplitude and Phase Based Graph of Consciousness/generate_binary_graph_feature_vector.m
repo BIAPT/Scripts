@@ -11,6 +11,8 @@ function [X] = generate_binary_graph_feature_vector(graph, num_null_network, bin
 % regions
 %
 % graph here is a functional connectivity matrix
+    mean_graph = mean(graph,2);
+    std_graph = std(graph,0,2);
     
     % Threshold the matrix
     t_grap = threshold_matrix(graph,t_level);
@@ -33,6 +35,6 @@ function [X] = generate_binary_graph_feature_vector(graph, num_null_network, bin
     [clust_coeff, norm_avg_clust_coeff] = undirected_binary_clustering_coefficient(b_graph,null_networks);
     
     %% Features vector construction
-    X = [clust_coeff; norm_avg_clust_coeff; norm_g_eff;community;b_small_worldness];
+    X = [mean_graph; std_graph; clust_coeff; norm_avg_clust_coeff; norm_g_eff;community;b_small_worldness];
 end
 
