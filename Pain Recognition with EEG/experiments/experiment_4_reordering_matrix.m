@@ -12,9 +12,9 @@ label_order = {'Fp1','Fp2','F3','Fz','F4','F7','F8','C3','Cz','C4','T3','T4','T5
 % Setting up path variables
 result_path = "";
 
-type = 'Healthy Average Participants';
+type = 'MSK Average Participants';
 
-data = load(strcat(result_path,'HEAVG.mat'));
+data = load(strcat(result_path,'MEAVG.mat'));
 data = data.result;
 
 data.baseline_wpli = reorder_matrix(data.baseline_wpli, label_order,data.m_location);
