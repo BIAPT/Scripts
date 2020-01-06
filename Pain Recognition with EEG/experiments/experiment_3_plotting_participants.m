@@ -7,13 +7,13 @@
 % Setting up path variables
 result_path = "";
 
-type = 'MSK Participants';
+type = 'MSK Average Participants';
 
 data = load(strcat(result_path,'MEAVG.mat'));
 data = data.result;
 
 %% Making the Spectrogram plot
-make_spectrogram(data,type);
+%make_spectrogram(data,type);
 
 %% Making the topographic map plot
 %make_topographic_map(data,type);
