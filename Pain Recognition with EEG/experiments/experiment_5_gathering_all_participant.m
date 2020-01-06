@@ -5,18 +5,20 @@
 %}
 %% Make a script to iterate over the healthy participants folder
 % Setting up path variables
-base_dir = "/home/yacine/Documents/pain_and_eeg/Cleaned_Healthy_EEG";
-output_dir = "/home/yacine/Documents/pain_and_eeg/results/healthy";
+base_dir = "/home/yacine/Documents/pain_and_eeg/Cleaned_MSK_EEG/sorted_by_patients";
+output_dir = "/home/yacine/Documents/pain_and_eeg/results/msk";
 %% Setting up experiment variables (this will be shipped inside the helper function)
 % The variables are in the calculate_features function
 
 % The participants folder are named HE001 to HE014
 % we can generate them like this  sprintf('%03d',participant_id)
-num_participant = 14;
+num_participant = 65;
+rejected_participant = [34, 42, 46, 50, 52, 53, 56, 59, 65, 48];
+
 participant_label = cell(num_participant,1);
 participant_path = cell(num_participant,1);
 for p_id = 1:num_participant
-    participant_label{p_id} = sprintf('HE%03d',p_id);
+    participant_label{p_id} = sprintf('ME%03d',p_id);
     participant_path{p_id} = sprintf('%s/%s',base_dir,participant_label{p_id});
 end
 
@@ -28,11 +30,17 @@ for p_id = 1:num_participant
     hot_pain_name = sprintf('%s_hot1.set',participant_label{p_id});
     
     % Load the data
+    % Here will skip those that are messed up
+    if(ismember(p_id,rejected_participant))
+       continue 
+    end
+    
     
     % This is to accomodate the new way of labelling the data
     try
         baseline_recording = load_set(baseline_name, participant_path{p_id});
     catch
+        disp(sprintf("Participant: %s does not have a nopain.set",participant_label{p_id}))
         baseline_name = sprintf('%s_rest.set',participant_label{p_id});
         baseline_recording = load_set(baseline_name, participant_path{p_id});
     end
@@ -44,6 +52,7 @@ for p_id = 1:num_participant
         disp(sprintf("Skiping that participant since missing the hot1"));
         continue
     end
+    
     % Calculate some features
     result = struct();
     result.healthy = calculate_features(baseline_recording);

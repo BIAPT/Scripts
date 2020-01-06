@@ -5,17 +5,18 @@
 %}
 %% Make a script to iterate over the healthy participants folder
 % Setting up path variables
-base_dir = "/home/yacine/Documents/pain_and_eeg/results/healthy";
+base_dir = "/home/yacine/Documents/pain_and_eeg/results/msk";
 %% Setting up experiment variables (this will be shipped inside the helper function)
 % The variables are in the calculate_features function
 
+rejected_participant = [34, 42, 46, 50, 52, 53, 56, 59, 65, 48];
 % The participants folder are named HE001 to HE014
 % we can generate them like this  sprintf('%03d',participant_id)
-num_participant = 13; % we have 12 because after that we have different labeling
+num_participant = 65; % we have 12 because after that we have different labeling
 participant_label = cell(num_participant,1);
 participant_path = cell(num_participant,1);
 for p_id = 1:num_participant
-    participant_label{p_id} = sprintf('HE%03d',p_id);
+    participant_label{p_id} = sprintf('ME%03d',p_id);
     participant_path{p_id} = sprintf('%s/%s',base_dir,participant_label{p_id});
 end
 
@@ -47,8 +48,7 @@ for p_id = 1:num_participant
     end
     
     % There is a problem with that participant
-    if(p_id == 40 || p_id == 7)
-        
+    if(ismember(p_id,rejected_participant))
         continue
         
     end
@@ -161,7 +161,7 @@ result.pain_dpli = pain_avg_dpli;
 result.m_location = m_location;
 
 % Save these average participant to the output directory
-output_path = sprintf('%s/HEAVG.mat',base_dir);
+output_path = sprintf('%s/MEAVG.mat',base_dir);
 save(output_path, 'result')
 
 % Helper function to find out where the current channels is w/r to the
