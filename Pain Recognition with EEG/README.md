@@ -10,3 +10,4 @@ In this folder there are at the time of writing about 6 experiments. The one tha
 2) Run experiment_6_averaging_participant_all_channels: Which will run through each of the participants result and create an average participant result for each of the metric studied. This will create a (M | H)EAVG.mat which will be used for the plotting.
 3) Run experiment_3_plotting_participants: To make all the plots except the wPLI/dPLI plot. Save these figures for latter.
 4) Finally run experiment_4_reordering_matrix: Which will take the unordered wPLI/dPLI matrix and will input an order of frontal to posterior `{'Fp1','Fp2','F3','Fz','F4','F7','F8','C3','Cz','C4','T3','T4','T5','T6','P3','Pz','P4','O1','O2'}`.
+
