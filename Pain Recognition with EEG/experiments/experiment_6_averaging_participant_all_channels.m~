@@ -121,8 +121,8 @@ for p_id = 1:num_participant
     baseline_wpli = data.healthy.wpli.data.avg_wpli;
     pain_wpli = data.hot_pain.wpli.data.avg_wpli;
    
-    if(isnan(pain_wpli) | isnan(baseline_wpli))
-        disp("ISNAN")
+    if(isnan(pain_wpli) || isnan(baseline_wpli))
+        
         continue 
     end
     
