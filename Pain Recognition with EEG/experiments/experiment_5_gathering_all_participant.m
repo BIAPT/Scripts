@@ -95,7 +95,7 @@ function [result] = calculate_features(recording)
 
     % wPLI & dPLI
     window_size = 10;
-    number_surrogate = 10; % Number of surrogate wPLI to create
+    number_surrogate = 20; % Number of surrogate wPLI to create
     p_value = 0.05; % the p value to make our test on
     step_size = window_size;
     result.wpli = na_wpli(recording, alpha_band, window_size, step_size, number_surrogate, p_value);
