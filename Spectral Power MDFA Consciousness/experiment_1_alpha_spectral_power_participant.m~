@@ -5,10 +5,11 @@
 
 % Variables
 participant = 'MDFA17';
-states = {'BASELINE', 'IF5', 'EMF5','EML30','EML10','EML5','RECOVERY'};
+states = {'BASELINE','EMF5','EML5','EML10','EML30','IF5','RECOVERY'};
 extension = '.set';
 
-filepath = strcat('/home/yacine/Documents/consciousness_data/',participant);
+filename = 'MDFA17_BASELINE.set'; 
+filepath = '/home/yacine/Documents/consciousness_data';
 
 state_data = [];
 for i = 1:length(states)
