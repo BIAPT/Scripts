@@ -5,7 +5,7 @@
 % modified by Yacine Mahdid 2019-12-12
 %
 % Experiment Variables
-
+%{
 filename = 'MDFA17_BASELINE.set';
 filepath = 'C:\Users\biapt\Desktop\motif fix\mdfa17_data';
 recording = load_set(filename, filepath);
@@ -19,11 +19,20 @@ step_size = window_size;
 result_wpli = na_wpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
 
 % Network Properties Parameters
-
+channels_location = result_wpli.metadata.channels_location;
 pli_matrix = result_wpli.data.avg_wpli;
+pli_matrix = filter_non_scalp(pli_matrix, channels_location);
+%}
 threshold_range = 0.01:0.01:0.60; %range of thresholds to sweep
 
 number_random_network = 10;
+
+
+% Calculate the null network parameters
+random_pli_networks = zeros(number_random_network,length(pli_matrix),length(pli_matrix));
+parfor r = 1:number_random_network
+    [random_pli_networks(r,:,:),~] = null_model_und_sign(pli_matrix,100);    % generate random matrix
+end
 
 %loop through thresholds
 for j = 1:length(threshold_range) 
@@ -34,22 +43,25 @@ for j = 1:length(threshold_range)
     t_network = threshold_matrix(pli_matrix, current_threshold);
     b_network = binarize_matrix(t_network);
     
+    random_networks = zeros(number_random_network,length(pli_matrix),length(pli_matrix));
+    for r = 1:number_random_network
+        disp(strcat("Random network #",string(r)));
+        current_random_network = squeeze(random_pli_networks(r,:,:));
+        t_random_network = threshold_matrix(current_random_network, current_threshold);
+        b_random_network = binarize_matrix(t_random_network);
+        random_networks(r,:,:) = b_random_network;
+    end
+
+    
     % Find average path length
     [b_lambda,geff,~,~,~] = charpath(distance_bin(b_network),0,0);
 
     % Find clustering coefficient
-    clustering_coef = clustering_coef_bu(b_network);
-    
-    
-    % Calculate the null network parameters
-    random_networks = zeros(number_random_network,length(pli_matrix),length(pli_matrix));
-    parfor r = 1:number_random_network
-        disp(strcat("Random network #",string(r)));
-        [random_networks(r,:,:),~] = randmio_und(b_network,10);    % generate random matrix
-    end
+    clustering_coef = global_clustering_coef_bu(b_network);
 
     % Find properties for `number_random_network` random network
     total_random_lambda = 0;
+    num_channels = length(random_networks);
     total_random_clustering_coef = 0;
     for r = 1:number_random_network
         % Create the random network based on the pli matrix instead of the
@@ -57,16 +69,17 @@ for j = 1:length(threshold_range)
         random_b_network = squeeze(random_networks(r,:,:));
         
         [rlambda,rgeff,~,~,~] = charpath(distance_bin(random_b_network),0,0);   % charpath for random network
-        random_clustering_coef = clustering_coef_bu(random_b_network); % cc for random network
+        random_clustering_coef = global_clustering_coef_bu(random_b_network); % cc for random network
 
         total_random_lambda = total_random_lambda + rlambda;
-        total_random_clustering_coef = total_random_clustering_coef + nanmean(random_clustering_coef);
+        
+        total_random_clustering_coef = total_random_clustering_coef + random_clustering_coef;
     end
-
+    
     rlambda = total_random_lambda/number_random_network;
     global_random_clustering_coef = total_random_clustering_coef/number_random_network;
 
-    binary_clustering(j) = nanmean(clustering_coef) / global_random_clustering_coef; % normalized clustering coefficient
+    binary_clustering(j) = clustering_coef / global_random_clustering_coef; % normalized clustering coefficient
     binary_charpath(j) = b_lambda / rlambda;  % normalized path length
     bsw(j) = binary_clustering(j)/binary_charpath(j); 
 end
