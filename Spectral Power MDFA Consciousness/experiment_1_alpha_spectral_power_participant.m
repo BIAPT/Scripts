@@ -1,20 +1,20 @@
-% Yacine Maahdid 2020-01-09
+% Yacine Mahdid 2020-01-09
 % This script was made for the revision of the motif analysis paper, where
 % we want to compare alpha topographic map for each participant version the
 % motif frequency topographic map
 
 % Variables
-participant = 'MDFA17';
+participant = 'MDFA03';
 states = {'BASELINE', 'IF5', 'EMF5','EML30','EML10','EML5','RECOVERY'};
 extension = '.set';
 
-filepath = strcat('/home/yacine/Documents/consciousness_data/',participant);
-
+input_path = strcat('E:/datasets/consciousness/MDFA Anesthesia data/',participant);
+output_path = strcat('E:/research projects/motif_analysis/power/',participant,'.mat');
 state_data = [];
 for i = 1:length(states)
    filename = strcat(participant,'_',states{i},extension);
    disp(filename)
-   recording = load_set(filename,filepath);
+   recording = load_set(filename,input_path);
    
    % Experiment Variables
     % Alpha Topographic Map Properties
@@ -30,7 +30,7 @@ for i = 1:length(states)
     state_data = [state_data data];
 end
 
-% Make the figure
+%% Make the figure
 figure
 for i = 1:length(states)
     power = state_data(i).power;
@@ -40,6 +40,10 @@ for i = 1:length(states)
     title(cur_title)
     topographic_map(power,location);
 end
+
+%% Save the data
+save(output_path, 'state_data');
+
 
 function topographic_map(data,location)
     topoplot(data,location,'maplimits','absmax', 'electrodes', 'off');

@@ -5,7 +5,7 @@
 % modified by Yacine Mahdid 2019-12-12
 %
 % Experiment Variables
-%{
+
 filename = 'MDFA17_BASELINE.set';
 filepath = 'C:\Users\biapt\Desktop\motif fix\mdfa17_data';
 recording = load_set(filename, filepath);
@@ -22,7 +22,7 @@ result_wpli = na_wpli(recording, frequency_band, window_size, step_size, number_
 channels_location = result_wpli.metadata.channels_location;
 pli_matrix = result_wpli.data.avg_wpli;
 pli_matrix = filter_non_scalp(pli_matrix, channels_location);
-%}
+
 threshold_range = 0.01:0.01:0.60; %range of thresholds to sweep
 
 number_random_network = 10;

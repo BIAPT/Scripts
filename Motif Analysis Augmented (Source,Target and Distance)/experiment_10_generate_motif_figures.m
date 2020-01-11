@@ -8,8 +8,9 @@
 data_location = 'C:\Users\biapt\Desktop\motif_analysis_dst\motif\';
 output_location = 'C:\Users\biapt\Desktop\motif_analysis_dst\figure\';
 
-participant = 'MDFA15';
-epochs = {'EC1', 'IF5', 'EF5', 'EL30', 'EL10', 'EL5', 'EC8'};
+participant = 'MDFA05';
+
+epochs = {'EC1','EF5','EC8'};%{'EC1', 'IF5', 'EF5', 'EL30', 'EL10', 'EL5', 'EC8'};
 frequency = 'alpha';
 
 output_location = strcat(output_location,participant,filesep);

@@ -14,7 +14,7 @@ data_location = 'C:\Users\biapt\Desktop\motif_analysis_dst\dPLI\';
 output_location = 'C:\Users\biapt\Desktop\motif_analysis_dst\motif\';
 
 participant = 'MDFA05';
-epochs = {'EC1', 'IF5', 'EF5', 'EL30', 'EL10', 'EL5', 'EC8'};
+epochs = {'EC1','EF5','EC8'};%{'EC1', 'IF5', 'EF5', 'EL30', 'EL10', 'EL5', 'EC8'};
 frequency = 'alpha';
 
 % Experiment variables

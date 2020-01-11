@@ -1,0 +1,58 @@
+%{
+    Script written by Yacine Mahdid
+    The goal of this script is to load the right dPLI matrices and then to
+    calculate the motifs along with the augmented values.
+
+    The choosen participant was MDFA17 as proposed by Danielle Nadin
+    The timepoints are:
+    baseline, induction, unconscious, - 30min, -10min, -5min, +30min,
+    +180min
+%}
+
+%% Variables Initalization
+participants = {'MDFA03','MDFA05','MDFA06','MDFA07','MDFA10','MDFA11','MDFA12','MDFA15','MDFA17'};
+input_path = 'C:\Users\biapt\Desktop\motif_analysis_dst\dPLI\';
+output_path = 'C:\Users\biapt\Desktop\motif_analysis_dst\motif\';
+
+states = {'BASELINE', 'IF5', 'EMF5','EML30','EML10','EML5','RECOVERY'};
+
+
+% Experiment variables
+% for Motif Analysis
+number_rand_network = 100;
+bin_swaps = 10;
+weight_frequency = 0.1;
+
+
+%% Iterating over the files
+participant = participants{i;
+input_path = strcat('E:/datasets/consciousness/MDFA Anesthesia data/',participant);
+    output_path = strcat('E:/research projects/motif_analysis/motif/',participant,'.mat');
+state_data = [];
+for e_i = 1:length(states)
+    % Load the data
+    disp(strcat("Motif analysis on dpli value from ", participant," at ", states{e_i}));
+    
+    base = strcat(input_path,participant,filesep);
+    filename = strcat(base,states{e_i},filesep,'dpli_',frequency,'.mat');
+    data = load(filename);
+    dpli_matrix = data.z_score;
+    
+    filename = strcat(base,'eeg_info.mat');
+    data = load(filename);
+    channels_location = data.EEG_info.chanlocs;
+    
+    % make a phase lead matrix using the average dPLI
+    network = make_phase_lead(dpli_matrix);
+    
+    [network,channels_location] = filter_non_scalp(network,channels_location);
+    
+    % Calculate the frequency/source/target/distance of each motifs
+    motifs = struct();
+    [motifs.frequency, motifs.source, motifs.target, motifs.distance] = motif_3(network, channels_location, number_rand_network, bin_swaps, weight_frequency);
+    
+    state_data = [state_data, motifs];
+end
+
+%% Save the data
+save(output_path, 'state_data');
