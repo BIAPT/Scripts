@@ -9,8 +9,14 @@ The code is structured in the following manner:
 - **experiments_\*.m** at the root level: these are the main script that will produce the reported output.
 - **run_all_analysis.m** at the root level: this script will run all the relevant experiments to generate the reported output.
 - **settings.txt** at the root level: this text file contains the configuration for the analysis that will be used throughout the experiments.
+- **library** folder: this folder contain all the external libraries that are needed to run the experiment. This is mainly the **NeuroAlgo** library. This library is currently in development and does change a lot over time. For this reason one of the release is included and must be used to constantly generated the right output and to prevent the code to break over time.
 
 The code is separated into 5 main experiments instead of being combined into one big script. The rational behind this is that some part of the experiment takes a long time to run. If something goes wrong in the middle of the full output generation we only need to restart this experiment instead of starting again from the first one. The **run_all_analysis.m** is there to run all the experiment automatically if we are sure that nothing is wrong with the output.
+
+## Requirements
+- **MATLAB 2018a** and above
+- **NeuroAlgo 0.0.1** (can be download from the BIAPT repository if needed)
+- **MDFA raw data** (see below)
 
 ## How to Use the Code
 1. Edit the **settings.txt** input folder. The input folder needs to contain the MDFA raw data and have this structure.
