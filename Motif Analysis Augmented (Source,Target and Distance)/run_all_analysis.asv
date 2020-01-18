@@ -10,35 +10,15 @@
 
 disp("Running experiment 14: generate wpli or dpli matrices:");
 try
-   experiment_14_generate_w_or_d_pli_matrix 
+    
 catch
-    error("experiment 14 failed or needs to be changed!");
+    
 end
 
 disp("Running experiment 15a: generate the motifs from the dpli matrices");
-try 
-   experiment_15a_generate_motif
-catch
-    error("experiment 15a failed or needs to be changed!");
-end
 
 disp("Running experiment 15b: generate power spectra from the raw data");
-try
-   experiment_15b_generate_power_spectra 
-catch
-    error("experiment 15b failed or needs to be changed!");
-end
 
 disp("Running experiment 15c: generate network properties from the wpli matrices");
-try
-   experiment_15c_generate_network_properties 
-catch
-    error("experiment 15c failed or needs to be changed!");
-end
 
 disp("Running experiment 16: generate figures from the motif/power spectra and network properties");
-try
-   experiment_16_generate_figures 
-catch
-    error("experiment 16 failed or needs to be changed!");
-end
