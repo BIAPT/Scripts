@@ -5,29 +5,28 @@
 %}
 
 %% Variables Initalization
-data_location = 'C:\Users\biapt\Desktop\motif_analysis_dst\motif\';
-output_location = 'C:\Users\biapt\Desktop\motif_analysis_dst\figure\';
+data_location = 'E:\research projects\motif_analysis\motif\';
+output_location = 'E:\research projects\motif_analysis\figure\';
 
-participant = 'MDFA05';
+% 03 05 06 11 12 15
+participant = 'MDFA15';
 
-epochs = {'EC1','EF5','EC8'};%{'EC1', 'IF5', 'EF5', 'EL30', 'EL10', 'EL5', 'EC8'};
+epochs = {'BASELINE', 'IF5', 'EMF5','EML30','EML10','EML5','RECOVERY'};
 frequency = 'alpha';
 
-output_location = strcat(output_location,participant,filesep);
+output_location = strcat(output_location,filesep);
+
+data = load(strcat(data_location,participant,'.mat'));
+state_data = data.state_data;
+data  = load(strcat(data_location,participant,'_eeg_info.mat'));
+channels_location = data.EEG_info.chanlocs;
 
 %% Iterating over the files
 for e_i = 1:length(epochs)
     % Load the data
     disp(strcat("Generate motifs figures from ", participant," at ", epochs{e_i}));
     
-    base = strcat(data_location,participant,filesep);
-    filename = strcat(base,participant,'_',epochs{e_i},'_motif.mat');
-    data = load(filename);
-    motifs = data.motifs;
-    
-    filename = strcat(base,'eeg_info.mat');
-    data = load(filename);
-    channels_location = data.EEG_info.chanlocs;
+    motifs = state_data(e_i);
     
     fake_network = zeros(length(channels_location), length(channels_location));
     [fake_network, channels_location] = filter_non_scalp(fake_network, channels_location);
@@ -48,7 +47,7 @@ function [handle] = plot_motif(frequency, source, distance, channels_location, t
     % Get the Z-Score of each values to plot in the topographic map
     norm_frequency = normalize_motif(frequency);
     norm_source = normalize_motif(source);
-    norm_distance = distance; %normalize_motif(distance);
+    norm_distance = normalize_motif(distance); %normalize_motif(distance);
     
     % Will plot motif 
     figure;

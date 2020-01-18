@@ -33,6 +33,7 @@ for p = 1:length(participants)
         % make a phase lead matrix using the average dPLI
         network = make_phase_lead(dpli_matrix);
 
+        % Filter the channels location to match the filtered motifs
         [network,channels_location] = filter_non_scalp(network,channels_location);
 
         % Calculate the frequency/source/target/distance of each motifs
