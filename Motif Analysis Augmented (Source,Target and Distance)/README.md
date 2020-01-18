@@ -19,7 +19,7 @@ The code is separated into 5 main experiments instead of being combined into one
 - **MDFA raw data** (see below)
 
 ## How to Use the Code
-1. Edit the **settings.txt** input folder. The input folder needs to contain the MDFA raw data and have this structure.
+1. Edit the **settings.txt** input path. The input path needs to contain the MDFA raw data and have this structure.
     - input_folder
         - MDFA03
             - MDFA03_BASELINE.fdt
@@ -39,7 +39,7 @@ The code is separated into 5 main experiments instead of being combined into one
         - MDFA05
             - etc.
         - etc
-2. Edit the settings.txt output folder. This folder only needs to exist and can be located anywhere on your computer or on an external disk. The resulting output folder will be populated like this:
+2. Edit the settings.txt output path. This folder only needs to exist and can be located anywhere on your computer or on an external disk. The resulting output path will be populated like this:
     - motif_analysis_(current_date):
         - wpli
             - MDFA03
