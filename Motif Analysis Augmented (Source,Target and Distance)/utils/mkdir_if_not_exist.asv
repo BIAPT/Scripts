@@ -1,0 +1,8 @@
+function [outputArg1,outputArg2] = mkdir_if_not_exist(inputArg1,inputArg2)
+%   MKDIR_IF_NOT_EXIST create a directory if it doesn't exist
+%   this is a wrapper function that will avoid having warning if the
+%   director 
+outputArg1 = inputArg1;
+outputArg2 = inputArg2;
+end
+

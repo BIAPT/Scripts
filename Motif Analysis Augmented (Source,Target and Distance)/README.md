@@ -40,7 +40,7 @@ The code is separated into 5 main experiments instead of being combined into one
             - etc.
         - etc
 2. Edit the settings.txt output path. This folder only needs to exist and can be located anywhere on your computer or on an external disk. The resulting output path will be populated like this:
-    - motif_analysis_(current_date):
+    - output_folder:
         - wpli
             - MDFA03
             - MDFA05
