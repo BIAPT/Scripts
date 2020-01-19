@@ -33,3 +33,9 @@ motif_param = struct();
 motif_param.number_rand_network = 1;
 motif_param.bin_swaps = 10;
 motif_param.weight_frequency = 0.1;
+
+% power spectrum Experiment Variable
+power_param = struct();
+power_param.frequency_band = [8 13];
+% The other parameters are recording dependant and will be dynamically
+% generated

@@ -47,9 +47,6 @@ for p = 1:length(participants)
     save(output_path, 'state_data');
 end
 
-
-
-
 function topographic_map(data,location)
     topoplot(data,location,'maplimits','absmax', 'electrodes', 'off');
     min_color = min(data);
