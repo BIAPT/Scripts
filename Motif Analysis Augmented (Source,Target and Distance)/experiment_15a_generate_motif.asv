@@ -1,8 +1,10 @@
 %{
     Yacine Mahdid 2020-01-08
-    This script will calculate the wpli and the dpli matrices (at alpha)
-    that are needed to run the subsequent analysis. The parameters for the
-    analysis can be found in this script
+    This script will calculate the motif on the dpli matrices at
+    alpha generated previously in the experiment 14. It will save them at
+    the same place as the pli matrices. This script use the augmented
+    version of the motif analysis which will calculate the distance and the
+    sink information.
 
     * Warning: This experiment use the setup_experiments.m script to 
     load variables. Therefore if you are trying to edit this code and you
@@ -11,25 +13,26 @@
 %}
 
 %% Seting up the variables
+clear % to keep only what is needed for this experiment
 setup_experiments % see this file to edit the experiments
 
-% Create the (w/d)pli directory
-wpli_output_path = mkdir_if_not_exist(output_path,'wpli');
-dpli_output_path = mkdir_if_not_exist(output_path,'dpli');
+% Create the motif output directory
+motif_output_path = mkdir_if_not_exist(output_path,'motif');
+dpli_input_path = strcat(
 % Iterate over the participants
 for p = 1:length(participants)
 
     % Create the participants directory
     participant = participants{p};
-    wpli_participant_output_path =  mkdir_if_not_exist(wpli_output_path, participant);
-    dpli_participant_output_path =  mkdir_if_not_exist(dpli_output_path, participant);
+    
+    motif_participant_output_path =  mkdir_if_not_exist(motif_output_path, participant);
 
     % Iterate over the states
     for s = 1:length(states)
         state = states{s};
         
         % Load the recording
-        raw_data_filename = strcat(participant,'_',state,'.set');
+
         data_location = strcat(raw_data_path,filesep,participant);
         recording = load_set(raw_data_filename,data_location);
         

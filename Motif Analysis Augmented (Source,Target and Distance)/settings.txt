@@ -1,2 +1,2 @@
-input_path=E:\datasets\consciousness\MDFA Anesthesia data
+raw_data_path=E:\datasets\consciousness\MDFA Anesthesia data
 output_path=E:\research projects\motif_analysis

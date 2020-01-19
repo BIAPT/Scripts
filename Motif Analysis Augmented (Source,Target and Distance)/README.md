@@ -19,8 +19,8 @@ The code is separated into 5 main experiments instead of being combined into one
 - **MDFA raw data** (see below)
 
 ## How to Use the Code
-1. Edit the **settings.txt** input path. The input path needs to contain the MDFA raw data and have this structure.
-    - input_folder
+1. Edit the **settings.txt** raw data path. The input path needs to contain the MDFA raw data and have this structure.
+    - raw_data_path
         - MDFA03
             - MDFA03_BASELINE.fdt
             - MDFA03_BASELINE.set
@@ -65,7 +65,8 @@ The code is separated into 5 main experiments instead of being combined into one
             - MDFA03
             - MDFA05
             - etc.
-3. Open MATLAB, add the current folder to the path and run `run_all_analysis` and wait for the output to be populated. If you want to run each experiments one by one do `experiment_*` and wait for one experiment to be done.
+3. Open MATLAB, add the current folder to the path and edit the `setup_experiments.m` script to setup the experiment environment properly.
+4.  run `run_all_analysis` and wait for the output to be populated. If you want to run each experiments one by one do `experiment_*` and wait for one experiment to be done.
 
 ## Modifying the Code
 If you are running a new experiment for a new project it might be a good idea to create a new folder in the `Script` repository and take whatever you need from this folder. If the code needs to be modified for review, please modify the structure, put the relevant experiments into exploratory_experiments and edit this README.md to reflect the changes.
