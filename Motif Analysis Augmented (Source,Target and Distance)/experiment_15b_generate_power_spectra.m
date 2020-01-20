@@ -33,8 +33,10 @@ for p = 1:length(participants)
         window_size = floor(recording.length_recording / recording.sampling_rate); % in seconds
         step_size = window_size; 
         result_td = na_topographic_distribution(recording, window_size, step_size, power_param.bandpass);
-        [power, location] = filter_non_scalp_vector(result_td.data.power, result_td.metadata.channels_location);
-       
+        [filt_power, filt_location] = filter_non_scalp_vector(result_td.data.power, result_td.metadata.channels_location);
+        result_td.data.filt_power = filt_power;
+        result_td.data.filt_location = filt_location;
+        
         save(power_state_filename, 'result_td');
     end
 end

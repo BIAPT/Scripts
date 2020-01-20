@@ -1,2 +1,2 @@
-raw_data_path=E:\datasets\consciousness\MDFA Anesthesia data
-output_path=E:\research projects\motif_analysis
+raw_data_path=/home/yacine/Documents/consciousness_data
+output_path=/home/yacine/Documents/motif_analysis_output

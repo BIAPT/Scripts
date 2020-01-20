@@ -34,7 +34,7 @@ for p = 1:length(participants)
         motif_state_filename = strcat(motif_participant_ouput_path,filesep,state,'_motif.mat');
         
         % Load the wpli result
-        data = load(strcat(dpli_participant_input_path,filesep,state,'.mat')); % This might break
+        data = load(strcat(dpli_participant_input_path,filesep,state,'.mat')); 
         result_dpli = data.result_dpli;
         dpli_matrix  = result_dpli.data.avg_dpli;
         channels_location = result_dpli.metadata.channels_location;

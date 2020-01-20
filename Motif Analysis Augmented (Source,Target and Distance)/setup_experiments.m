@@ -9,7 +9,7 @@ settings = load_settings();
 raw_data_path = settings.raw_data_path;
 output_path = settings.output_path;
 
-participants = {'MDFA17'};
+participants = {'MDFA10','MDFA17'};
 states = {'BASELINE', 'IF5', 'EMF5', 'EML30','EML10','EML5', 'RECOVERY'};
 
 % wPLI Experiment Variables
