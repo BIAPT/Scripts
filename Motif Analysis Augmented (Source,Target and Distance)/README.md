@@ -15,10 +15,11 @@ The code is separated into 5 main experiments instead of being combined into one
 
 ## Requirements
 - **MATLAB 2018a** and above
-- **NeuroAlgo 0.0.1** (can be download from the BIAPT repository if needed)
+- **NeuroAlgo 0.0.1** (Will be downloaded with `setup_project`)
 - **MDFA raw data** (see below)
 
 ## How to Use the Code
+0. Run `setup_project.m` to install the right dependencies for this project.
 1. Edit the **settings.txt** raw data path. The input path needs to contain the MDFA raw data and have this structure.
     - raw_data_path
         - MDFA03
