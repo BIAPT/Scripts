@@ -7,6 +7,8 @@ The code is structured in the following manner:
 - **exploratory_experiments** folder : contains experiment that lead to the current working code.
 - **utils** folder: contain helper functions that are used throughout the analysis
 - **experiments_\*.m** at the root level: these are the main script that will produce the reported output.
+- **setup_project.m** at the root level: a setup file to download the required dependencies from Github and setting up the project properly so that the output are reproducible.
+- **setup_exepriments.m** at the root level: helper file to setup the experiments so that they behave similarly all across.
 - **run_all_analysis.m** at the root level: this script will run all the relevant experiments to generate the reported output.
 - **settings.txt** at the root level: this text file contains the configuration for the analysis that will be used throughout the experiments.
 - **library** folder: this folder contain all the external libraries that are needed to run the experiment. This is mainly the **NeuroAlgo** library. This library is currently in development and does change a lot over time. For this reason one of the release is included and must be used to constantly generated the right output and to prevent the code to break over time.
