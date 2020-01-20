@@ -1,12 +1,12 @@
 
 %% Variables Initalization
-participants = {'MDFA03','MDFA05','MDFA06','MDFA07','MDFA11','MDFA12','MDFA15'};
+participants = {'MDFA10','MDFA17'};%{'MDFA03','MDFA05','MDFA06','MDFA07','MDFA11','MDFA12','MDFA15'};
 states = {'EC1', 'IF5', 'EF5','EL30','EL10','EL5','EC8'};
 
 
 % Experiment variables
 % for Motif Analysis
-number_rand_network = 1;
+number_rand_network = 100;
 bin_swaps = 10;
 weight_frequency = 0.1;
 frequency = "alpha";
@@ -15,8 +15,8 @@ frequency = "alpha";
 %% Iterating over the files
 for p = 1:length(participants)
     participant = participants{p};
-    input_path = strcat('C:/Users/biapt/Desktop/motif_analysis_dst/dPLI/',participant);
-    output_path = strcat('E:/research projects/motif_analysis/motif/',participant,'.mat');
+    input_path = strcat('/home/yacine/Documents/motif_analysis_dst/dPLI/',participant);
+    output_path = strcat('/home/yacine/Documents/motif_analysis_dst/result/',participant,'.mat');
     state_data = [];
     for e_i = 1:length(states)
         % Load the data
