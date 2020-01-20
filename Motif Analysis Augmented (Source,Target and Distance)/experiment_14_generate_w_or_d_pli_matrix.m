@@ -19,9 +19,10 @@ wpli_output_path = mkdir_if_not_exist(output_path,'wpli');
 dpli_output_path = mkdir_if_not_exist(output_path,'dpli');
 % Iterate over the participants
 for p = 1:length(participants)
-
+    
     % Create the participants directory
     participant = participants{p};
+    disp(strcat("Participant : ",participant));
     wpli_participant_output_path =  mkdir_if_not_exist(wpli_output_path, participant);
     dpli_participant_output_path =  mkdir_if_not_exist(dpli_output_path, participant);
 

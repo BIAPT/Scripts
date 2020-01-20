@@ -9,8 +9,8 @@ settings = load_settings();
 raw_data_path = settings.raw_data_path;
 output_path = settings.output_path;
 
-participants = {'MDFA10','MDFA17'};
-states = {'BASELINE', 'IF5', 'EMF5', 'EML30','EML10','EML5', 'RECOVERY'};
+participants = {'MDFA03','MDFA05','MDFA06','MDFA07','MDFA10','MDFA11','MDFA12','MDFA15','MDFA17'};
+states = {'BASELINE', 'IF5', 'EMF5', 'EML30','EML10','EML5', 'EC3', 'RECOVERY'};
 
 % wPLI Experiment Variables
 wpli_param = struct();
