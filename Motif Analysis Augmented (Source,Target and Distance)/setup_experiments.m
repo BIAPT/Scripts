@@ -18,7 +18,7 @@ wpli_param.frequency_band = [8 13]; % This is in Hz
 wpli_param.window_size = 10; % This is in seconds and will be how we chunk the whole dataset
 wpli_param.number_surrogate = 20; % Number of surrogate wPLI to create
 wpli_param.p_value = 0.05; % the p value to make our test on
-wpli_param.step_size = window_size;
+wpli_param.step_size = 10;
 
 % dPLI Experiment Variables
 dpli_param = struct();
@@ -26,7 +26,7 @@ dpli_param.frequency_band = [8 13]; % This is in Hz
 dpli_param.window_size = 10; % This is in seconds and will be how we chunk the whole dataset
 dpli_param.number_surrogate = 20; % Number of surrogate wPLI to create
 dpli_param.p_value = 0.05; % the p value to make our test on
-dpli_param.step_size = window_size;
+dpli_param.step_size = 10;
 
 % motif Experiment Variable
 motif_param = struct();

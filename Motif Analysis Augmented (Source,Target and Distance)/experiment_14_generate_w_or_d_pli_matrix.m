@@ -11,6 +11,7 @@
 %}
 
 %% Seting up the variables
+clear;
 setup_experiments % see this file to edit the experiments
 
 % Create the (w/d)pli directory

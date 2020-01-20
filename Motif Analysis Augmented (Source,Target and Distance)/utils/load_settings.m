@@ -15,7 +15,7 @@ function [settings] = load_settings()
     % Populate the input path
     input_path_line = fgetl(file_id);
     input_path_data = split(strtrim(input_path_line),"=");
-    settings.input_path = strtrim(input_path_data{2});
+    settings.raw_data_path = strtrim(input_path_data{2});
     
     % Populate the output path
     output_path_line = fgetl(file_id);
