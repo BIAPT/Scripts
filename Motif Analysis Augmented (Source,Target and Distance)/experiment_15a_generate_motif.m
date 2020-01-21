@@ -18,23 +18,25 @@ setup_experiments % see this file to edit the experiments
 
 % Create the motif output directory
 motif_output_path = mkdir_if_not_exist(output_path,'motif');
-dpli_input_path = strcat(ouput_path,filesep,'dpli');
+dpli_input_path = strcat(output_path,filesep,'dpli');
 % Iterate over the participants
 for p = 1:length(participants)
 
     % Create the participants directory
     participant = participants{p};
+    disp(strcat("Participant :", participant)); 
     motif_participant_output_path =  mkdir_if_not_exist(motif_output_path,participant);
     dpli_participant_input_path = strcat(dpli_input_path,filesep,participant);
     
     % Iterate over the states
     for s = 1:length(states)
         state = states{s};
+        disp(strcat("State :", state));
         
-        motif_state_filename = strcat(motif_participant_ouput_path,filesep,state,'_motif.mat');
+        motif_state_filename = strcat(motif_participant_output_path,filesep,state,'_motif.mat');
         
         % Load the wpli result
-        data = load(strcat(dpli_participant_input_path,filesep,state,'.mat')); 
+        data = load(strcat(dpli_participant_input_path,filesep,state,'_dpli.mat')); 
         result_dpli = data.result_dpli;
         dpli_matrix  = result_dpli.data.avg_dpli;
         channels_location = result_dpli.metadata.channels_location;
