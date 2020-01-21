@@ -5,7 +5,7 @@ from shutil import copyfile
 
 #make sure to put the video file in the session folder before running this code
 
-session =  "Session_Dec_5"
+session =  "Session_Dec_19"
 input_Path = os.path.join("C:\\","Users","biomusic","Desktop", session)
 output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
 

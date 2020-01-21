@@ -3,7 +3,7 @@ import os
 
 #this code will store the start recording time in the session folder (where all data is)
 
-session =  "Session_Dec_5"
+session =  "Session_Jan_xx"
 this_session_folder_path = os.path.join("C:\\","Users","biomusic","Desktop", session)
 if not os.path.exists(this_session_folder_path):
 	os.mkdir(this_session_folder_path)

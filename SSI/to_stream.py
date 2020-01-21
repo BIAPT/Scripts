@@ -41,10 +41,12 @@ from signals import pre_process
 #     "P11":"ABSENT",
 #     "P12":"TP001472",
 #     "P13":"ABSENT",
-#     "P14": "TP001354", #gargabe data from this sensor
+#     "P14": "ABSENT",
+#     "P15": "TP001354", #P15 collects garbage data
 #     "session":"Session_Oct_31",
-#     "num_participant":14,
-#     "crashed_phones": []
+#     "num_participant":15,
+#     "crashed_phones": [],
+#     "phones_with_time_problem": ["orange"]
 # }
 
 
@@ -63,9 +65,12 @@ from signals import pre_process
 #     "P11":"TP001472",
 #     "P12":"TP001884",
 #     "P13":"TP001123",
+#     "P14":"ABSENT",
+#     "P15":"ABSENT",
 #     "session":"Session_Nov_7",
-#     "num_participant":13,
-#     "crashed_phones": []    
+#     "num_participant":15,
+#     "crashed_phones": ["orange"],
+#     "phones_with_time_problem": ["orange"]    
 # }
 
 
@@ -84,9 +89,12 @@ from signals import pre_process
 #     "P11":"TP001472",
 #     "P12":"TP001484",
 #     "P13":"TP001491",
+#     "P14":"ABSENT",
+#     "P15":"ABSENT",
 #     "session":"Session_Nov_14",
-#     "num_participant":13,
-#     "crashed_phones": []
+#     "num_participant":15,
+#     "crashed_phones": ["yellow"],
+#     "phones_with_time_problem": ["orange"]
 # }
 
 # #mappings for session Nov 21st
@@ -104,11 +112,12 @@ from signals import pre_process
 #     "P11":"TP001472",
 #     "P12":"TP001484",
 #     "P13":"TP001123",
-#     "P14":"ABSENT",
-#     "P15":"TP001491",
+#     "P14":"TP001491",
+#     "P15":"ABSENT",
 #     "session":"Session_Nov_21",
 #     "num_participant":15,
-#     "crashed_phones": []   
+#     "crashed_phones": [],
+#     "phones_with_time_problem": ["orange"]   
 # }
 
 # #mappings for session Dec 5th
@@ -116,36 +125,82 @@ from signals import pre_process
 #     "P1":"TP001376",
 #     "P2":"TP001884",
 #     "P3":"TP001353",
-#     "P4":"ABSENT",
+#     "P4":"TP001491",
+#     "P5":"TP001484",
+#     "P6":"TP001689",
+#     "P7":"TP001254",
+#     "P8":"TP001822",
+#     "P9":"ABSENT",
+#     "P10":"TP001354",
+#     "P11":"TP001472",
+#     "P12":"ABSENT",
+#     "P13":"ABSENT",
+#     "P14":"TP001123",
+#     "P15":"ABSENT",
+#     "session":"Session_Dec_5",
+#     "num_participant":15,
+#     "crashed_phones": ["orange"],
+#     "phones_with_time_problem": []    
+# }
+
+#mappings for session Dec 12th
+experiment_info = {
+    "P1":"TP001376",
+    "P2":"TP001123",
+    "P3":"TP001353",
+    "P4":"ABSENT",
+    "P5":"ABSENT",
+    "P6":"TP001689",
+    "P7":"TP001254",
+    "P8":"TP001491",
+    "P9":"ABSENT",
+    "P10":"ABSENT",
+    "P11":"TP001472",
+    "P12":"TP001484",
+    "P13":"ABSENT",
+    "P14":"TP001822",
+    "P15":"ABSENT",
+    "session":"Session_Dec_12",
+    "num_participant":15,
+    "crashed_phones": ["orange"],
+    "phones_with_time_problem": []    
+}
+
+# #mappings for session Dec 19th
+# experiment_info = {
+#     "P1":"TP001376",
+#     "P2":"TP001884",
+#     "P3":"TP001353",
+#     "P4":"TP001354",
 #     "P5":"ABSENT",
 #     "P6":"TP001689",
 #     "P7":"TP001254",
 #     "P8":"TP001822",
-#     "P9":"TP001491",
-#     "P10":"TP001354",
+#     "P9":"ABSENT",
+#     "P10":"ABSENT",
 #     "P11":"TP001472",
 #     "P12":"TP001484",
 #     "P13":"TP001123",
-#     "P14":"ABSENT",
+#     "P14":"TP001491",
 #     "P15":"ABSENT",
-#     "session":"Session_Dec_5",
+#     "session":"Session_Dec_19",
 #     "num_participant":15,
-#     "crashed_phones": []    
+#     "crashed_phones": [],
+#     "phones_with_time_problem": []    
 # }
 
 
 
 
-crashed_phones = experiment_info["crashed_phones"]
-
+#change these based on your input and output paths
 input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
 output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "data")
-# input_path = os.path.join("C:\\","Users","biomusic","Desktop", experiment_info["session"])
-# output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "only to test the python code")
+#output_path = os.path.join("C:\\","Users","biomusic","Desktop","Nova", "test output folder")
 
-# input_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_data",experiment_info["session"])
-# output_path = os.path.join("C:\\","Users","biapt","Documents","GitHub","Scripts","SSI","test_out")
 
+#take the name of crashed phones and phones with time problem and put them in local variables
+crashed_phones = experiment_info["crashed_phones"]
+phones_with_time_problem = experiment_info["phones_with_time_problem"]
 
 # Get the timestamp of when the script was run 
 # We do this here so that all file created when this is run 
@@ -163,16 +218,16 @@ experiment = Experiment(experiment_info, output_path)
 
 
 already_glued = False
-def glue(colorpath1):
-    #find out the second part of the folder we want to glue
-    if "1" in colorpath1:
-        colorpath2 = colorpath1.replace("1","2") + ".zip"
-    elif "2" in colorpath1:
-        colorpath2 = colorpath1.replace("2","1") + ".zip"
+#if one of the phones crashed in the middle of the experiment
+#and the experimenter has re-connected it and started recording again,
+#this function is supposed to glue the data files from two recording folders together
+def glue(crashed_phone, colorpath1):
+    #set the path for the second part of the folder we want to glue
+    colorpath2 = colorpath1.replace(crashed_phone + "1", crashed_phone + "2") + ".zip"
 
     #extract the second folder
+    print("extracting..." + colorpath2)
     with zipfile.ZipFile(colorpath2, 'r') as zip_ref:
-        print("extracting..." + colorpath2)
         colorpath2 = colorpath2.replace(".zip","") 
         zip_ref.extractall(colorpath2)
 
@@ -255,13 +310,15 @@ def glue(colorpath1):
 #and inside that folder are the recorded data from that phone.
 for colorfolder in listdir(input_path):
     if ".zip" in colorfolder:
-        # if "orange" in colorfolder:
-        #     start_time = load_time(os.path.join(input_path,"start_recording_time_orange.txt"))
-        # else:
-        #     start_time = load_time(os.path.join(input_path,"start_recording_time.txt"))
-        # print(colorfolder)
-        # print("start time:")
-        # print(start_time)
+
+        #sometimes, phone's system time might not be accurate. In that case, we have to move
+        #the start recording time, based on the delay that phone had had
+        for phone_with_time_problem in phones_with_time_problem:
+            if phone_with_time_problem in colorfolder:
+                start_time = load_time(os.path.join(input_path,"start_recording_time_" + phone_with_time_problem + ".txt"))
+                phones_with_time_problem.remove(phone_with_time_problem)
+            else:
+                start_time = load_time(os.path.join(input_path,"start_recording_time.txt"))
 
 
         # Here we unzip the file
@@ -278,7 +335,7 @@ for colorfolder in listdir(input_path):
         if already_glued:
             #make this false, for other crashed phones that might exist
             already_glued = False
-            continue      
+            continue
 
         for crashed_phone in crashed_phones:
             #if this folder we are at, is either the first of second part of the crashed phone data
@@ -288,10 +345,14 @@ for colorfolder in listdir(input_path):
                     #glue this file to its second folder, using "glue" function
                     #the function returns the path where the glued data is stored as the output
                     #so we continue creating stream files from the glued data.
-                    color_path = glue(color_path)
+                    color_path = glue(crashed_phone, color_path)
                     already_glued = True
 
-        
+
+        print(colorfolder)
+        print("start time:")
+        print(start_time)
+
         # Here we iterate through the color path session folder
         for sessionfolder in listdir(color_path):
             session_path = color_path + os.sep + sessionfolder
