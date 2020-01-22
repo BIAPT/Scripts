@@ -15,11 +15,13 @@ for p = 1:length(participants)
 
     % Create the participants directory
     participant = participants{p};
+    disp(strcat("Participant: ", participant));
     power_participant_output_path =  mkdir_if_not_exist(power_output_path, participant);
 
     % Iterate over the states
     for s = 1:length(states)
         state = states{s};
+        disp(strcat("State: ", state));
         
         % Load the recording
         raw_data_filename = strcat(participant,'_',state,'.set');
@@ -32,7 +34,7 @@ for p = 1:length(participants)
         % setup the dynamic parameters
         window_size = floor(recording.length_recording / recording.sampling_rate); % in seconds
         step_size = window_size; 
-        result_td = na_topographic_distribution(recording, window_size, step_size, power_param.bandpass);
+        result_td = na_topographic_distribution(recording, window_size, step_size, power_param.frequency_band);
         [filt_power, filt_location] = filter_non_scalp_vector(result_td.data.power, result_td.metadata.channels_location);
         result_td.data.filt_power = filt_power;
         result_td.data.filt_location = filt_location;
