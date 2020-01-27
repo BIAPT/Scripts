@@ -1,0 +1,41 @@
+%{
+    Yacine Mahdid 2020-01-22
+    This script is used to generate the cosine similarities value we need
+    for the paper. This mirror the analysis we did in Cosine Similarity for Motif comparison
+    But we automate everything now
+    
+    The output should be a csv file with the same format as we need to run
+    the statistics on
+
+%}
+
+%% Seting up the variables
+clear % to keep only what is needed for this experiment
+setup_experiments % see this file to edit the experiments
+
+data_output_file = strcat(output_path,filesep,'motif',filesep,'cosine_similarity.csv');
+motif_data_path = strcat(output_path,filesep,'motif');
+
+% Header for output file
+header = {'subject_id','state', 'motif_id', 'cos_anterior', 'cos_posterior', 'cos_whole'};
+
+
+%% Calculating the cosine similarity
+
+
+%% Writing the cosine similarity to CSV
+
+% Overwrite the file
+delete(data_output_file);
+
+% Open the 
+file_id = fopen(data_output_file,'w');
+
+% Create the header
+for i = 1:length(header)
+    fprintf(file_id,'%s,',header{i});
+end
+fprintf(file_id,"\n");
+fclose(file_id);
+
+for p = p
