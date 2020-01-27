@@ -162,7 +162,7 @@ for m = 1:length(motif_ids)
         end
     end
     
-    %{
+  
     for e_i = 1:length(states)
         
         n_freq = normalize_motif(squeeze(avg_data.freq(e_i,:,:)));
@@ -184,7 +184,7 @@ for m = 1:length(motif_ids)
         title(strcat("Average power at ",states{e_i}))
         topographic_map(avg_data.power(e_i,:),avg_data.location);
     end
-    %}
+    
     
 end
 
