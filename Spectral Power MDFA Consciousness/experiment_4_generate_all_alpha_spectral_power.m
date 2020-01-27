@@ -34,11 +34,11 @@ for p = 1:length(participants)
 
     %% Make the figure
     figure
-    for i = 1:length(states)
-        power = state_data(i).power;
-        location = state_data(i).location;
-        cur_title = strcat(participant," ",states{i});
-        subplot(3,3,i)
+    for e_i = 1:length(states)
+        power = state_data(e_i).power;
+        location = state_data(e_i).location;
+        cur_title = strcat(participant," ",states{e_i});
+        subplot(3,3,e_i)
         title(cur_title)
         topographic_map(power,location);
     end

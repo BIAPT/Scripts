@@ -24,7 +24,7 @@ avg_motifs.distance = zeros(7,13,99);
 
 % Here we will iterate over all the participant load them and then add them
 % together if their frequency at a given motif is not zero.
-motifs_count = zeros(7,13,99);
+
 
 for p_i = 1:length(participants)
     participant = participants{p_i};
