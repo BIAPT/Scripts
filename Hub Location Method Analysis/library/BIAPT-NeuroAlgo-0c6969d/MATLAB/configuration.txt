@@ -1,0 +1,9 @@
+// General bundle behavior
+is_verbose = 1
+saving_directory = C:/Users/biapt/Desktop/test_data
+// Common brain wave for human
+alpha = [7 13]
+beta = [12 38]
+theta = [4 7]
+delta = [0.5 4]
+gamma = [25 40]
