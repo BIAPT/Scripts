@@ -11,6 +11,7 @@ for i in range (1,105):
     matrix[rng, rng+i] = fill
     a=a+len(fill)
 
+
 mat=pd.DataFrame(matrix)
 #mat = mat.applymap(str)
 #np.savetxt('foo.txt', mat, fmt='%s',delimiter=';')
