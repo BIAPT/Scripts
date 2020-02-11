@@ -17,18 +17,19 @@ in_path = settings.raw_data_path;
 out_path = settings.output_path;
 
 % Constructing the in and out filename
-in_filename = strcat(ppt, '_', state, '.mat');
+in_path = strcat(in_path, ppt, filesep);
+in_filename = strcat(ppt, '_', state, '.set');
 out_filename = strcat(out_path, ppt,'_',state,'_wpli.mat');
 
 recording = load_set(in_filename, in_path);
 
 % Calculate the wPLI which is the basis for the hub location network
-% This might need to be separated into its own file
-frequency_band = [8 14]; % This is in Hz
-window_size = 10; % This is in seconds and will be how we chunk the whole dataset
-number_surrogate = 20; % Number of surrogate wPLI to create
-p_value = 0.05; % the p value to make our test on
-step_size = 1;
+frequency_band = [8 13];
+window_size = 10;
+step_size = 0.1;
+number_surrogate = 20;
+p_value = 0.05;
 result_wpli = na_wpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
 
-save(output_file_path, 'result_wpli');
+save(out_filename, 'result_wpli');
+
