@@ -140,3 +140,12 @@ dmypy.json
 .history
 
 # End of https://www.gitignore.io/api/python,visualstudiocode
+*.DS_Store
+*.mat
+*.set
+*.fdt
+*.txt
+*.png
+*.xlsx
+
+*.xml
