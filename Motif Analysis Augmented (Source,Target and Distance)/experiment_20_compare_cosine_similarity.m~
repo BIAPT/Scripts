@@ -1,0 +1,27 @@
+%{
+    Yacine Mahdid 2020-01-22
+    This script is used to generate the average motif across participants
+
+%}
+
+%% Seting up the variables
+clear % to keep only what is needed for this experiment
+setup_experiments % see this file to edit the experiments
+
+%% Setup the variables
+num_motif = 13;
+motif_folder = '/home/yacine/Documents/motif_analysis_output/motif';
+
+%% Manual Variable to Change
+ppt_name_1 = 'MDFA03';
+ppt_state_1 = 'BASELINE';
+
+ppt_name_2 = 'AVERAGE';
+ppt_state_2 = 'BASELINE';
+
+%% loading the data
+data = load(strcat(motif_folder,filesep,ppt_name_1,filesep,ppt_state_1,'_motif.mat');
+ppt_data_1 = 
+data = load(strcat(motif_folder,filesep,ppt_name_2,filesep,ppt_state_2,'_motif.mat');
+
+

@@ -63,11 +63,11 @@ for s = 1:length(states)
    end
    
    % Averaging the motifs
-   avg_ppt_motif = average_motif(total_ppt_motif, num_motif);
+   result_motif = average_motif(total_ppt_motif, num_motif);
    
    % Saving the motif
-   motif_state_filename = strcat(avg_motif_path,filesep,state,'_avg_motif.mat');
-   save(motif_state_filename, 'avg_ppt_motif');
+   motif_state_filename = strcat(avg_motif_path,filesep,state,'_motif.mat');
+   save(motif_state_filename, 'result_motif');
 end
 
 %% Helper functions
@@ -123,10 +123,10 @@ function avg_ppt_motif = average_motif(total_ppt_motif, num_motif)
     % where we will add everything to the total
     for m = 1:num_motif
         if (sum(total_ppt_motif.frequency(m,:)) ~= 0)
-            avg_ppt_motif.frequency(m,:) = total_ppt_motif.frequency(m,:) / total_ppt_motif.num_participant(m,:);
-            avg_ppt_motif.source(m,:) = total_ppt_motif.source(m,:) / total_ppt_motif.num_participant(m,:);
-            avg_ppt_motif.target(m,:) = total_ppt_motif.target(m,:) / total_ppt_motif.num_participant(m,:);
-            avg_ppt_motif.distance(m,:) = total_ppt_motif.distance(m,:) / total_ppt_motif.num_participant(m,:);
+            avg_ppt_motif.frequency(m,:) = total_ppt_motif.frequency(m,:) ./ total_ppt_motif.num_participant(m,:);
+            avg_ppt_motif.source(m,:) = total_ppt_motif.source(m,:) ./ total_ppt_motif.num_participant(m,:);
+            avg_ppt_motif.target(m,:) = total_ppt_motif.target(m,:) ./ total_ppt_motif.num_participant(m,:);
+            avg_ppt_motif.distance(m,:) = total_ppt_motif.distance(m,:) ./ total_ppt_motif.num_participant(m,:);
         end
         
     end
