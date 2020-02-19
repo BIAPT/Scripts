@@ -35,10 +35,9 @@ isInterpolation = 0;
 
 wpli = struct();
 wpli.data = avg_wpli;
-wpli.location = result_wpli.metadata.channels_location;
-reorder_wpli = reorder_channels(wpli);
+wpli.location = result_wpli.me
 
-plot_wpli(reorder_wpli.data, title_name, reorder_wpli.location, color, isInterpolation)
+plot_wpli(avg_wpli, title_name, label_names, color, isInterpolation)
 
 
 % Aggregate statistic over the whole wPLI matrices (mean and std)

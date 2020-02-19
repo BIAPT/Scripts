@@ -8,7 +8,7 @@ function [reorder_wpli] = reorder_channels(wpli)
     
     reorder_wpli = struct();
     reorder_wpli.data = zeros(num_location, num_location);
-    reorder_wpli.data = labels;
+    reorder_wpli.location = labels;
     
     for l1 = 1:length(labels)
        label_1 = labels{l1};
