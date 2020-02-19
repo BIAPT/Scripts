@@ -20,13 +20,14 @@ mat=pd.DataFrame(matrix)
 exportdata = np.zeros((105,105))
 exportdata=pd.DataFrame(exportdata)
 
-eoe
+#test=np.loadtxt('cluster2.txt')
+#eoe=test
+eoe[]
 
 for i in range(0,len(eoe)):
     a=eoe[i]
     p=np.where(mat == a)
     exportdata.iloc[p[1][0],p[0][0]]=1
-
 
 for i in range(0,len(eoe[0])):
     a=eoe[0][i]
