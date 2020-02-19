@@ -5,8 +5,8 @@ function [reorder_wpli] = reorder_channels(wpli)
     channel_order = readtable('biapt_egi129.csv');
     
     [num_location,labels] = get_num_location(wpli.location, channel_order);
-    
     reorder_wpli = struct();
+    
     reorder_wpli.data = zeros(num_location, num_location);
     reorder_wpli.data = labels;
     
