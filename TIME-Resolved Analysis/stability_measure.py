@@ -6,9 +6,9 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from scipy.spatial import distance
 from tqdm import tqdm
+from sklearn.metrics import silhouette_score
 
-
-def Stability_Index(X_temp,X_test,P,K,Rep):
+def compute_stability_index(X_temp,X_test,P,K,Rep):
     SI=np.zeros([Rep,len(K) ,len(P)])   # Collection of stability index over Repetitions
     x_complete = np.row_stack([X_temp, X_test])  # complete input set for PCA-fit
 
@@ -32,7 +32,7 @@ def Stability_Index(X_temp,X_test,P,K,Rep):
                 S_test = kmeans.predict(X_test_LD)
 
                 # proportion of disagreeing components in u and v
-                SI[r,p_i,k_i]=distance.hamming(S_test,S_temp) # should be already normalized
+                SI[r,k_i,p_i]=distance.hamming(S_test,S_temp) # should be already normalized
                 k_i=k_i+1
 
             # increase p iteration by one
@@ -45,7 +45,7 @@ def Stability_Index(X_temp,X_test,P,K,Rep):
 
 
 
-def silhouette_score(X_temp,X_test,P,K,Rep):
+def compute_silhouette_score(X_temp,X_test,P,K,Rep):
     x_complete = np.row_stack([X_temp, X_test])     # complete input set for PCA-fit
     SIL = np.zeros([Rep, len(K), len(P)])           # Collection of silhouette scores over Repetitions
 
@@ -63,7 +63,7 @@ def silhouette_score(X_temp,X_test,P,K,Rep):
                 kmeans.fit(X_complete_LD)           #fit the classifier on all X_LD
                 S_complete = kmeans.predict(X_complete_LD)
                 silhouette = silhouette_score(X_complete_LD, S_complete)
-                SIL[r,p_i,k_i]=silhouette
+                SIL[r,k_i,p_i]=silhouette
                 k_i=k_i+1
 
             # increase p iteration by one
