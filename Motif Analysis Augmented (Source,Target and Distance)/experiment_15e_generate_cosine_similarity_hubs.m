@@ -1,4 +1,6 @@
 %{
+    Modified by Danielle Nadin 2020-02-18 modify computing cosine
+    similarity on hubs instead of motifs
     Yacine Mahdid 2020-01-22
     This script is used to generate the cosine similarities value we need
     for the paper. This mirror the analysis we did in Cosine Similarity for Motif comparison
@@ -13,12 +15,11 @@
 clear % to keep only what is needed for this experiment
 setup_experiments % see this file to edit the experiments
 
-data_output_file = strcat(output_path,filesep,'motif',filesep,'cosine_similarity.csv');
-motif_data_path = strcat(output_path,filesep,'motif');
+data_output_file = strcat(output_path,filesep,'hubs',filesep,'cosine_similarity.csv');
+hubs_data_path = strcat(output_path,filesep,'hubs');
 
 % Header for output file
-header = {'subject_id','state', 'motif_id', 'cos_anterior', 'cos_posterior', 'cos_whole'};
-motif_ids = [1,7];
+header = {'subject_id','state', 'cos_anterior', 'cos_posterior', 'cos_whole'};
 
 %% Calculating and Writing the cosine similarity to CSV
 
@@ -38,54 +39,51 @@ fprintf(file_id,"\n");
 % Iterate over all the data participant->motifs->states
 for p = 1:length(participants)
     participant = participants{p};
-    
-    for m = 1:length(motif_ids)
-        motif_id = motif_ids(m);
         
         for s = 1:length(states)
             state = states{s};
             
             % Load the baseline data
-            base_filename = strcat('_Pre_5min_motif.mat');
-            base_location = strcat(motif_data_path, filesep, participant, filesep, base_filename);
+            base_filename = strcat('_Pre_5min_hubs.mat');
+            base_location = strcat(hubs_data_path, filesep, participant, filesep, base_filename);
             data = load(base_location);
-            base_motif = data.result_motif;
+            base_hubs = data.result_hubs;
             
             % Load the other data points (which might be baseline too)
-            other_filename = strcat(state,'_motif.mat');
-            other_location = strcat(motif_data_path, filesep, participant, filesep, other_filename);
+            other_filename = strcat(state,'_hubs.mat');
+            other_location = strcat(hubs_data_path, filesep, participant, filesep, other_filename);
             data = load(other_location);
-            other_motif = data.result_motif;
+            other_hubs = data.result_hubs;
             
             % Double checking that we have two vector of similar size
-            [base_row, base_col] = size(base_motif.channels_location);
-            [other_row, other_col] = size(other_motif.channels_location);
+            [base_row, base_col] = size(base_hubs.channels_location);
+            [other_row, other_col] = size(other_hubs.channels_location);
             assert(base_row == other_row & base_col == other_col);
             
             % Here we are comparing the baseline against every other state
             % (even against itself)
-            freq_base = normalize(base_motif.frequency(motif_id, :));
-            freq_other = normalize(other_motif.frequency(motif_id, :));
-            location = other_motif.channels_location;
+            deg_base = normalize(base_hubs.degree);
+            deg_other = normalize(other_hubs.degree);
+            location = other_hubs.channels_location;
             
             % Get the anterior data points
-            freq_base_anterior = get_anterior(freq_base, location);
-            freq_other_anterior = get_anterior(freq_other, location);
+            deg_base_anterior = get_anterior(deg_base, location);
+            deg_other_anterior = get_anterior(deg_other, location);
             
             % Get the posterior data points
-            freq_base_posterior = get_posterior(freq_base, location);
-            freq_other_posterior = get_posterior(freq_other, location);
+            deg_base_posterior = get_posterior(deg_base, location);
+            deg_other_posterior = get_posterior(deg_other, location);
             
             % Actually calculating the cosine similarity
-            cos_anterior = vector_cosine_similarity(freq_base_anterior, freq_other_anterior);
-            cos_posterior = vector_cosine_similarity(freq_base_posterior, freq_other_posterior);
-            cos_whole = vector_cosine_similarity(freq_base, freq_other);
+            cos_anterior = vector_cosine_similarity(deg_base_anterior, deg_other_anterior);
+            cos_posterior = vector_cosine_similarity(deg_base_posterior, deg_other_posterior);
+            cos_whole = vector_cosine_similarity(deg_base, deg_other);
             
             % Print to the file
-            fprintf(file_id,"%s,%s,%s,%f,%f,%f\n",participant, state,...
-                string(motif_id),cos_anterior, cos_posterior, cos_whole);
+            fprintf(file_id,"%s,%s,%f,%f,%f\n",participant, state,...
+                cos_anterior, cos_posterior, cos_whole);
         end
-    end
+ 
 end
 
 % Close the file pointer when done 
