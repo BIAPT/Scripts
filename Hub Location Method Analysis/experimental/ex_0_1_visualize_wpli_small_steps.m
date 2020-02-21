@@ -32,7 +32,13 @@ title_name = strcat(ppt,' ',state,' Average wPLI');
 label_names = '';
 color = 'jet';
 isInterpolation = 0;
-plot_wpli(avg_wpli, title_name, label_names, color, isInterpolation)
+
+wpli = struct();
+wpli.data = avg_wpli;
+wpli.location = result_wpli.metadata.channels_location;
+reorder_wpli = reorder_channels(wpli);
+
+plot_wpli(reorder_wpli.data, title_name, reorder_wpli.location, color, isInterpolation)
 
 
 % Aggregate statistic over the whole wPLI matrices (mean and std)
@@ -52,4 +58,4 @@ title(strcat(ppt,' ', state, ' Standard Deviation of Global wPLI over time'))
 out_video = strcat(out_figure_path, filesep, ppt, '_', state, '_wpli');
 make_video_functional_connectivity(out_video, result_wpli.data.wpli, .1)
 
-%% Separate the 
+%% 
