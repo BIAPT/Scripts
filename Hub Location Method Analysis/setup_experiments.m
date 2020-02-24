@@ -19,7 +19,7 @@ settings.wpli.frequency_band = [8 13]; % This is in Hz
 settings.wpli.window_size = 10; % This is in seconds and will be how we chunk the whole dataset
 settings.wpli.number_surrogate = 20; % Number of surrogate wPLI to create
 settings.wpli.p_value = 0.05; % the p value to make our test on
-settings.wpli.step_size = 0.1;
+settings.wpli.step_size = 10;
 
 % Hub Location Variables
 % TODO

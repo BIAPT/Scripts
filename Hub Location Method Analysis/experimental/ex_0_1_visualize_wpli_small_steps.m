@@ -20,6 +20,7 @@ in_filename = strcat(in_path,ppt, '_', state, '_wpli.mat');
 out_figure_path = mkdir_if_not_exist(in_path, 'figure');
 
 % Load the wpli struct
+in_filename= 'test_wpli.mat';
 data = load(in_filename);
 result_wpli = data.result_wpli;
 
@@ -33,13 +34,15 @@ label_names = '';
 color = 'jet';
 isInterpolation = 0;
 
+hemisphere = 'left';
+[avg_wpli, location] = get_hemisphere(avg_wpli, result_wpli.metadata.channels_location, hemisphere);
+
 wpli = struct();
 wpli.data = avg_wpli;
-wpli.location = result_wpli.metadata.channels_location;
-reorder_wpli = reorder_channels(wpli);
+wpli.location = location;
+avg_reorder_wpli = reorder_channels(wpli);
 
-plot_wpli(reorder_wpli.data, title_name, reorder_wpli.location, color, isInterpolation)
-
+plot_wpli(avg_reorder_wpli.data, title_name, avg_reorder_wpli.regions, color, isInterpolation)
 
 % Aggregate statistic over the whole wPLI matrices (mean and std)
 out_stat_figure = strcat(out_figure_path, filesep, ppt,'_',state,'_stat_wpli.fig');
@@ -54,8 +57,54 @@ subplot(2,1,2)
 plot(std_wpli)
 title(strcat(ppt,' ', state, ' Standard Deviation of Global wPLI over time'))
 
-% Generate a video of the whole wPLI matrices over time
-out_video = strcat(out_figure_path, filesep, ppt, '_', state, '_wpli');
-make_video_functional_connectivity(out_video, result_wpli.data.wpli, .1)
+[num_wpli, num_channels, ~] = size(result_wpli.data.wpli);
+location = result_wpli.metadata.channels_location;
+reorder_wplis = zeros(num_wpli, length(avg_wpli), length(avg_wpli));
 
-%% 
+for i = 1:num_wpli
+    disp(i)
+    [half_wpli, half_location] = get_hemisphere(squeeze(result_wpli.data.wpli(i,:,:)), result_wpli.metadata.channels_location, hemisphere);
+    wpli = struct();
+    wpli.data = half_wpli;
+    wpli.location = half_location;  
+    
+    reorder_wpli = reorder_channels(wpli);
+    reorder_wplis(i,:,:) = reorder_wpli.data;
+end
+% Generate a video of the whole wPLI matrices over time
+out_video = strcat(hemisphere);
+make_video_functional_connectivity(out_video, reorder_wplis, .1)
+ 
+function [half_wpli, half_location] = get_hemisphere(wpli, location, hemisphere)
+    
+    half_channels = [];
+    for i = 1:length(location)
+       if(is_hemisphere(location, i, hemisphere))
+          half_channels = [half_channels, i]; 
+       end
+    end
+    
+    num_channel = length(half_channels);
+    half_wpli = zeros(num_channel, num_channel);
+    half_location = location(half_channels);
+    for i = 1:num_channel
+        ci = half_channels(i);
+        
+        for j = 1:num_channel
+            cj = half_channels(j);
+            
+            half_wpli(i,j) = wpli(ci, cj);
+        end
+        
+    end
+
+end
+
+function is = is_hemisphere(location, index, hemisphere)
+    is = 0;
+    if(strcmp(hemisphere, 'left') && location(index).is_left)
+        is = 1;
+    elseif(strcmp(hemisphere, 'right') && location(index).is_right)
+       is = 1; 
+    end
+end
