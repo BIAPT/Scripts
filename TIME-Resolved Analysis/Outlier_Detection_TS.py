@@ -16,13 +16,16 @@ X_step=extract_features.extract_features(data_step)
 X_step=np.array(X_step)
 X_step_diff = extract_features.get_difference(X_step)
 
-eventtime = scipy.io.loadmat('data/N418_event_time.mat')
-eventtime= eventtime['eventtimes']
-eventtime.astype(int)
+eventtime = scipy.io.loadmat('data/N418_event_time_con.mat')
+eventtime_con= eventtime['coneventtimes']
+eventtime = scipy.io.loadmat('data/N418_event_time_incon.mat')
+eventtime_incon= eventtime['inconeventtimes']
+
+eventtime_incon.astype(int)
 Y=np.zeros(X_step.shape[0]+100)
-Y[eventtime]=1
+Y[eventtime_incon]=1
 Y=Y[0:X_step.shape[0]]
-len(eventtime[0])
+#len(np.where(Y==1)[0])
 
 data_step.shape
 X_step.shape
@@ -32,16 +35,9 @@ e=np.where(Y==1)
 ne=np.where(Y==0)
 
 # plot different mean matrixes event, nonevent)
-delay=1
+delay=0
 plt.imshow(np.mean(data_step[e[0]+delay],0))
 plt.imshow(np.mean(data_step[ne],0))
-
-#plot one image to test the data
-plt.imshow(X_step[eventtime[0][1:500],:])
-#plt.imshow(X_step)
-plt.xlabel('feature')
-plt.ylabel('timestep')
-
 
 """
     PCA PLOT
@@ -53,22 +49,12 @@ X3 = pca3.transform(X_step)
 
 fig = plt.figure()
 ax = Axes3D(fig)
-n=range(100,5400)
+n=np.where(Y==0)
 ax.scatter(X3[n, 0], X3[n, 1],X3[n, 2], marker='o',color='blue',label="none", edgecolor='k')
 n=np.where(Y==1)
 ax.scatter(X3[n, 0], X3[n, 1],X3[n, 2], marker='o',color='red',label="event", edgecolor='k')
 #plt.title('Anesthesia PCA 3D')
 plt.title('Rest PCA 3D')
-
-"""
-    PCA ANALYSIS
-"""
-
-pca = PCA().fit(X_anes_step)
-plt.plot(np.cumsum(pca.explained_variance_ratio_)[0:50])
-plt.xlabel('number of components')
-plt.ylabel('cumulative explained variance');
-#plt.savefig("pca_anes_4.png",bbox_inches='tight')
 
 
 """
@@ -77,13 +63,11 @@ plt.ylabel('cumulative explained variance');
 import pandas as pd
 from adtk.data import validate_series
 
-dti = pd.date_range('2020-01-01 00:00:00', periods=len(X_step), freq='S')
+dti = pd.date_range('2020-01-01 00:00:00', periods=len(X_step), freq='D')
 
 df = pd.DataFrame(dti, columns=['date'])
-df['data'] = (X_step[:,1000])
-df['data2'] = (X_step[:,2000])
-df['data4'] = (X_step[:,3000])
-df['data5'] = (X_step[:,3500])
+for i in range(1,X_step.shape[1]):
+    df[i] = (X_step[:,i])
 
 df['datetime'] = pd.to_datetime(df['date'])
 df = df.set_index('datetime')
@@ -107,19 +91,18 @@ plot(s_train, anomaly_pred=anomalies, ap_color='red', ap_marker_on_curve=True)
 
 
 
-
 from adtk.detector import MinClusterDetector
 from sklearn.cluster import KMeans
-min_cluster_detector = MinClusterDetector(KMeans(n_clusters=2))
+min_cluster_detector = MinClusterDetector(KMeans(n_clusters=3))
 anomalies = min_cluster_detector.fit_detect(df)
 plot(df, anomaly_pred=anomalies, ts_linewidth=2, ts_markersize=3, ap_color='red', ap_alpha=0.3, curve_group='all');
 
 
 '''GET ACCURACY'''
-plt.plot(Y[anomalies.values])
 found_events=len(np.where(Y[anomalies.values]==1)[0])
-accuracy=found_events/len(eventtime[0])
+accuracy=found_events/len(eventtime_incon[0])
 accuracy
+# !!!! PLOT ROC CURVE !!!!
 
 '''THIS IS SUPER COOL B=) '''
 from adtk.detector import OutlierDetector
@@ -139,6 +122,10 @@ plot(df, anomaly_pred=anomalies, ts_linewidth=2, ts_markersize=3, ap_color='red'
 from adtk.transformer import RollingAggregate
 s_transformed = RollingAggregate(agg='count', window=5).transform(df.iloc[:,1])
 plot(s_transformed, ts_linewidth=2, ts_markersize=3);
+
+
+
+
 
 
 

@@ -46,7 +46,7 @@ for p = 1:length(participants)
             state = states{s};
             
             % Load the baseline data
-            base_filename = strcat('BASELINE_motif.mat');
+            base_filename = strcat('_Pre_5min_motif.mat');
             base_location = strcat(motif_data_path, filesep, participant, filesep, base_filename);
             data = load(base_location);
             base_motif = data.result_motif;
