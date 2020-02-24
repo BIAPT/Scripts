@@ -1,8 +1,8 @@
 %{
  Danielle Nadin 2020-02-24
- Loop through MDFA data and change channel location labels of dpli, wpli
- and power results (motif, hubs and graph theory can all be fixed by
- rerunning the code to generate motif, hubs and graph theory)
+ Loop through MDFA data and change channel location labels of dpli, wpli,
+ motif and power results (hubs and graph theory can be quickly fixed by
+ rerunning the code to generate them)
 %}
 
 %% Seting up the variables
@@ -12,6 +12,7 @@ setup_experiments % see this file to edit the experiments
 dpli_input_path = strcat(output_path,filesep,'dpli');
 wpli_input_path = strcat(output_path,filesep,'wpli');
 power_input_path = strcat(output_path,filesep,'power');
+motif_input_path = strcat(output_path,filesep,'motif')
 
 % Iterate over the participants
 for p = 1:length(participants)
@@ -23,6 +24,7 @@ for p = 1:length(participants)
     dpli_participant_input_path = strcat(dpli_input_path,filesep,participant);
     wpli_participant_input_path = strcat(wpli_input_path,filesep,participant); 
     power_participant_input_path = strcat(power_input_path,filesep,participant); 
+    motif_participant_input_path = strcat(motif_input_path,filesep,participant); 
     
     % Iterate over the states
     for s = 1:length(states)
@@ -30,11 +32,13 @@ for p = 1:length(participants)
         dpli_state_filename = strcat(dpli_participant_input_path,filesep,state,'_dpli.mat');
         wpli_state_filename = strcat(wpli_participant_input_path,filesep,state,'_wpli.mat');
         power_state_filename = strcat(power_participant_input_path,filesep,state,'_power.mat');
+        motif_state_filename = strcat(motif_participant_input_path,filesep,state,'_motif.mat');
         
         % Load the dpli and wpli result
         load(dpli_state_filename);
         load(wpli_state_filename);
         load(power_state_filename);
+        load(motif_state_filename);
         ppt_location = result_dpli.metadata.channels_location;
 
         %Rename channels 
@@ -89,9 +93,11 @@ for p = 1:length(participants)
         result_dpli.metadata.channels_location = ppt_location;
         result_wpli.metadata.channels_location = ppt_location;
         result_td.metadata.channels_location = ppt_location;
+        result_motif.channels_location = ppt_location;
         save(dpli_state_filename, 'result_dpli');
         save(wpli_state_filename, 'result_wpli');
         save(power_state_filename, 'result_td');
+        save(motif_state_filename, 'result_motif');
     end
 end
 
