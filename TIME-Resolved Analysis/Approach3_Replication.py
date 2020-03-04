@@ -7,6 +7,12 @@ from matplotlib import pyplot as plt
 from sklearn.cluster import KMeans
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.decomposition import PCA
+import pandas as pd
+
+channels=pd.read_csv('data/MDFA05_channel.txt',sep="#")
+channels = channels.iloc[0,0].split(",")
+channels=np.array(channels)
+selection=['E1','Cz','E2','E3',] #across the combinations of these
 
 mat = scipy.io.loadmat('data/MDFA05_result_wPLI_anes_avg.mat')
 data_anes_avg = mat['result_wpli_anes_avg']
@@ -39,51 +45,7 @@ Y_all=np.concatenate((np.ones(X_anes_step.shape[0]),np.zeros(X_rest_step.shape[0
 X_all_2= np.concatenate((X_anes_step,X_rest_step,X_anes5_step),axis=0)
 Y_all_2=np.concatenate((np.ones(X_anes_step.shape[0]),np.zeros(X_rest_step.shape[0]), np.repeat(2, X_anes5_step.shape[0])),axis=0)
 
-"""
-    Compute Stability index
-"""
-P=[2,3,4,5]     #number of Principal components to iterate
-K=[2,3,4,5]     #number of K-clusters to iterate
-Rep=10          #number of Repetitions (Mean at the end)
 
-X_temp=X_all    #Template set (50% of Participants)
-X_test=X_all    #Test set (50% of Participants)
-X_complete = np.row_stack([X_temp,X_test]) #complete input set for PCA-fit
-
-SI_M=np.zeros([len(K) ,len(P)])     # Mean stability index
-SI_SD=np.zeros([len(K) ,len(P)])    # stability index SD
-SI=np.zeros([Rep,len(K) ,len(P)])   # Collection of stability index over Repetitions
-from scipy.spatial import distance
-from tqdm import tqdm
-
-for r in tqdm(range(0,Rep)):
-    p_i = 0
-    for p in P:
-        pca3 = PCA(n_components=p)
-        pca3.fit(X_complete)
-        X_temp_LD = pca3.transform(X_temp) # get a low dimension version of X_temp
-        X_test_LD = pca3.transform(X_test) # and X_test
-
-        k_i=0
-        for k in K:
-            kmeans = KMeans(n_clusters=k, max_iter=1000, n_init=1)
-            kmeans.fit(X_temp_LD)           #fit the classifier on X_template
-            S_temp = kmeans.predict(X_test_LD)
-
-            kmeans = KMeans(n_clusters=k, max_iter=1000, n_init=1)
-            kmeans.fit(X_test_LD)           #fit the classifier on X_test
-            S_test = kmeans.predict(X_test_LD)
-
-            # proportion of disagreeing components in u and v
-            SI[r,p_i,k_i]=distance.hamming(S_test,S_temp) # should be already normalized
-            k_i=k_i+1
-
-        # increase p iteration by one
-        p_i=p_i+1
-        print('PC '+str(p)+' finished' )
-
-SI_M=np.mean(SI,axis=0)
-SI_D=np.std(SI,axis=0)
 
 
 """

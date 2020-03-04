@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-def extract_features (data):
+def extract_features (data,getmean=False):
     data=data
 
     # Calculate nr of features with gaussian sum formula
@@ -21,6 +21,8 @@ def extract_features (data):
             for e in range(1, nr_electrodes):
                 tmp.extend(data[t].diagonal(e))
             tofill[t, :] = tmp
+        if getmean == True:
+            tofill = np.mean(tofill, axis=1)
 
     if len(data.shape) == 2:
         timesteps = 1
@@ -31,7 +33,28 @@ def extract_features (data):
             tmp.extend(data.diagonal(e))
         tofill = tmp
 
+        if getmean == True:
+            tofill = np.mean(tofill, axis=0)
+
     return tofill
+
+def extract_single_features(X_step,channels,selection):
+    if len(X_step.shape) == 3:
+        selected=[]
+        for i in range(0,len(selection)):
+            selected.append(np.where(channels==selection[i])[0][0])
+        X_step=X_step[:,selected,:] #[time,horizontal,vertical]
+        X_step=X_step[:,:,selected]
+        return X_step
+
+    if len(X_step.shape) == 2:
+        selected=[]
+        for i in range(0,len(selection)):
+            selected.append(np.where(channels==selection[i])[0][0])
+        X_step=X_step[selected,:] #[time,horizontal,vertical]
+        X_step=X_step[:,selected]
+        return X_step
+
 
 def get_difference (data):
     tofill= np.zeros((data.shape[0]-1, data.shape[1]))
@@ -39,5 +62,6 @@ def get_difference (data):
         j=i+1
         tofill[i,:]=data[j]-data[i]
     return  tofill
+
 
 
