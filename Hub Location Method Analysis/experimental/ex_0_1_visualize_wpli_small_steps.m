@@ -20,7 +20,6 @@ in_filename = strcat(in_path,ppt, '_', state, '_wpli.mat');
 out_figure_path = mkdir_if_not_exist(in_path, 'figure');
 
 % Load the wpli struct
-in_filename= 'test_wpli.mat';
 data = load(in_filename);
 result_wpli = data.result_wpli;
 
@@ -34,7 +33,7 @@ label_names = '';
 color = 'jet';
 isInterpolation = 0;
 
-hemisphere = 'left';
+hemisphere = 'right';
 [avg_wpli, location] = get_hemisphere(avg_wpli, result_wpli.metadata.channels_location, hemisphere);
 
 wpli = struct();
@@ -59,7 +58,7 @@ title(strcat(ppt,' ', state, ' Standard Deviation of Global wPLI over time'))
 
 [num_wpli, num_channels, ~] = size(result_wpli.data.wpli);
 location = result_wpli.metadata.channels_location;
-reorder_wplis = zeros(num_wpli, length(avg_wpli), length(avg_wpli));
+reorder_wplis = zeros(num_wpli, 43, 43);
 
 for i = 1:num_wpli
     disp(i)

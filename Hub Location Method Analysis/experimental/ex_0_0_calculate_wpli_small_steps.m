@@ -21,9 +21,6 @@ in_path = strcat(in_path, ppt, filesep);
 in_filename = strcat(ppt, '_', state, '.set');
 out_filename = strcat(out_path, ppt,'_',state,'_wpli.mat');
 
-in_filename = 'test_data.set';
-in_path = '';
-out_filename = 'test_wpli.mat';
 recording = load_set(in_filename, in_path);
 
 % Calculate the wPLI which is the basis for the hub location network
