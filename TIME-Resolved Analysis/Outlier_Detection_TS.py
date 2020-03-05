@@ -8,24 +8,97 @@ from sklearn.cluster import KMeans
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.decomposition import PCA
 from sklearn.cluster import AgglomerativeClustering
+import pandas as pd
+import scipy.stats
+
+channels=pd.read_csv('data/MDFA05_channel.txt',sep="#")
+channels = channels.iloc[0,0].split(",")
+channels=np.array(channels)
+#selection=['E24','E11','E124'] #3x Frontal
+#selection=['E52','E62','E92'] #3x Parietal
+#selection=['E36','E104','Cz'] #3x central
+
+#selection=['E11','E24','E52','E62','E92','E124'] #Frontal-Parietal
+#selection=['E11','E24','E36','E104','E124','Cz'] #Frontal-central
+#selection=['E36','E52','E62','E92','E104','Cz'] #central-Parietal
+
+selection=['E11','E24','E36','E52','E62','E92','E104','E124','Cz'] #Frontal-central-Parietal
+
+
+
 
 
 mat = scipy.io.loadmat('data/result_wpli_N418_step.mat')
 data_step = mat['result_wpli_N418_step']
-X_step=extract_features.extract_features(data_step)
-X_step=np.array(X_step)
-X_step_diff = extract_features.get_difference(X_step)
+data_step_selection=extract_features.extract_single_features(data_step,channels,selection)
+
+X_step_selection=extract_features.extract_features(data_step_selection)
+X_step_selection=np.array(X_step_selection)
+X_step_selection_diff=extract_features.get_difference(X_step_selection)
+X_step=np.mean(X_step_selection_diff,axis=1)
+
+#X_step_s_mean=extract_features.extract_features(data_step_selection,getmean=True)
 
 eventtime = scipy.io.loadmat('data/N418_event_time_con.mat')
 eventtime_con= eventtime['coneventtimes']
 eventtime = scipy.io.loadmat('data/N418_event_time_incon.mat')
 eventtime_incon= eventtime['inconeventtimes']
 
-eventtime_incon.astype(int)
-Y=np.zeros(X_step.shape[0]+100)
-Y[eventtime_incon]=1
-Y=Y[0:X_step.shape[0]]
+#eventtime_incon.astype(int)
+#Y=np.zeros(X_step.shape[0]+100)
+#Y[eventtime_incon]=1
+
+#Y=Y[0:X_step.shape[0]]
 #len(np.where(Y==1)[0])
+
+incon_mean=[]
+incon_sd=[]
+incon_all=[]
+for i in range(-20,20):
+    Y = np.zeros(X_step.shape[0] + 100)
+    Y[eventtime_incon+i] = 1
+    Y = Y[0:X_step.shape[0]]
+    incon_mean.append(np.mean(X_step[Y==1]))
+    incon_sd.append(scipy.stats.sem(X_step[Y==1]))
+    incon_all.append(X_step[Y==1])
+
+con_mean=[]
+con_sd=[]
+con_all=[]
+for i in range(-20,20):
+    Y = np.zeros(X_step.shape[0] + 100)
+    Y[eventtime_con+i] = 1
+    Y = Y[0:X_step.shape[0]]
+    con_mean.append(np.mean(X_step[Y==1]))
+    con_sd.append(scipy.stats.sem(X_step[Y==1]))
+    con_all.append(X_step[Y==1])
+
+incon_all=pd.DataFrame(incon_all)
+
+for i in range(1,49):
+    plt.plot(range(-20,20),incon_all.iloc[:,i])
+
+
+incon_all.iloc[:,40].shape
+
+plt.plot(range(-20,20),con_mean)
+plt.plot(range(-20,20),incon_mean)
+plt.errorbar(range(-20,20),incon_mean, yerr=incon_sd, fmt='.k',elinewidth=0.2);
+plt.errorbar(range(-20,20),con_mean, yerr=con_sd, fmt='.k',elinewidth=0.1);
+plt.axvline(0, color='k', linestyle='--')
+plt.legend(['con', 'incon'])
+plt.title('Average Frontal-Central-Parietal')
+plt.xlabel('100ms')
+
+plt.plot(range(-20,20),incon_all,linestyle='--')
+plt.plot(range(-20,20),incon_mean,linewidth=2)
+plt.plot(range(-20,20),con_mean,linewidth=2)
+plt.axvline(0, color='k', linestyle='--')
+plt.legend(['con', 'incon'])
+plt.title('Average C3,C4,Cz')
+plt.xlabel('100ms')
+
+
 
 data_step.shape
 X_step.shape
@@ -36,16 +109,17 @@ ne=np.where(Y==0)
 
 # plot different mean matrixes event, nonevent)
 delay=0
-plt.imshow(np.mean(data_step[e[0]+delay],0))
-plt.imshow(np.mean(data_step[ne],0))
+plt.imshow(np.mean(data_step_selection[e[0]+delay],0))
+plt.colorbar()
+plt.imshow(np.mean(data_step_selection[ne],0))
 
 """
     PCA PLOT
 """
 
 pca3 = PCA(n_components=3)
-pca3.fit(X_step)
-X3 = pca3.transform(X_step)
+pca3.fit(X_step_selection)
+X3 = pca3.transform(X_step_selection)
 
 fig = plt.figure()
 ax = Axes3D(fig)
@@ -64,20 +138,30 @@ import pandas as pd
 from adtk.data import validate_series
 
 dti = pd.date_range('2020-01-01 00:00:00', periods=len(X_step), freq='D')
-
 df = pd.DataFrame(dti, columns=['date'])
-for i in range(1,X_step.shape[1]):
+for i in range(0,X_step.shape[1]):
     df[i] = (X_step[:,i])
 
 df['datetime'] = pd.to_datetime(df['date'])
 df = df.set_index('datetime')
 df.drop(['date'], axis=1, inplace=True)
 df.head()
+s_train=df
+
+# the same for the label
+df = pd.DataFrame(dti, columns=['date'])
+df[1] = (Y)
+df['datetime'] = pd.to_datetime(df['date'])
+df = df.set_index('datetime')
+df.drop(['date'], axis=1, inplace=True)
+df.head()
+from adtk.data import to_events
+known_anomalies = to_events(df)
 
 
-s_train = validate_series(df)
 from adtk.visualization import plot
-plot(s_train)
+plot(s_train,anomaly_true=known_anomalies)
+plt.plot(Y)
 
 from adtk.detector import SeasonalAD
 seasonal_ad = SeasonalAD()
@@ -123,41 +207,6 @@ from adtk.transformer import RollingAggregate
 s_transformed = RollingAggregate(agg='count', window=5).transform(df.iloc[:,1])
 plot(s_transformed, ts_linewidth=2, ts_markersize=3);
 
-
-
-
-
-
-
-from sklearn.ensemble import IsolationForest
-rs=np.random.RandomState(123)
-clf = IsolationForest(max_samples=100,random_state=rs, contamination=.1)
-clf.fit(X_anes_step)
-
-if_scores = clf.decision_function(X_anes_step)
-if_anomalies=clf.predict(X_anes_step)
-if_anomalies=pd.Series(if_anomalies).replace([-1,1],[1,0])
-if_anomalies=X_anes_step[if_anomalies==1];
-
-plt.figure(figsize=(12,8))
-plt.hist(if_scores);
-plt.title('Histogram of Avg Anomaly Scores: Lower => More Anomalous');
-
-cmap=np.array(['white','red'])
-
-fig = plt.figure()
-ax = Axes3D(fig)
-n = np.where(if_anomalies == 0)
-ax.scatter(X3[n, 0], X3[n, 1],X3[n, 2], marker='o',color='red',label="Anomalies", edgecolor='k')
-n = np.where(if_anomalies != 0)
-ax.scatter(X3[n, 0], X3[n, 1],X3[n, 2], marker='o',color='grey',label="NONE", edgecolor='k')
-
-
-plt.scatter(df.iloc[:,1],df.iloc[:,2],c='white',s=20,edgecolor='k')
-plt.scatter(if_anomalies.iloc[1,:],if_anomalies.iloc[:,1],c='red')
-plt.xlabel('Income')
-plt.ylabel('Spend_Score')
-plt.title('Isolation Forests - Anomalies')
 
 
 

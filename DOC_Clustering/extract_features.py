@@ -38,21 +38,27 @@ def extract_features (data,getmean=False):
 
     return tofill
 
-def extract_single_features(X_step,channels,selection):
+def extract_single_features(X_step,channels,selection_1,selection_2):
     if len(X_step.shape) == 3:
-        selected=[]
-        for i in range(0,len(selection)):
-            selected.append(np.where(channels==selection[i])[0][0])
-        X_step=X_step[:,selected,:] #[time,horizontal,vertical]
-        X_step=X_step[:,:,selected]
+        selected_1=[]
+        selected_2=[]
+        for i in range(0,len(selection_1)):
+            selected_1.append(np.where(channels==selection_1[i])[0][0])
+        for i in range(0,len(selection_2)):
+            selected_2.append(np.where(channels==selection_2[i])[0][0])
+        X_step=X_step[:,selected_1,:] #[time,horizontal,vertical]
+        X_step=X_step[:,:,selected_2]
         return X_step
 
     if len(X_step.shape) == 2:
-        selected=[]
-        for i in range(0,len(selection)):
-            selected.append(np.where(channels==selection[i])[0][0])
-        X_step=X_step[selected,:] #[time,horizontal,vertical]
-        X_step=X_step[:,selected]
+        selected_1 = []
+        selected_2 = []
+        for i in range(0, len(selection_1)):
+            selected_1.append(np.where(channels == selection_1[i])[0][0])
+        for i in range(0, len(selection_2)):
+            selected_2.append(np.where(channels == selection_2[i])[0][0])
+        X_step=X_step[selected_1,:]    #[time,horizontal,vertical]
+        X_step=X_step[:,selected_2]
         return X_step
 
 

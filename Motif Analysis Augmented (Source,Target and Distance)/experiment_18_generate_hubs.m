@@ -20,18 +20,20 @@ setup_experiments % see this file to edit the experiments
 hubs_output_path = mkdir_if_not_exist(output_path,'hubs');
 wpli_input_path = strcat(output_path,filesep,'wpli');
 
+% Create average result struct
 avg_data = struct();
 avg_data.degree = zeros(length(states),99);
 avg_data.degree_count = zeros(length(states),99);
-avg_data.hubs = zeros(length(states),99);
+avg_data.avg_degree = zeros(length(states),99);
 avg_data.location = -1;
+
 
 % Iterate over the participants
 for p = 1:length(participants)
-
+    
     % Create the participants directory
     participant = participants{p};
-    disp(strcat("Participant :", participant)); 
+    disp(strcat("Participant :", participant));
     hubs_participant_output_path =  mkdir_if_not_exist(hubs_output_path,participant);
     wpli_participant_input_path = strcat(wpli_input_path,filesep,participant);
     
@@ -43,7 +45,7 @@ for p = 1:length(participants)
         hubs_state_filename = strcat(hubs_participant_output_path,filesep,state,'_hubs.mat');
         
         % Load the wpli result
-        data = load(strcat(wpli_participant_input_path,filesep,state,'_wpli.mat')); 
+        data = load(strcat(wpli_participant_input_path,filesep,state,'_wpli.mat'));
         result_wpli = data.result_wpli;
         wpli_matrix  = result_wpli.data.avg_wpli;
         channels_location = result_wpli.metadata.channels_location;
@@ -54,7 +56,7 @@ for p = 1:length(participants)
         % Binarize the network
         t_network = threshold_matrix(wpli_matrix, hubs_param.threshold);
         b_network = binarize_matrix(t_network);
-
+        
         % Calculate node degree
         deg = degrees_und(b_network);
         normalized_deg = (deg - mean(deg,2))./std(deg); %z-transform
@@ -64,6 +66,9 @@ for p = 1:length(participants)
         result_hubs = struct();
         result_hubs.channels_location = channels_location;
         result_hubs.wpli_matrix = wpli_matrix;
+        result_hubs.thresholded_wpli_matrix = t_network;
+        result_hubs.binarized_wpli_matrix = b_network;
+        result_hubs.threshold = hubs_param.threshold;
         result_hubs.degree = deg;
         result_hubs.normalized_degree = normalized_deg;
         
@@ -78,7 +83,7 @@ for p = 1:length(participants)
         
         %Collect data for average, if applicable
         if hubs_param.average
-             
+            
             if(isstruct(avg_data.location) == 0)
                 avg_data.location = channels_location; %assumes first participant in average has all 129 channels
             end
@@ -87,12 +92,12 @@ for p = 1:length(participants)
                 current_label = avg_data.location(e_i).labels;
                 is_found = 0;
                 for j=1:length(channels_location)
-                   if(strcmp(channels_location(j).labels, current_label))
-                       is_found = j;
-                       break;
-                   end
+                    if(strcmp(channels_location(j).labels, current_label))
+                        is_found = j;
+                        break;
+                    end
                 end
-
+                
                 if(is_found ~= 0)
                     j = is_found;
                     avg_data.degree(s,e_i) = avg_data.degree(s, e_i) +  result_hubs.degree(j);
@@ -100,10 +105,7 @@ for p = 1:length(participants)
                 end
             end
             
-        end
-        
-        
-        
+        end 
     end
 end
 
@@ -112,27 +114,28 @@ if hubs_param.average
     
     for s = 1:length(states)
         for c_i = 1:99
-            avg_data.hubs(s,c_i) = avg_data.degree(s,c_i) / avg_data.degree_count(c_i);
+            avg_data.avg_degree(s,c_i) = avg_data.degree(s,c_i) ./ avg_data.degree_count(c_i);
         end
     end
-    
-    
+       
     figure
     for e_i = 1:length(states)
-        subplot(length(states)/3,3,e_i)
+        avg_data.normalized_avg_degree = (avg_data.avg_degree(e_i,:)-mean(avg_data.avg_degree(e_i,:),2))./std(avg_data.avg_degree(e_i,:));
+        subplot(ceil(length(states)/3),3,e_i)
         title(strcat("Hubs at ",states{e_i}))
-        topographic_map((avg_data.hubs(e_i,:)-mean(avg_data.hubs(e_i,:),2))./std(avg_data.hubs(e_i,:)),avg_data.location);
+        topographic_map(avg_data.normalized_avg_degree,avg_data.location);
     end
+    save(strcat(hubs_output_path,filesep,'_average_hubs.mat'), 'avg_data');
     output_figure_path = strcat(hubs_output_path,filesep,'_average_hubs.fig');
     savefig(output_figure_path)
     
 end
 
 function topographic_map(data,location)
-    topoplot(data,location,'maplimits','absmax', 'electrodes', 'off');
-    min_color = min(data);
-    max_color = max(data);
-    caxis([min_color max_color])
-    colormap('jet')
-    colorbar;
+topoplot(data,location,'maplimits','absmax', 'electrodes', 'off');
+min_color = min(data);
+max_color = max(data);
+caxis([min_color max_color])
+colormap('jet')
+colorbar;
 end
