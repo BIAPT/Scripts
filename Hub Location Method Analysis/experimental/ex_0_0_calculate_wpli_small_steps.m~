@@ -24,11 +24,16 @@ out_filename = strcat(out_path, ppt,'_',state,'_wpli.mat');
 recording = load_set(in_filename, in_path);
 
 % Calculate the wPLI which is the basis for the hub location network
+settings.wpli.frequency_band = [8 13]; % This is in Hz
+settings.wpli.window_size = 10; % This is in seconds and will be how we chunk the whole dataset
+settings.wpli.number_surrogate = 20; % Number of surrogate wPLI to create
+settings.wpli.p_value = 0.05; % the p value to make our test on
+settings.wpli.step_size = 10;
 frequency_band = settings.wpli.frequency_band;
 window_size = settings.wpli.window_size;
 step_size = settings.wpli.step_size;
 number_surrogate = settings.wpli.number_surrogate;
-p_value = settings.wpli.p_value;
+p_value = settings.wpli
 result_wpli = na_wpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
 
 save(out_filename, 'result_wpli');

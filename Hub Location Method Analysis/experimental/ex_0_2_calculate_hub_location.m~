@@ -8,22 +8,32 @@
     functions
 %}
 
+setup_experiments;
+
+load_path = strcat(settings.output_path,settings.participant,'_');
+
+
 % Hub location parameters
 t_level_wpli = 0.10; % keep top 10% of the data
 t_level_hub = 0.10; % definition of a hub
 
 % Get the relevant data out
-num_channels = 56;
-baseline_wpli = rand(num_channels, num_channels);
-baseline_location = recording.channels_location;
-anesthesia_wpli = rand(num_channels, num_channels);
-anesthesia_location = recording.channels_location;
-recovery_wpli = rand(num_channels, num_channels);
-recovery_location = recording.channels_location;
+
+data = load(strcat(load_path,'BASELINE_wpli.mat'));
+baseline_wpli = data.result_wpli.data.avg_wpli;
+baseline_location = data.result_wpli.metadata.channels_location;
+
+data = load(strcat(load_path,'EMF5_wpli.mat'));
+anesthesia_wpli = data.result_wpli.data.avg_wpli;
+anesthesia_location = data.result_wpli.metadata.channels_location;
+
+data = load(strcat(load_path,'RECOVERY_wpli.mat'));
+recovery_wpli = data.result_wpli.data.avg_wpli;
+recovery_location = data.result_wpli.metadata.channels_location;
 
 median_locations = zeros(1, 3);
 max_locations = zeros(1, 3);
-bc_location = zeros(1,3);
+bc_locations = zeros(1,3);
 
 %% Filtering out the non-scalp channels
 [baseline_wpli, baseline_location] = filter_non_scalp(baseline_wpli, baseline_location);
@@ -36,28 +46,30 @@ bc_location = zeros(1,3);
 % Threshold at 10%
 % Baseline
 baseline_wpli = binarize_matrix(threshold_matrix(baseline_wpli, t_level_wpli));
-max_location(1) = max_degree_hub_location(baseline_wpli, baseline_location);
-median_location(1) = median_degree_hub_location(baseline_wpli, baseline_location, t_level_hub);
-bc_location(1) = betweeness_hub_location(baseline_wpli, baseline_location);
+max_locations(1) = max_degree_hub_location(baseline_wpli, baseline_location);
+median_locations(1) = median_degree_hub_location(baseline_wpli, baseline_location, t_level_hub);
+bc_locations(1) = betweeness_hub_location(baseline_wpli, baseline_location);
 
 % Anesthesia
 anesthesia_wpli = binarize_matrix(threshold_matrix(anesthesia_wpli, t_level_wpli));
-max_location(2) = max_degree_hub_location(anesthesia_wpli, anesthesia_location);
-median_location(2) = median_degree_hub_location(anesthesia_wpli, anesthesia_location, t_level_hub);
-bc_location(2) = betweeness_hub_location(anesthesia_wpli, anesthesia_location);
+max_locations(2) = max_degree_hub_location(anesthesia_wpli, anesthesia_location);
+median_locations(2) = median_degree_hub_location(anesthesia_wpli, anesthesia_location, t_level_hub);
+bc_locations(2) = betweeness_hub_location(anesthesia_wpli, anesthesia_location);
 
 
 % Recovery
 recovery_wpli = binarize_matrix(threshold_matrix(recovery_wpli, t_level_wpli));
-max_location(3) = max_degree_hub_location(recovery_wpli, recovery_location);
-median_location(3) = median_degree_hub_location(recovery_wpli, recovery_location, t_level_hub);
-bc_location(3) = betweeness_hub_location(recovery_wpli, recovery_location);
+max_locations(3) = max_degree_hub_location(recovery_wpli, recovery_location);
+median_locations(3) = median_degree_hub_location(recovery_wpli, recovery_location, t_level_hub);
+bc_locations(3) = betweeness_hub_location(recovery_wpli, recovery_location);
 
 figure;
 plot(median_locations);
 hold on;
 plot(max_locations);
-legend('median','max');
+hold on;
+plot(bc_locations)
+legend('median','max', 'bc');
 
 
 function [hub_location] = betweeness_hub_location(b_wpli, location)
@@ -65,22 +77,29 @@ function [hub_location] = betweeness_hub_location(b_wpli, location)
 %betweeness centrality and degree
 % b_wpli: binary matrix
 % location: 3d channels location
+
+
+    
     %% 1.Calculate the degree for each electrode.
-    channels_degree = degrees_und(b_wpli);
+    degrees = degrees_und(b_wpli);
+    norm_degree = (degrees - mean(degrees)) / std(degrees);
+    a_degree = 1.0;
+    
     
     %% 2. Calculate the betweeness centrality for each electrode.
-    betweeness_centrality = betweenness_bin(b_wpli);
-    norm_bc = betweeness_centrality - mean(betweeness_centrality) / std(betweeness_centrality);
+    bc = betweenness_bin(b_wpli);
+    norm_bc = (bc - mean(bc)) / std(bc);
+    a_bc = 1.0;
     
     
     %% 3. Combine the two metric (here we assume equal weight on both the degree and the betweeness centrality)
-    weights = channels_degree + betweeness_centrality;
+    weights = a_bc*bc)/(a_degree*degree);
     
     %% 4.Look at the degree + betweeness centrality of the neighbouring electrodes, and if they weren't high as well, exclude this electrode as a potential hub.
     % WON'T FIX FOR NOW
     
     %% Obtain a metric for the channel that is most likely the hub epicenter
-    [~, channel_index] = max(channels_degree);
+    [~, channel_index] = max(weights);
     hub_location = threshold_anterior_posterior(channel_index, location);
 
 end

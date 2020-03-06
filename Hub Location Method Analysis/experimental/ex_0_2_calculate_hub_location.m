@@ -8,22 +8,32 @@
     functions
 %}
 
+setup_experiments;
+
+load_path = strcat(settings.output_path,settings.participant,'_');
+
+
 % Hub location parameters
 t_level_wpli = 0.10; % keep top 10% of the data
 t_level_hub = 0.10; % definition of a hub
 
 % Get the relevant data out
-num_channels = 56;
-baseline_wpli = rand(num_channels, num_channels);
-baseline_location = recording.channels_location;
-anesthesia_wpli = rand(num_channels, num_channels);
-anesthesia_location = recording.channels_location;
-recovery_wpli = rand(num_channels, num_channels);
-recovery_location = recording.channels_location;
+
+data = load(strcat(load_path,'BASELINE_wpli.mat'));
+baseline_wpli = data.result_wpli.data.avg_wpli;
+baseline_location = data.result_wpli.metadata.channels_location;
+
+data = load(strcat(load_path,'EMF5_wpli.mat'));
+anesthesia_wpli = data.result_wpli.data.avg_wpli;
+anesthesia_location = data.result_wpli.metadata.channels_location;
+
+data = load(strcat(load_path,'RECOVERY_wpli.mat'));
+recovery_wpli = data.result_wpli.data.avg_wpli;
+recovery_location = data.result_wpli.metadata.channels_location;
 
 median_locations = zeros(1, 3);
 max_locations = zeros(1, 3);
-bc_location = zeros(1,3);
+bc_locations = zeros(1,3);
 
 %% Filtering out the non-scalp channels
 [baseline_wpli, baseline_location] = filter_non_scalp(baseline_wpli, baseline_location);
@@ -36,29 +46,29 @@ bc_location = zeros(1,3);
 % Threshold at 10%
 % Baseline
 baseline_wpli = binarize_matrix(threshold_matrix(baseline_wpli, t_level_wpli));
-max_location(1) = max_degree_hub_location(baseline_wpli, baseline_location);
-median_location(1) = median_degree_hub_location(baseline_wpli, baseline_location, t_level_hub);
-bc_location(1) = betweeness_hub_location(baseline_wpli, baseline_location);
+max_locations(1) = max_degree_hub_location(baseline_wpli, baseline_location);
+median_locations(1) = median_degree_hub_location(baseline_wpli, baseline_location, t_level_hub);
+bc_locations(1) = betweeness_hub_location(baseline_wpli, baseline_location);
 
 % Anesthesia
 anesthesia_wpli = binarize_matrix(threshold_matrix(anesthesia_wpli, t_level_wpli));
-max_location(2) = max_degree_hub_location(anesthesia_wpli, anesthesia_location);
-median_location(2) = median_degree_hub_location(anesthesia_wpli, anesthesia_location, t_level_hub);
-bc_location(2) = betweeness_hub_location(anesthesia_wpli, anesthesia_location);
+max_locations(2) = max_degree_hub_location(anesthesia_wpli, anesthesia_location);
+median_locations(2) = median_degree_hub_location(anesthesia_wpli, anesthesia_location, t_level_hub);
+bc_locations(2) = betweeness_hub_location(anesthesia_wpli, anesthesia_location);
 
 
 % Recovery
 recovery_wpli = binarize_matrix(threshold_matrix(recovery_wpli, t_level_wpli));
-max_location(3) = max_degree_hub_location(recovery_wpli, recovery_location);
-median_location(3) = median_degree_hub_location(recovery_wpli, recovery_location, t_level_hub);
-bc_location(3) = betweeness_hub_location(recovery_wpli, recovery_location);
+max_locations(3) = max_degree_hub_location(recovery_wpli, recovery_location);
+median_locations(3) = median_degree_hub_location(recovery_wpli, recovery_location, t_level_hub);
+bc_locations(3) = betweeness_hub_location(recovery_wpli, recovery_location);
 
 figure;
 plot(median_locations);
 hold on;
 plot(max_locations);
 hold on;
-plot(bc_location)
+plot(bc_locations)
 legend('median','max', 'bc');
 
 

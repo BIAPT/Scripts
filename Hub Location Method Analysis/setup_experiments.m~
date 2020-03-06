@@ -12,7 +12,7 @@ settings.output_path = '/home/yacine/Documents/hub_location_output/';
 % Set participant to be one of {'MDFA03','MDFA05','MDFA06','MDFA07','MDFA10','MDFA11','MDFA12','MDFA15','MDFA17'};
 settings.participant = 'MDFA03';
 % Set state to be one of : {'BASELINE', 'IF5', 'EMF5', 'EML30','EML10','EML5', 'EC3', 'RECOVERY'};
-settings.state = 'RECOVERY';
+settings.state = 'EMF5';
 
 % wPLI Experiment Variables
 settings.wpli.frequency_band = [8 13]; % This is in Hz
