@@ -14,7 +14,7 @@ load_path = strcat(settings.output_path,settings.participant,'_');
 
 
 % Hub location parameters
-t_level_wpli = 0.10; % keep top 10% of the data
+t_level_wpli = 0.35; % keep top 10% of the data
 t_level_hub = 0.10; % definition of a hub
 
 % Get the relevant data out
