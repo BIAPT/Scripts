@@ -26,8 +26,8 @@ Rep=100         #number of Repetitions (Mean at the end)
 [SI_M ,SI_SD] = stability_measure.compute_stability_index(X,Y_ID, P, K, Rep)
 
 
-pd.DataFrame(SI_M).to_pickle('SI_M_100x100x3-10x2-10.pickle')
-pd.DataFrame(SI_SD).to_pickle('SI_SD_100x100x3-10x2-10.pickle')
+pd.DataFrame(SI_M).to_pickle('data/SI_M_100x100x3-10x2-10.pickle')
+pd.DataFrame(SI_SD).to_pickle('data/SI_SD_100x100x3-10x2-10.pickle')
 
 
 
