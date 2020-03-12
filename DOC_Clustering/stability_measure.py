@@ -7,12 +7,23 @@ from sklearn.decomposition import PCA
 from scipy.spatial import distance
 from tqdm import tqdm
 from sklearn.metrics import silhouette_score
+import random
 
-def compute_stability_index(X_temp,X_test,P,K,Rep):
+def compute_stability_index(X,Y_ID,P,K,Rep):
+
     SI=np.zeros([Rep,len(K) ,len(P)])   # Collection of stability index over Repetitions
-    x_complete = np.row_stack([X_temp, X_test])  # complete input set for PCA-fit
+    x_complete = X  # complete input set for PCA-fit
 
     for r in range(0,Rep):
+        part = np.unique(Y_ID)
+        nr_part = len(part)
+        rand = random.sample(range(0, nr_part), 5)  # Choose 5 elements
+
+        X_temp = X[(Y_ID == part[rand[0]]) | (Y_ID == part[rand[1]]) | (Y_ID == part[rand[2]]) | (Y_ID == part[rand[3]]) | (
+                Y_ID == part[rand[4]])]
+        X_test = X[(Y_ID != part[rand[0]]) & (Y_ID != part[rand[1]]) & (Y_ID != part[rand[2]]) & (Y_ID != part[rand[3]]) & (
+                Y_ID != part[rand[4]])]
+
         p_i = 0
         print('Repetition '+str(r)+'| '+str(Rep))
         for p in tqdm(P):
@@ -45,11 +56,20 @@ def compute_stability_index(X_temp,X_test,P,K,Rep):
 
 
 
-def compute_silhouette_score(X_temp,X_test,P,K,Rep):
-    x_complete = np.row_stack([X_temp, X_test])     # complete input set for PCA-fit
+def compute_silhouette_score(X,Y_ID,P,K,Rep):
+    x_complete = X     # complete input set for PCA-fit
     SIL = np.zeros([Rep, len(K), len(P)])           # Collection of silhouette scores over Repetitions
 
     for r in range(0,Rep):
+        part = np.unique(Y_ID)
+        nr_part = len(part)
+        rand = random.sample(range(0, nr_part), 5)  # Choose 5 elements
+
+        X_temp = X[(Y_ID == part[rand[0]]) | (Y_ID == part[rand[1]]) | (Y_ID == part[rand[2]]) | (Y_ID == part[rand[3]]) | (
+                Y_ID == part[rand[4]])]
+        X_test = X[(Y_ID != part[rand[0]]) & (Y_ID != part[rand[1]]) & (Y_ID != part[rand[2]]) & (Y_ID != part[rand[3]]) & (
+                Y_ID != part[rand[4]])]
+
         p_i = 0
         print('Repetition '+str(r)+'| '+str(Rep))
         for p in tqdm(P):

@@ -101,4 +101,4 @@ for i in range(0,len(wplifiles)):
     np.save("full_wpli_F_C_Pe.npy", df_wpli_final,allow_pickle=True)
 
     df_wpli_final.to_pickle('final_wPLI_clustering.pickle')
-oo=pd.read_pickle('final_wPLI_clustering.pickle')
+    #data=pd.read_pickle('final_wPLI_clustering.pickle')
