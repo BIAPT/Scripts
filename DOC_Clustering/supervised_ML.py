@@ -8,6 +8,8 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import model_selection, naive_bayes, svm
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+import seaborn as sn
 from sklearn import metrics
 import matplotlib.pyplot as plt
 import random
@@ -209,6 +211,24 @@ clf.fit(X_train, Y_train)
 y_pred_ert=clf.predict(X_test)
 print("Accuracy:",metrics.accuracy_score(Y_test, y_pred_ert))
 
+y_test=np.array(Y_test).flatten()
+y_pred_ert=np.array(y_pred_ert).flatten()
 
-
-
+"""print(cm)
+fig = plt.figure()
+ax = fig.add_subplot(111)
+cax = ax.matshow(cm)
+plt.title('Confusion matrix of the classifier')
+fig.colorbar(cax)
+ax.set_xticklabels([''] + labels)
+ax.set_yticklabels([''] + labels)
+plt.xlabel('Predicted')
+plt.ylabel('True')
+plt.show()
+"""
+plt.figure()
+labels = ['Base', 'Anes','Reco']
+cm = confusion_matrix(y_test, Y_pred_svm, labels)
+sn.heatmap(cm,annot=True,xticklabels=labels,yticklabels=labels)
+plt.xlabel('Predicted')
+plt.ylabel('True')

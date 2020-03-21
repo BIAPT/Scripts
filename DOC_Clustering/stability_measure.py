@@ -17,13 +17,16 @@ def compute_stability_index(X,Y_ID,P,K,Rep):
     for r in range(0,Rep):
         part = np.unique(Y_ID)
         nr_part = len(part)
-        rand = random.sample(range(0, nr_part), 5)  # Choose 5 elements
+        rand = random.sample(range(0, nr_part), 2)  # Choose 2 elements
 
+        X_temp = X[(Y_ID == part[rand[0]]) | (Y_ID == part[rand[1]])]
+        X_test = X[(Y_ID != part[rand[0]]) & (Y_ID != part[rand[1]])]
+        """
         X_temp = X[(Y_ID == part[rand[0]]) | (Y_ID == part[rand[1]]) | (Y_ID == part[rand[2]]) | (Y_ID == part[rand[3]]) | (
                 Y_ID == part[rand[4]])]
         X_test = X[(Y_ID != part[rand[0]]) & (Y_ID != part[rand[1]]) & (Y_ID != part[rand[2]]) & (Y_ID != part[rand[3]]) & (
                 Y_ID != part[rand[4]])]
-
+        """
         p_i = 0
         print('Repetition '+str(r)+'| '+str(Rep))
         for p in tqdm(P):
@@ -55,43 +58,5 @@ def compute_stability_index(X,Y_ID,P,K,Rep):
 
 
 
-
-def compute_silhouette_score(X,Y_ID,P,K,Rep):
-    x_complete = X     # complete input set for PCA-fit
-    SIL = np.zeros([Rep, len(K), len(P)])           # Collection of silhouette scores over Repetitions
-
-    for r in range(0,Rep):
-        part = np.unique(Y_ID)
-        nr_part = len(part)
-        rand = random.sample(range(0, nr_part), 5)  # Choose 5 elements
-
-        X_temp = X[(Y_ID == part[rand[0]]) | (Y_ID == part[rand[1]]) | (Y_ID == part[rand[2]]) | (Y_ID == part[rand[3]]) | (
-                Y_ID == part[rand[4]])]
-        X_test = X[(Y_ID != part[rand[0]]) & (Y_ID != part[rand[1]]) & (Y_ID != part[rand[2]]) & (Y_ID != part[rand[3]]) & (
-                Y_ID != part[rand[4]])]
-
-        p_i = 0
-        print('Repetition '+str(r)+'| '+str(Rep))
-        for p in tqdm(P):
-            pca = PCA(n_components=p)
-            pca.fit(x_complete)
-            X_complete_LD = pca.transform(x_complete) # and X_test
-            k_i=0
-
-            for k in K:
-                kmeans = KMeans(n_clusters=k, max_iter=1000, n_init=100)
-                kmeans.fit(X_complete_LD)           #fit the classifier on all X_LD
-                S_complete = kmeans.predict(X_complete_LD)
-                silhouette = silhouette_score(X_complete_LD, S_complete)
-                SIL[r,k_i,p_i]=silhouette
-                k_i=k_i+1
-
-            # increase p iteration by one
-            p_i=p_i+1
-
-    SIL_M = np.mean(SIL, axis=0)
-    SIL_SD = np.std(SIL, axis=0)
-
-    return SIL_M , SIL_SD
 
 
