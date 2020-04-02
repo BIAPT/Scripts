@@ -3,26 +3,8 @@ matplotlib.use('Qt5Agg')
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
-data=pd.read_pickle('data/final_wPLI_all_left.pickle')
-X=data.iloc[:,4:]
-Y_ID=data.iloc[:,1]
-Y_St=data.iloc[:,2]
-Y_time=data.iloc[:,3]
-
-data_chro=data[(Y_ID == 'WSAS13') | (Y_ID == 'WSAS22') | (Y_ID == 'WSAS10') | (Y_ID == 'WSAS18')]
-data_reco=data[(Y_ID == 'WSAS19') | (Y_ID == 'WSAS20') | (Y_ID == 'WSAS02') | (Y_ID == 'WSAS09')]
-
-data_reco.insert(0, 'outcome', "1")
-data_chro.insert(0, 'outcome', "0")
-
-data=np.row_stack([data_reco,data_chro])
-data=pd.DataFrame(data)
-X=data.iloc[:,5:]
-Y_ID=data.iloc[:,2]
-Y_St=data.iloc[:,3]
-Y_time=data.iloc[:,4]
-Y_out=data.iloc[:,0]
+import seaborn as sns
+from prepareDataset import *
 
 FC=X.iloc[:,0:70]
 FP=X.iloc[:,70:140]
@@ -35,9 +17,25 @@ PO=X.iloc[:,490:560]
 PC=X.iloc[:,560:630]
 CO=X.iloc[:,630:700]
 
+plt.imshow(np.transpose(FC.iloc[1:20,:]))
+plt.ylabel('frequency [Hz]')
+plt.xlabel('timestep')
+plt.colorbar()
+
+eFC=empty[0:70]
+eFP=empty[70:140]
+eFO=empty[140:210]
+eFT=empty[210:280]
+eTO=empty[280:350]
+eTC=empty[350:420]
+eTP=empty[420:490]
+ePO=empty[490:560]
+ePC=empty[560:630]
+eCO=empty[630:700]
+
 frequ=np.arange(0,70,1)
 
-fig,a =  plt.subplots(2,5)
+fig,a =plt.subplots(2,5)
 plt.setp(a, xticks=[10,20,30,40,50,60,70] , xticklabels=['5','10','15','20','25','30','35'],
         yticks=[0,0.05,0.1,0.15,0.2,0.25])
 
@@ -45,35 +43,74 @@ a[0][0].plot(frequ,np.mean(FC[(Y_St == 'Anes') & (Y_out=='1')],0))
 a[0][0].plot(frequ,np.mean(FC[(Y_St == 'Anes') & (Y_out=='0')],0))
 a[0][0].set_title("Frontal-Central")
 a[0][0].set_ylabel("wPLI")
+xcoords = frequ[eFC==1]
+for xc in xcoords:
+        a[0][0].axvline(x=xc,color='red',alpha=0.2)
+
 a[0][1].plot(frequ,np.mean(FP[(Y_St == 'Anes') & (Y_out=='1')],0))
 a[0][1].plot(frequ,np.mean(FP[(Y_St == 'Anes') & (Y_out=='0')],0))
 a[0][1].set_title("Frontal-Parietal")
+xcoords = frequ[eFP==1]
+for xc in xcoords:
+        a[0][1].axvline(x=xc,color='red',alpha=0.2)
+
 a[0][2].plot(frequ,np.mean(FO[(Y_St == 'Anes') & (Y_out=='1')],0))
 a[0][2].plot(frequ,np.mean(FO[(Y_St == 'Anes') & (Y_out=='0')],0))
 a[0][2].set_title("Frontal-Occipital")
+xcoords = frequ[eFO==1]
+for xc in xcoords:
+        a[0][2].axvline(x=xc,color='red',alpha=0.2)
+
 a[0][3].plot(frequ,np.mean(FT[(Y_St == 'Anes') & (Y_out=='1')],0))
 a[0][3].plot(frequ,np.mean(FT[(Y_St == 'Anes') & (Y_out=='0')],0))
 a[0][3].set_title("Frontal-Temporal")
+xcoords = frequ[eFT==1]
+for xc in xcoords:
+        a[0][3].axvline(x=xc,color='red',alpha=0.2)
+
 a[0][4].plot(frequ,np.mean(TO[(Y_St == 'Anes') & (Y_out=='1')],0))
 a[0][4].plot(frequ,np.mean(TO[(Y_St == 'Anes') & (Y_out=='0')],0))
 a[0][4].set_title("Temporal-Occipital")
+xcoords = frequ[eTO==1]
+for xc in xcoords:
+        a[0][4].axvline(x=xc,color='red',alpha=0.2)
+
 a[1][0].plot(frequ,np.mean(TC[(Y_St == 'Anes') & (Y_out=='1')],0))
 a[1][0].plot(frequ,np.mean(TC[(Y_St == 'Anes') & (Y_out=='0')],0))
 a[1][0].set_ylabel("wPLI")
 a[1][0].set_xlabel("Frequency")
 a[1][0].set_title("Temporal-Central")
+xcoords = frequ[eTC==1]
+for xc in xcoords:
+        a[1][0].axvline(x=xc,color='red',alpha=0.2)
+
 a[1][1].plot(frequ,np.mean(TP[(Y_St == 'Anes') & (Y_out=='1')],0))
 a[1][1].plot(frequ,np.mean(TP[(Y_St == 'Anes') & (Y_out=='0')],0))
 a[1][1].set_title("Temporal-Parietal")
+xcoords = frequ[eTP==1]
+for xc in xcoords:
+        a[1][1].axvline(x=xc,color='red',alpha=0.2)
+
 a[1][2].plot(frequ,np.mean(PO[(Y_St == 'Anes') & (Y_out=='1')],0))
 a[1][2].plot(frequ,np.mean(PO[(Y_St == 'Anes') & (Y_out=='0')],0))
 a[1][2].set_title("Parietal-Occipital")
+xcoords = frequ[ePO==1]
+for xc in xcoords:
+        a[1][2].axvline(x=xc,color='red',alpha=0.2)
+
 a[1][3].plot(frequ,np.mean(PC[(Y_St == 'Anes') & (Y_out=='1')],0))
 a[1][3].plot(frequ,np.mean(PC[(Y_St == 'Anes') & (Y_out=='0')],0))
 a[1][3].set_title("Parietal-Central")
+xcoords = frequ[ePC==1]
+for xc in xcoords:
+        a[1][3].axvline(x=xc,color='red',alpha=0.2)
+
 a[1][4].plot(frequ,np.mean(CO[(Y_St == 'Anes') & (Y_out=='1')],0))
 a[1][4].plot(frequ,np.mean(CO[(Y_St == 'Anes') & (Y_out=='0')],0))
 a[1][4].set_title("Central-Occipital")
+xcoords = frequ[eCO==1]
+for xc in xcoords:
+        a[1][4].axvline(x=xc,color='red',alpha=0.2)
 
 
 
@@ -114,6 +151,36 @@ a[1][3].set_title("Parietal-Central")
 a[1][4].plot(frequ,np.mean(CO[(Y_St == 'Base') & (Y_out=='1')],0))
 a[1][4].plot(frequ,np.mean(CO[(Y_St == 'Base') & (Y_out=='0')],0))
 a[1][4].set_title("Central-Occipital")
+xcoords = frequ[eFC==1]
+for xc in xcoords:
+        a[0][0].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[eFP==1]
+for xc in xcoords:
+        a[0][1].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[eFO==1]
+for xc in xcoords:
+        a[0][2].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[eFT==1]
+for xc in xcoords:
+        a[0][3].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[eTO==1]
+for xc in xcoords:
+        a[0][4].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[eTC==1]
+for xc in xcoords:
+        a[1][0].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[eTP==1]
+for xc in xcoords:
+        a[1][1].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[ePO==1]
+for xc in xcoords:
+        a[1][2].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[ePC==1]
+for xc in xcoords:
+        a[1][3].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[eCO==1]
+for xc in xcoords:
+        a[1][4].axvline(x=xc,color='red',alpha=0.2)
 
 
 fig,a =  plt.subplots(2,5)
@@ -153,4 +220,49 @@ a[1][3].set_title("Parietal-Central")
 a[1][4].plot(frequ,np.mean(CO[(Y_St == 'Reco') & (Y_out=='1')],0))
 a[1][4].plot(frequ,np.mean(CO[(Y_St == 'Reco') & (Y_out=='0')],0))
 a[1][4].set_title("Central-Occipital")
+xcoords = frequ[eFC==1]
+for xc in xcoords:
+        a[0][0].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[eFP==1]
+for xc in xcoords:
+        a[0][1].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[eFO==1]
+for xc in xcoords:
+        a[0][2].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[eFT==1]
+for xc in xcoords:
+        a[0][3].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[eTO==1]
+for xc in xcoords:
+        a[0][4].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[eTC==1]
+for xc in xcoords:
+        a[1][0].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[eTP==1]
+for xc in xcoords:
+        a[1][1].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[ePO==1]
+for xc in xcoords:
+        a[1][2].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[ePC==1]
+for xc in xcoords:
+        a[1][3].axvline(x=xc,color='red',alpha=0.2)
+xcoords = frequ[eCO==1]
+for xc in xcoords:
+        a[1][4].axvline(x=xc,color='red',alpha=0.2)
+
+
+sns.heatmap(X_Anes.iloc[:,empty==0].corr(),cmap='viridis')
+plt.title('Anesthesia')
+
+sns.heatmap(X.iloc[:,empty==0].corr(),cmap='viridis')
+plt.title('3_Phases')
+
+sns.heatmap(X_Base.iloc[:,empty==0].corr(),cmap='viridis')
+plt.title('Baseline')
+
+sns.heatmap(X_Reco.iloc[:,empty==0].corr(),cmap='viridis')
+plt.title('Recovery')
+
+
 

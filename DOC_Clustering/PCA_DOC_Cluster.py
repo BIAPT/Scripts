@@ -10,6 +10,10 @@ from prepareDataset import *
 from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score
 
+X=X.iloc[:,empty==0]
+X_Anes=X_Anes.iloc[:,empty==0]
+X_Base=X_Base.iloc[:,empty==0]
+X_Reco=X_Reco.iloc[:,empty==0]
 
 Y_out_int_Base=np.zeros(len(Y_out_Base))
 Y_out_int_Base[Y_out_Base=='1']=1
@@ -117,5 +121,6 @@ plt.plot(np.cumsum(pca.explained_variance_ratio_))
 
 plt.title('Explained Variance PCA')
 plt.legend(['Baseline','Anesthesia','Recovery'])
+
 
 
