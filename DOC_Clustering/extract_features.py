@@ -56,6 +56,10 @@ def extract_single_features(X_step,channels,selection_1,selection_2,name):
 
         X_step=X_step[:,selected_1,:] #[time,horizontal,vertical]
         X_step=X_step[:,:,selected_2]
+
+        if selected_1==selected_2:
+            X_step=X_step[~np.eye(X_step.shape[0], dtype=bool)].reshape(X_step.shape[0], -1)
+
         return X_step
 
     if len(X_step.shape) == 2:
@@ -75,6 +79,11 @@ def extract_single_features(X_step,channels,selection_1,selection_2,name):
 
         X_step=X_step[selected_1,:]    #[time,horizontal,vertical]
         X_step=X_step[:,selected_2]
+
+        # for interhemispheric connectivity
+        if selected_1==selected_2:
+            X_step=X_step[~np.eye(X_step.shape[0], dtype=bool)].reshape(X_step.shape[0], -1)
+
         return X_step
 
 
