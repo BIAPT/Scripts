@@ -2,12 +2,12 @@ import scipy.io
 import extract_features
 import numpy as np
 
-mat = scipy.io.loadmat('C:/Users/User/Documents/GitHub/Unsupervised/data/MDFA05_result_wPLI_rest_avg.mat')
+mat = scipy.io.loadmat('data/MDFA05_result_wPLI_rest_avg.mat')
 data_rest_avg = mat['result_wpli_rest_avg']
 data_rest_avg.shape
 X_rest_avg=extract_features.extract_features(data_rest_avg)
 
-mat = scipy.io.loadmat('C:/Users/User/Documents/GitHub/Unsupervised/data/MDFA05_result_wPLI_rest_step.mat')
+mat = scipy.io.loadmat('data/MDFA05_result_wPLI_rest_step.mat')
 data_rest_step = mat['result_wpli_rest_step']
 data_rest_step.shape
 X_rest_step=extract_features.extract_features(data_rest_step)
