@@ -1,7 +1,5 @@
 %% Loading a .set file
-%fileList = dir('*.set');
-
-fileList = dir('WSAS10_Base_300.set');
+fileList = dir('*.set');
 
 data_path = strcat('','wPLI_30_10');
 
@@ -42,6 +40,6 @@ for p=1:length(fileList)
     data{2}=data_avg;
     data{3}=info;
 
-    save(data_path+"/"+name+"wPLI_30_30",'data')
+    save(data_path+"/"+name+"wPLI_30_10",'data')
     
 end
