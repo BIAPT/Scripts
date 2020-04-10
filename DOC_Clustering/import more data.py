@@ -30,7 +30,7 @@ for i in range(0,len(wplifiles)):
     name=part[37:48]
 
     #load Data
-    mat = scipy.io.loadmat('data/WSAS_TIME_DATA_250Hz/wPLI_30_10/' + name + '_300wPLI_30_30.mat')
+    mat = scipy.io.loadmat('data/WSAS_TIME_DATA_250Hz/wPLI_30_10/' + name + '_300wPLI_30_10.mat')
     data = mat['data']  # extract the variable "data" (3 cell array)
     data_step = data[0][0][0]
     data_avg = data[0][1][0]
@@ -156,6 +156,6 @@ for i in range(0,len(wplifiles)):
     df_wpli_final=df_wpli_final.append(df_wpli)
 
 
-np.save("full_wpli_all_left.npy", df_wpli_final,allow_pickle=True)
+#np.save("full_wpli_all_left.npy", df_wpli_final,allow_pickle=True)
 df_wpli_final.to_pickle('final_wPLI_all_left.pickle')
 #data=pd.read_pickle('final_wPLI_clustering.pickle')

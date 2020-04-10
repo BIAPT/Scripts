@@ -36,8 +36,7 @@ eCO=empty[630:700]
 frequ=np.arange(0,70,1)
 
 fig,a =plt.subplots(2,5)
-plt.setp(a, xticks=[10,20,30,40,50,60,70] , xticklabels=['5','10','15','20','25','30','35'],
-        yticks=[0,0.05,0.1,0.15,0.2,0.25])
+plt.setp(a, xticks=[10,20,30,40,50,60,70] , xticklabels=['5','10','15','20','25','30','35'])
 
 a[0][0].plot(frequ,np.mean(FC[(Y_St == 'Anes') & (Y_out=='1')],0))
 a[0][0].plot(frequ,np.mean(FC[(Y_St == 'Anes') & (Y_out=='0')],0))
@@ -115,8 +114,7 @@ for xc in xcoords:
 
 
 fig,a =  plt.subplots(2,5)
-plt.setp(a, xticks=[10,20,30,40,50,60,70] , xticklabels=['5','10','15','20','25','30','35'],
-        yticks=[0,0.05,0.1,0.15,0.2,0.25])
+plt.setp(a, xticks=[10,20,30,40,50,60,70] , xticklabels=['5','10','15','20','25','30','35'])
 
 a[0][0].plot(frequ,np.mean(FC[(Y_St == 'Base') & (Y_out=='1')],0))
 a[0][0].plot(frequ,np.mean(FC[(Y_St == 'Base') & (Y_out=='0')],0))
@@ -184,8 +182,7 @@ for xc in xcoords:
 
 
 fig,a =  plt.subplots(2,5)
-plt.setp(a, xticks=[10,20,30,40,50,60,70] , xticklabels=['5','10','15','20','25','30','35'],
-        yticks=[0,0.05,0.1,0.15,0.2,0.25])
+plt.setp(a, xticks=[10,20,30,40,50,60,70] , xticklabels=['5','10','15','20','25','30','35'])
 
 a[0][0].plot(frequ,np.mean(FC[(Y_St == 'Reco') & (Y_out=='1')],0))
 a[0][0].plot(frequ,np.mean(FC[(Y_St == 'Reco') & (Y_out=='0')],0))
@@ -250,19 +247,6 @@ for xc in xcoords:
 xcoords = frequ[eCO==1]
 for xc in xcoords:
         a[1][4].axvline(x=xc,color='red',alpha=0.2)
-
-
-sns.heatmap(X_Anes.iloc[:,empty==0].corr(),cmap='viridis')
-plt.title('Anesthesia')
-
-sns.heatmap(X.iloc[:,empty==0].corr(),cmap='viridis')
-plt.title('3_Phases')
-
-sns.heatmap(X_Base.iloc[:,empty==0].corr(),cmap='viridis')
-plt.title('Baseline')
-
-sns.heatmap(X_Reco.iloc[:,empty==0].corr(),cmap='viridis')
-plt.title('Recovery')
 
 
 

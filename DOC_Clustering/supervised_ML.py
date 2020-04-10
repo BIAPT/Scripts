@@ -31,7 +31,7 @@ Logistic Regression
 '''
 from sklearn.linear_model import LogisticRegression
 
-cs=np.arange(1,5.6,0.05)
+cs=np.arange(1,10,0.1)
 lr_accuracy_Base=[]
 lr_accuracy_Anes=[]
 lr_accuracy_Reco=[]
@@ -52,8 +52,8 @@ for c in cs:
     P_lr=lr.predict(X_test_Reco)
     lr_accuracy_Reco.append(metrics.accuracy_score(Y_test_Reco, P_lr))
 
-feat_importances_Reco = pd.Series(lr.coef_[0], index=X.columns)
-feat_importances_Reco.plot(kind='barh')
+#feat_importances_Reco = pd.Series(lr.coef_[0], index=X.columns)
+#feat_importances_Reco.plot(kind='barh')
 
 
 plt.plot(cs,lr_accuracy_Base)
@@ -96,13 +96,13 @@ for r in range(0,4):
         cv_LR_Base.append(metrics.accuracy_score(tmp_Y_test_Base, P_lr))
         FI_LR_Base.append(lr.coef_)
 
-        lr = LogisticRegression(random_state=0, penalty='l1', C=1.8)
+        lr = LogisticRegression(random_state=0, penalty='l1', C=5)
         lr.fit(tmp_X_train_Anes, tmp_Y_train_Anes)
         P_lr = lr.predict(tmp_X_test_Anes)
         cv_LR_Anes.append(metrics.accuracy_score(tmp_Y_test_Anes, P_lr))
         FI_LR_Anes.append(lr.coef_)
 
-        lr = LogisticRegression(random_state=0, penalty='l1', C=3.9)
+        lr = LogisticRegression(random_state=0, penalty='l1', C=5)
         lr.fit(tmp_X_train_Reco, tmp_Y_train_Reco)
         P_lr = lr.predict(tmp_X_test_Reco)
         cv_LR_Reco.append(metrics.accuracy_score(tmp_Y_test_Reco, P_lr))
@@ -197,23 +197,44 @@ for r in range(0,4):
         tmp_Y_test_Reco=Y_out_Reco[(Y_ID_Reco == Part_reco[r]) | (Y_ID_Reco == Part_chro[c])]
         tmp_Y_train_Reco=Y_out_Reco[(Y_ID_Reco != Part_reco[r]) & (Y_ID_Reco != Part_chro[c])]
 
-        svm_model = svm.LinearSVC(C=5, loss="hinge", max_iter=15000)
+        svm_model = svm.LinearSVC(C=1, loss="hinge", max_iter=15000)
         svm_model.fit(tmp_X_train_Base, tmp_Y_train_Base)
         P_lr = svm_model.predict(tmp_X_test_Base)
         cv_SVM_Base.append(metrics.accuracy_score(tmp_Y_test_Base, P_lr))
         FI_SVM_Base.append(svm_model.coef_.flatten())
 
-        svm_model = svm.LinearSVC(C=5, loss="hinge", max_iter=15000)
+        svm_model = svm.LinearSVC(C=1, loss="hinge", max_iter=15000)
         svm_model.fit(tmp_X_train_Anes, tmp_Y_train_Anes)
         P_lr = svm_model.predict(tmp_X_test_Anes)
         cv_SVM_Anes.append(metrics.accuracy_score(tmp_Y_test_Anes, P_lr))
         FI_SVM_Anes.append(svm_model.coef_.flatten())
 
-        svm_model = svm.LinearSVC(C=5, loss="hinge", max_iter=15000)
+        svm_model = svm.LinearSVC(C=1, loss="hinge", max_iter=15000)
         svm_model.fit(tmp_X_train_Reco, tmp_Y_train_Reco)
         P_lr = svm_model.predict(tmp_X_test_Reco)
         cv_SVM_Reco.append(metrics.accuracy_score(tmp_Y_test_Reco, P_lr))
         FI_SVM_Reco.append(svm_model.coef_.flatten())
+
+
+np.mean(cv_SVM_Base)
+np.std(cv_SVM_Base)
+
+np.mean(cv_SVM_Anes)
+np.std(cv_SVM_Anes)
+
+np.mean(cv_SVM_Reco)
+np.std(cv_SVM_Reco)
+
+plt.plot(cv_SVM_Base)
+plt.plot(cv_SVM_Anes)
+plt.plot(cv_SVM_Reco)
+plt.legend(['Baseline','Anesthesia','Recovery'])
+plt.xlabel('cross validation')
+plt.ylabel('accuracy')
+
+
+
+
 
 right_Anes = np.where(np.array(cv_SVM_Anes) > 0.5)[0]
 right_Base = np.where(np.array(cv_SVM_Base) > 0.5)[0]
@@ -226,49 +247,11 @@ FI_SVM_Reco=pd.DataFrame(FI_SVM_Reco)
 
 feat_importances_Base_SVM_b = pd.Series(np.array(abs(np.mean(FI_SVM_Base.iloc[right_Base,:],axis=0))), index=X_train_Base.columns)
 feat_importances_Anes_SVM_b = pd.Series(np.array(abs(np.mean(FI_SVM_Anes.iloc[right_Anes,:],axis=0))), index=X_train_Anes.columns)
-feat_importances_Reco_SVM_b = pd.Series(np.array(abs(np.mean(FI_SVM_Reco.iloc[right_Reco,:],axis=0))), index=X_train_Anes.columns)
+feat_importances_Reco_SVM_b = pd.Series(np.array(abs(np.mean(FI_SVM_Reco.iloc[right_Reco,:],axis=0))), index=X_train_Reco.columns)
 
 feat_importances_Base_SVM = pd.Series(np.array((np.mean(FI_SVM_Base.iloc[right_Base,:],axis=0))), index=X_train_Base.columns)
 feat_importances_Anes_SVM = pd.Series(np.array((np.mean(FI_SVM_Anes.iloc[right_Anes,:],axis=0))), index=X_train_Anes.columns)
-feat_importances_Reco_SVM = pd.Series(np.array((np.mean(FI_SVM_Reco.iloc[right_Reco,:],axis=0))), index=X_train_Anes.columns)
-
-
-fig,a =  plt.subplots(2,5)
-a[0][0].plot(feat_importances_Base_SVM.plot(kind='barh'))
-a[0][0].plot(frequ,np.mean(FC[(Y_St == 'Base') & (Y_out=='0')],0))
-a[0][0].set_title("Frontal-Central")
-a[0][0].set_ylabel("wPLI")
-a[0][1].plot(frequ,np.mean(FP[(Y_St == 'Base') & (Y_out=='1')],0))
-a[0][1].plot(frequ,np.mean(FP[(Y_St == 'Base') & (Y_out=='0')],0))
-a[0][1].set_title("Frontal-Parietal")
-a[0][2].plot(frequ,np.mean(FO[(Y_St == 'Base') & (Y_out=='1')],0))
-a[0][2].plot(frequ,np.mean(FO[(Y_St == 'Base') & (Y_out=='0')],0))
-a[0][2].set_title("Frontal-Occipital")
-a[0][3].plot(frequ,np.mean(FT[(Y_St == 'Base') & (Y_out=='1')],0))
-a[0][3].plot(frequ,np.mean(FT[(Y_St == 'Base') & (Y_out=='0')],0))
-a[0][3].set_title("Frontal-Temporal")
-a[0][4].plot(frequ,np.mean(TO[(Y_St == 'Base') & (Y_out=='1')],0))
-a[0][4].plot(frequ,np.mean(TO[(Y_St == 'Base') & (Y_out=='0')],0))
-a[0][4].set_title("Temporal-Occipital")
-a[1][0].plot(frequ,np.mean(TC[(Y_St == 'Base') & (Y_out=='1')],0))
-a[1][0].plot(frequ,np.mean(TC[(Y_St == 'Base') & (Y_out=='0')],0))
-a[1][0].set_ylabel("wPLI")
-a[1][0].set_xlabel("Frequency")
-a[1][0].set_title("Temporal-Central")
-a[1][1].plot(frequ,np.mean(TP[(Y_St == 'Base') & (Y_out=='1')],0))
-a[1][1].plot(frequ,np.mean(TP[(Y_St == 'Base') & (Y_out=='0')],0))
-a[1][1].set_title("Temporal-Parietal")
-a[1][2].plot(frequ,np.mean(PO[(Y_St == 'Base') & (Y_out=='1')],0))
-a[1][2].plot(frequ,np.mean(PO[(Y_St == 'Base') & (Y_out=='0')],0))
-a[1][2].set_title("Parietal-Occipital")
-a[1][3].plot(frequ,np.mean(PC[(Y_St == 'Base') & (Y_out=='1')],0))
-a[1][3].plot(frequ,np.mean(PC[(Y_St == 'Base') & (Y_out=='0')],0))
-a[1][3].set_title("Parietal-Central")
-a[1][4].plot(frequ,np.mean(CO[(Y_St == 'Base') & (Y_out=='1')],0))
-a[1][4].plot(frequ,np.mean(CO[(Y_St == 'Base') & (Y_out=='0')],0))
-a[1][4].set_title("Central-Occipital")
-
-
+feat_importances_Reco_SVM = pd.Series(np.array((np.mean(FI_SVM_Reco.iloc[right_Reco,:],axis=0))), index=X_train_Reco.columns)
 
 plt.figure()
 FC_Anes=np.mean(feat_importances_Anes_SVM_b[0:70])
@@ -291,9 +274,6 @@ PC_Anes=np.mean(feat_importances_Anes_SVM_b[326:339])
 PC_Base=np.mean(feat_importances_Base_SVM_b[326:339])
 CO_Anes=np.mean(feat_importances_Anes_SVM_b[340:346])
 CO_Base=np.mean(feat_importances_Base_SVM_b[340:346])
-
-feat_importances_Anes_SVM_b[326:339].plot(kind='barh',color = 'orange')
-feat_importances_Base_SVM_b[340:346].plot(kind='barh')
 
 
 # set width of bar
@@ -323,34 +303,22 @@ plt.legend()
 plt.show()
 
 
+#plot single areas
+feat_importances_Anes_SVM_b[71:123].plot(kind='barh',color = 'orange')
+feat_importances_Base_SVM_b[71:123].plot(kind='barh')
 
-feat_importances_Anes_SVM[0:70].plot(kind='barh',color = 'orange')
-#feat_importances_Reco_SVM_b[0:70].plot(kind='barh',color = 'green')
+
+feat_importances_Base_SVM_b[0:70].plot(kind='barh',color = 'blue')
+feat_importances_Anes_SVM_b[0:70].plot(kind='barh',color = 'orange')
+feat_importances_Reco_SVM_b[0:70].plot(kind='barh',color = 'green')
 plt.title('Frontal-Central')
-plt.legend(['Baseline','Anesthesia'])
+plt.legend(['Baseline','Anesthesia',"Recovery"])
 
 plt.figure()
 feat_importances_Base_SVM.nsmallest(20).plot(kind='barh')
 plt.figure()
 feat_importances_Anes_SVM.nsmallest(20).plot(kind='barh',color = 'orange')
 
-
-
-np.mean(cv_SVM_Base)
-np.std(cv_SVM_Base)
-
-np.mean(cv_SVM_Anes)
-np.std(cv_SVM_Anes)
-
-np.mean(cv_SVM_Reco)
-np.std(cv_SVM_Reco)
-
-plt.plot(cv_SVM_Base)
-plt.plot(cv_SVM_Anes)
-plt.plot(cv_SVM_Reco)
-plt.legend(['Baseline','Anesthesia','Recovery'])
-plt.xlabel('cross validation')
-plt.ylabel('accuracy')
 
 
 
@@ -361,7 +329,7 @@ GAUSSIAN NAIVE BAYES
 """
 from sklearn.naive_bayes import MultinomialNB
 
-cs=np.arange(0.001,0.5,0.005)
+cs=np.arange(0.1,3.5,0.1)
 
 gnb_accuracy_Base=[]
 gnb_accuracy_Anes=[]

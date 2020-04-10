@@ -109,7 +109,7 @@ pca.fit(X_Base)
 plt.plot(np.cumsum(pca.explained_variance_ratio_))
 plt.xlabel('number of components')
 plt.ylabel('cumulative explained variance')
-plt.xlim(1,50)
+plt.xlim(1,20)
 
 pca = PCA()
 pca.fit(X_Anes)

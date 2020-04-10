@@ -44,7 +44,7 @@ random.seed(141)
 
 X_train_BA,X_test_BA,Y_train_BA,Y_test_BA=train_test_split(X_B_A,Y_B_A[0],random_state=0,test_size=0.3)
 
-cs=np.arange(0.1,10,0.1)
+cs=np.arange(0.1,2,0.1)
 svm_accuracy_BA=[]
 
 for c in cs:
@@ -53,32 +53,30 @@ for c in cs:
     P_lr=svm_model.predict(X_test_BA)
     svm_accuracy_BA.append(metrics.accuracy_score(Y_test_BA, P_lr))
 
-plt.plot(svm_accuracy_BA)
+plt.plot(cs,svm_accuracy_BA)
 max(svm_accuracy_BA)
 
-c_mean=[]
-cs=np.arange(0.1,8,0.1)
 
-for cc in cs:
-    cv_svm_accuracy_BA = []
-    for r in range(0,4):
-        for c in range (0,4):
-            tmp_X_test_BA=X_B_A[(Y_B_A[1] == Part_reco[r]) | (Y_B_A[1] == Part_chro[c])]
-            tmp_X_train_BA=X_B_A[(Y_B_A[1] != Part_reco[r]) & (Y_B_A[1] != Part_chro[c])]
-            tmp_Y_test_BA=Y_B_A[(Y_B_A[1] == Part_reco[r]) | (Y_B_A[1] == Part_chro[c])]
-            tmp_Y_train_BA=Y_B_A[(Y_B_A[1] != Part_reco[r]) & (Y_B_A[1] != Part_chro[c])]
-            tmp_Y_test_BA=tmp_Y_test_BA[0]
-            tmp_Y_train_BA=tmp_Y_train_BA[0]
+cv_svm_accuracy_BA = []
+for r in range(0,4):
+    for c in range (0,4):
+        tmp_X_test_BA=X_B_A[(Y_B_A[1] == Part_reco[r]) | (Y_B_A[1] == Part_chro[c])]
+        tmp_X_train_BA=X_B_A[(Y_B_A[1] != Part_reco[r]) & (Y_B_A[1] != Part_chro[c])]
+        tmp_Y_test_BA=Y_B_A[(Y_B_A[1] == Part_reco[r]) | (Y_B_A[1] == Part_chro[c])]
+        tmp_Y_train_BA=Y_B_A[(Y_B_A[1] != Part_reco[r]) & (Y_B_A[1] != Part_chro[c])]
+        tmp_Y_test_BA=tmp_Y_test_BA[0]
+        tmp_Y_train_BA=tmp_Y_train_BA[0]
 
-            svm_model = svm.LinearSVC(C=cc, loss="hinge", max_iter=15000)
-            svm_model.fit(tmp_X_train_BA, tmp_Y_train_BA)
-            P_lr = svm_model.predict(tmp_X_test_BA)
-            cv_svm_accuracy_BA.append(metrics.accuracy_score(tmp_Y_test_BA, P_lr))
-    c_mean.append(np.mean(cv_svm_accuracy_BA))
+        svm_model = svm.LinearSVC(C=1, loss="hinge", max_iter=15000)
+        svm_model.fit(tmp_X_train_BA, tmp_Y_train_BA)
+        P_lr = svm_model.predict(tmp_X_test_BA)
+        cv_svm_accuracy_BA.append(metrics.accuracy_score(tmp_Y_test_BA, P_lr))
 
-plt.plot(cs,c_mean)
+
 plt.plot(cv_svm_accuracy_BA)
 np.mean(cv_svm_accuracy_BA)
+np.std(cv_svm_accuracy_BA)
+
 
 cv_svm_accuracy_BA = []
 FI_SVM_BA=[]
@@ -91,12 +89,15 @@ for r in range(0, 4):
         tmp_Y_test_BA = tmp_Y_test_BA[0]
         tmp_Y_train_BA = tmp_Y_train_BA[0]
 
-        svm_model = svm.LinearSVC(C=3.55, loss="hinge", max_iter=15000)
+        svm_model = svm.LinearSVC(C=1, loss="hinge", max_iter=15000)
         svm_model.fit(tmp_X_train_BA, tmp_Y_train_BA)
         P_lr = svm_model.predict(tmp_X_test_BA)
         cv_svm_accuracy_BA.append(metrics.accuracy_score(tmp_Y_test_BA, P_lr))
         FI_SVM_BA.append(svm_model.coef_.flatten())
 
+for r in range(0, 4):
+    for c in range(0, 4):
+        print(Part_reco[r]+"  "+Part_chro[c])
 
 plt.plot(cv_svm_accuracy_BA)
 np.mean(cv_svm_accuracy_BA)
@@ -167,7 +168,7 @@ plt.title('Combined Data Feature Importance')
 from sklearn import tree
 import graphviz
 import os
-os.environ["PATH"] += os.pathsep + 'C:/Users/User/Anaconda3/pkgs/graphviz-2.38-hfd603c8_2/Library/bin/graphviz/'
+#os.environ["PATH"] += os.pathsep + 'C:/Users/User/Anaconda3/pkgs/graphviz-2.38-hfd603c8_2/Library/bin/graphviz/'
 
 
 cv_DT_accuracy_BA = []
@@ -195,6 +196,7 @@ for r in range(0, 4):
 
 
 np.mean(cv_DT_accuracy_BA)
+plt.plot(cv_DT_accuracy_BA)
 
 '''dot_data = tree.export_graphviz(clf, out_file=None,feature_names=names,class_names=['Chronic','recovered'],
                                 filled=True, rounded=True,special_characters=True)
