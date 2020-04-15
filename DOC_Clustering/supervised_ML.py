@@ -108,11 +108,17 @@ for r in range(0,4):
         cv_LR_Reco.append(metrics.accuracy_score(tmp_Y_test_Reco, P_lr))
         FI_LR_Reco.append(lr.coef_)
 
-feat_importances_Base_LR = pd.Series((np.mean(FI_LR_Base[0:16],axis=0)[0]), index=X.columns)
+right_Anes = np.where(np.array(cv_LR_Anes) > 0.5)[0]
+right_Base = np.where(np.array(cv_LR_Base) > 0.5)[0]
+right_Reco = np.where(np.array(cv_LR_Reco) > 0.5)[0]
+
+FI_LR_Base= list(FI_LR_Base[i] for i in right_Base)
+
+feat_importances_Base_LR = pd.Series(abs(np.mean(FI_LR_Base[0:],axis=0)[0]), index=X.columns)
 feat_importances_Anes_LR = pd.Series((np.mean(FI_LR_Anes[0:16],axis=0)[0]), index=X.columns)
 feat_importances_Reco_LR = pd.Series((np.mean(FI_LR_Reco[0:16],axis=0)[0]), index=X.columns)
 
-feat_importances_Base_LR.nlargest(30).plot(kind='barh')
+feat_importances_Base_LR.nlargest(10).plot(kind='barh')
 plt.title('Baseline')
 feat_importances_Anes_LR.nlargest(30).plot(kind='barh',color='orange')
 plt.title('Anesthesia')
@@ -140,7 +146,7 @@ plt.ylabel('accuracy')
 SVM (sklearn)
 ################
 '''
-cs=np.arange(0.3,10,0.1)
+cs=np.arange(0.3,3,0.1)
 
 svm_accuracy_Base=[]
 svm_accuracy_Anes=[]
@@ -234,8 +240,6 @@ plt.ylabel('accuracy')
 
 
 
-
-
 right_Anes = np.where(np.array(cv_SVM_Anes) > 0.5)[0]
 right_Base = np.where(np.array(cv_SVM_Base) > 0.5)[0]
 right_Reco = np.where(np.array(cv_SVM_Reco) > 0.5)[0]
@@ -254,10 +258,10 @@ feat_importances_Anes_SVM = pd.Series(np.array((np.mean(FI_SVM_Anes.iloc[right_A
 feat_importances_Reco_SVM = pd.Series(np.array((np.mean(FI_SVM_Reco.iloc[right_Reco,:],axis=0))), index=X_train_Reco.columns)
 
 plt.figure()
-FC_Anes=np.mean(feat_importances_Anes_SVM_b[0:70])
-FC_Base=np.mean(feat_importances_Base_SVM_b[0:70])
-FP_Anes=np.mean(feat_importances_Anes_SVM_b[71:123])
-FP_Base=np.mean(feat_importances_Base_SVM_b[71:123])
+FC_Anes=np.mean(feat_importances_Anes_SVM_b[0:69])
+FC_Base=np.mean(feat_importances_Base_SVM_b[0:69])
+FP_Anes=np.mean(feat_importances_Anes_SVM_b[70:123])
+FP_Base=np.mean(feat_importances_Base_SVM_b[70:123])
 FO_Anes=np.mean(feat_importances_Anes_SVM_b[124:169])
 FO_Base=np.mean(feat_importances_Base_SVM_b[124:169])
 FT_Anes=np.mean(feat_importances_Anes_SVM_b[170:210])
@@ -277,14 +281,14 @@ CO_Base=np.mean(feat_importances_Base_SVM_b[340:346])
 
 
 # set width of bar
-barWidth = 0.25
+barWidth = 0.3
 
 # set height of bar
 bars_A = [FC_Anes, FP_Anes, FO_Anes, FT_Anes, TO_Anes, TC_Anes, TP_Anes, PO_Anes, PC_Anes, CO_Anes]
 bars_B = [FC_Base, FP_Base, FO_Base, FT_Base, TO_Base, TC_Base, TP_Base, PO_Base, PC_Base, CO_Base]
 
 # Set position of bar on X axis
-r1 = np.arange(len(bars_A))
+r1 = np.arange(len(bars_B))
 r2 = [x + barWidth for x in r1]
 r3 = [x + barWidth for x in r2]
 
@@ -304,18 +308,11 @@ plt.show()
 
 
 #plot single areas
-feat_importances_Anes_SVM_b[71:123].plot(kind='barh',color = 'orange')
-feat_importances_Base_SVM_b[71:123].plot(kind='barh')
-
-
-feat_importances_Base_SVM_b[0:70].plot(kind='barh',color = 'blue')
-feat_importances_Anes_SVM_b[0:70].plot(kind='barh',color = 'orange')
-feat_importances_Reco_SVM_b[0:70].plot(kind='barh',color = 'green')
-plt.title('Frontal-Central')
-plt.legend(['Baseline','Anesthesia',"Recovery"])
+feat_importances_Base_SVM_b[124:169].plot(kind='barh')
+plt.title('Frontal-Occipital Feature Importance during Baseline')
 
 plt.figure()
-feat_importances_Base_SVM.nsmallest(20).plot(kind='barh')
+feat_importances_Base_SVM.nlargest(10).plot(kind='barh')
 plt.figure()
 feat_importances_Anes_SVM.nsmallest(20).plot(kind='barh',color = 'orange')
 

@@ -74,6 +74,9 @@ for r in range(0,4):
 
 
 plt.plot(cv_svm_accuracy_BA)
+plt.xlabel('cross validation')
+plt.ylabel('accuracy')
+
 np.mean(cv_svm_accuracy_BA)
 np.std(cv_svm_accuracy_BA)
 
@@ -103,7 +106,7 @@ plt.plot(cv_svm_accuracy_BA)
 np.mean(cv_svm_accuracy_BA)
 np.std(cv_svm_accuracy_BA)
 
-right_BA = np.where(np.array(cv_svm_accuracy_BA) > 0.55)[0]
+right_BA = np.where(np.array(cv_svm_accuracy_BA) > 0.5)[0]
 FI_SVM_BA=pd.DataFrame(FI_SVM_BA)
 
 
@@ -196,6 +199,7 @@ for r in range(0, 4):
 
 
 np.mean(cv_DT_accuracy_BA)
+np.std(cv_DT_accuracy_BA)
 plt.plot(cv_DT_accuracy_BA)
 
 '''dot_data = tree.export_graphviz(clf, out_file=None,feature_names=names,class_names=['Chronic','recovered'],
@@ -203,3 +207,11 @@ plt.plot(cv_DT_accuracy_BA)
 graph = graphviz.Source(dot_data)
 graph.view()
 '''
+
+clf = tree.DecisionTreeClassifier(criterion='entropy')
+clf = clf.fit(X_B_A,Y_B_A[0])
+
+dot_data = tree.export_graphviz(clf, out_file=None, feature_names=names, class_names=['Chronic', 'recovered'],
+                                filled=True, rounded=True, special_characters=True)
+graph = graphviz.Source(dot_data)
+graph.render('alldata')

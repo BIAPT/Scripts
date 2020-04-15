@@ -89,10 +89,10 @@ plt.plot(hists_Base[3].history['val_loss'])
 plt.legend(['Training', 'Validation'], loc='upper left')
 plt.title('Basline learning_rate= 0.05')
 
-plt.plot(hists_Reco[3].history['loss'])
-plt.plot(hists_Reco[3].history['val_loss'])
+plt.plot(hists_Reco[2].history['loss'])
+plt.plot(hists_Reco[2].history['val_loss'])
 plt.legend(['Training', 'Validation'], loc='upper left')
-plt.title('Recovery learning_rate= 0.05')
+plt.title('Recovery learning_rate= 0.01')
 
 
 
