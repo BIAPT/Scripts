@@ -12,19 +12,19 @@ datafiles = [f for f in glob.glob('data/WSAS_TIME_DATA_250Hz/Raw_250' + "**/*.ma
 wplifiles = [f for f in glob.glob('data/WSAS_TIME_DATA_250Hz/wPLI_10_1' + "**/*.mat", recursive=True)]
 
 
-
 df_wpli_final=pd.DataFrame()
+
 
 
 for i in range(0,len(wplifiles)):
     part=wplifiles[i]
-    name=part[36:48]
-    State = part[44:48]
-    ID = part[41:43]
+    name=part[36:47]
+    State = part[43:47]
+    ID = part[40:42]
 
     #load Data
-    mat = scipy.io.loadmat('data/WSAS_TIME_DATA_250Hz/wPLI_10_1/' + name + '.mat')
-    data = mat['result_wpli_'+ID+ State.lower()+'_step']  # extract the variable "data" (3 cell array)
+    mat = scipy.io.loadmat('data/WSAS_TIME_DATA_250Hz/wPLI_10_1/' + name +'_300wPLI_10_1.mat')
+    data = mat['result_wpli']  # extract the variable "data" (3 cell array)
 
     freq_steps=1
     time_steps=data.shape[0]
@@ -179,7 +179,3 @@ df_wpli_final.columns=names
 df_wpli_final.to_pickle('final_wPLI_all_NEW_1320.pickle')
 #data=pd.read_pickle('final_wPLI_clustering.pickle')
 
-
-conn2 = extract_features.extract_single_features(data[t], channels=channels, selection_1=['E1','E2','E3'], selection_2=['E1','E2','E3'],name=name)
-
-np.mean(conn2)
