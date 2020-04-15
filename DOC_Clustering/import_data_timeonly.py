@@ -56,6 +56,14 @@ for i in range(0,len(wplifiles)):
     LO = ['E75', 'E70', 'E65', 'E64', 'E74', 'E69']
     LT = ['E38', 'E44', 'E39', 'E40', 'E46', 'E45', 'E50', 'E57']
 
+    if ID == '02':
+        LF=['Fp1','AF3','AF7','AFz','Fz','F1','F3','F5','F7','FCz','FC1','FC3','FC5','FT7','FT9']
+        LC=['Cz','C1','C3','C5','CPz','CP1','CP3','CP5']
+        LP=['Pz','P1','P3','P5','P7','POz','PO3','PO7']
+        LO=['Oz','O1']
+        LT=['T7','TP7','TP9']
+
+
     for i in range(0,len(recos)):
         channels.append(recos.iloc[i,0][0])
     channels=np.array(channels)
@@ -176,6 +184,6 @@ names=['Name','ID','Phase','Time','FC','FP','FO','FT','TO','TC','TP','PO','PC','
 df_wpli_final.columns=names
 
 #np.save("time_resolved_wpli_all.npy", df_wpli_final,allow_pickle=True)
-df_wpli_final.to_pickle('final_wPLI_all_NEW_1320.pickle')
+df_wpli_final.to_pickle('final_wPLI_all_10_1.pickle')
 #data=pd.read_pickle('final_wPLI_clustering.pickle')
 
