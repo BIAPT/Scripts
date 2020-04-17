@@ -138,14 +138,29 @@ plt.title('PARTICIPANT   ' + participant)
 
 
 
-plt.plot(data13_reco['PC'])
-plt.hlines((np.mean(data13_reco['PC'])),0,290)
-plt.hlines((np.mean(data13_reco['PC'])+np.std(data13_reco['PC'])),0,290,linestyles='--')
-plt.hlines((np.mean(data13_reco['PC'])-np.std(data13_reco['PC'])),0,290,linestyles='--')
+
+#plt.plot(np.concatenate([data20_base['MEAN'],data20_anes['MEAN'],data20_reco['MEAN']]))
+for i in range(0,len(data20_base['MEAN'])):
+        plt.axvline(x=i,color='blue',alpha=0.1)
+plt.axvline(x=len(data20_base['MEAN']),color='black',alpha=0.7,linewidth =5)
+for i in range(len(data20_base['MEAN']),len(data20_base['MEAN'])+len(data20_anes['MEAN'])):
+        plt.axvline(x=i,color='orange',alpha=0.1,linewidth =2 )
+plt.axvline(x=len(data20_base['MEAN'])+len(data20_anes['MEAN']),color='black',alpha=0.7,linewidth =5)
+for i in range(len(data20_base['MEAN'])+len(data20_anes['MEAN']),len(data20_base['MEAN'])+len(data20_anes['MEAN'])+len(data20_reco['MEAN'])):
+        plt.axvline(x=i,color='green',alpha=0.1)
+plt.plot(np.concatenate([data20_base['MEAN'],data20_anes['MEAN'],data20_reco['MEAN']]),color = 'darkslategrey')
+
+
+
+plt.plot(data20_base['MEAN'])
+plt.plot(data20_anes['MEAN'])
+plt.plot(data20_reco['MEAN'])
+
+plt.hlines((np.mean(data20_reco['FF'])),0,290)
+plt.hlines((np.mean(data20_reco['FF'])+np.std(data20_reco['PC'])),0,290,linestyles='--')
+plt.hlines((np.mean(data20_reco['FF'])-np.std(data20_reco['PC'])),0,290,linestyles='--')
 plt.ylabel('wPLI')
 plt.title('WSAS_13 Recovery PC')
-
-
 
 
 
@@ -213,12 +228,18 @@ plt.xlabel('timestep')
 plt.ylabel('wPLI')
 plt.title('WSAS_13 during Recovery')
 
-plt.subplot(211)
-plt.plot(data13_base.iloc[:,4:])
-#plt.hlines(np.mean(np.mean(data13_anes.iloc[:,4:])),0,290)
+plt.subplot(311)
+plt.plot(data20_base.iloc[:,4:])
+plt.subplot(312)
+plt.plot(data20_anes.iloc[:,4:])
+plt.legend(areas)
+plt.subplot(313)
+plt.plot(data20_reco.iloc[:,4:])
+
+##
 plt.ylabel('wPLI')
-plt.title('WSAS_13 during Baseline')
-#plt.legend(areas)
+plt.title('WSAS_20 during Baseline')
+plt.legend(['FF','CO','PO'])
 
 plt.subplot(212)
 plt.plot(data13_anes.iloc[:,4:])
