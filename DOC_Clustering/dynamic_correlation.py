@@ -11,7 +11,7 @@ data=pd.read_pickle('data/WSAS_TIME_DATA_250Hz/wPLI_10_1/final_wpli_all_Left_10_
 
 pdf = matplotlib.backends.backend_pdf.PdfPages("output_contrast.pdf")
 
-participants=['02','05','09','10','11','12','13','18','19','20','22']
+participants=['02','05','09','10','11','12','13','18','19','20','22','99']
 
 for participant in participants:
     data_base=data.iloc[np.where((data['ID']==participant) & (data['Phase']=='Base'))[0],:]
@@ -34,7 +34,7 @@ for participant in participants:
     plt.subplot(133)
     sns.heatmap(corrR,vmin=0, vmax=1)
     plt.title('WSAS'+participant+'Recovery')
-    #pdf.savefig(figure)
+    pdf.savefig(figure)
     plt.close()
 
     figure= plt.figure()

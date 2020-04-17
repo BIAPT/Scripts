@@ -7,11 +7,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.backends.backend_pdf
 
-data=pd.read_pickle('data/WSAS_TIME_DATA_250Hz/wPLI_10_1/final_wpli_all_Left_10_1.pickle')
+#data=pd.read_pickle('data/WSAS_TIME_DATA_250Hz/wPLI_10_1/final_wpli_all_Left_10_1.pickle')
+data=pd.read_pickle('data/final_wPLI_all_10_1_allWSAS_05MDFA.pickle')
 
 pdf = matplotlib.backends.backend_pdf.PdfPages("output_pca.pdf")
 
-participants=['02','05','09','10','11','12','13','18','19','20','22']
+participants=['02','05','09','10','11','12','13','18','19','20','22','99']
+
 
 for participant in participants:
     data_base=data.iloc[np.where((data['ID']==participant) & (data['Phase']=='Base'))[0],:]
@@ -32,7 +34,7 @@ for participant in participants:
     A_mean=np.mean(X_A,axis=0)
     R_mean=np.mean(X_R,axis=0)
 
-    difference=((B_mean+A_mean)/2)-A_mean
+    difference=((B_mean+R_mean)/2)-A_mean
     selected=np.where(difference==max(difference))[0][0]
 
     figure = plt.figure()
