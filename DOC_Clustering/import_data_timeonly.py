@@ -184,6 +184,6 @@ names=['Name','ID','Phase','Time','FC','FP','FO','FT','TO','TC','TP','PO','PC','
 df_wpli_final.columns=names
 
 #np.save("time_resolved_wpli_all.npy", df_wpli_final,allow_pickle=True)
-df_wpli_final.to_pickle('final_wPLI_all_10_1.pickle')
+df_wpli_final.to_pickle('final_wPLI_all_10_1_allWSAS_05MDFA.pickle')
 #data=pd.read_pickle('final_wPLI_clustering.pickle')
 
