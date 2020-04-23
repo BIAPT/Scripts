@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 
 data=pd.read_pickle('data/WSAS_TIME_DATA_250Hz/wPLI_10_1/final_wpli_all_NEW_1320.pickle')
 
-data13_base=data.iloc[np.where((data['ID']=='13') & (data['Phase']=='base'))[0],:]
-data13_anes=data.iloc[np.where((data['ID']=='13') & (data['Phase']=='anes'))[0],:]
-data13_reco=data.iloc[np.where((data['ID']=='13') & (data['Phase']=='reco'))[0],:]
+data13_base=data.iloc[np.where((data['ID']=='13') & (data['Phase']=='Base'))[0],:]
+data13_anes=data.iloc[np.where((data['ID']=='13') & (data['Phase']=='Anes'))[0],:]
+data13_reco=data.iloc[np.where((data['ID']=='13') & (data['Phase']=='Reco'))[0],:]
 
-data20_base=data.iloc[np.where((data['ID']=='20') & (data['Phase']=='base'))[0],:]
-data20_anes=data.iloc[np.where((data['ID']=='20') & (data['Phase']=='anes'))[0],:]
-data20_reco=data.iloc[np.where((data['ID']=='20') & (data['Phase']=='reco'))[0],:]
+data20_base=data.iloc[np.where((data['ID']=='20') & (data['Phase']=='Base'))[0],:]
+data20_anes=data.iloc[np.where((data['ID']=='20') & (data['Phase']=='Anes'))[0],:]
+data20_reco=data.iloc[np.where((data['ID']=='20') & (data['Phase']=='Reco'))[0],:]
 
 areas=['FC','FP','FO','FT','TO','TC','TP','PO','PC','CO','FF','CC','PP','TT','OO','MEAN']
 part=['13','20']
@@ -148,8 +148,12 @@ for i in range(len(data20_base['MEAN']),len(data20_base['MEAN'])+len(data20_anes
 plt.axvline(x=len(data20_base['MEAN'])+len(data20_anes['MEAN']),color='black',alpha=0.7,linewidth =5)
 for i in range(len(data20_base['MEAN'])+len(data20_anes['MEAN']),len(data20_base['MEAN'])+len(data20_anes['MEAN'])+len(data20_reco['MEAN'])):
         plt.axvline(x=i,color='green',alpha=0.1)
-plt.plot(np.concatenate([data20_base['MEAN'],data20_anes['MEAN'],data20_reco['MEAN']]),color = 'darkslategrey')
+plt.plot(np.concatenate([data20_base.iloc[:,4:],data20_anes.iloc[:,4:],data20_reco.iloc[:,4:]]))
+plt.xlabel('time')
+plt.ylabel('wPLI')
 
+plt.plot(data20_base.iloc[1:2,4:])
+plt.legend(areas)
 
 
 plt.plot(data20_base['MEAN'])
@@ -264,3 +268,19 @@ plt.imshow(mean_13_reco,cmap='jet')
 plt.colorbar()
 #plt.clim(0,0.15)
 plt.title("WSAS13_Recovery")
+
+
+maxval_B=[]
+for i in range(0,len(data20_base)):
+    m= np.where((data20_base.iloc[i,4:-1])==max(data20_base.iloc[i,4:-1]))[0][0]
+    maxval_B.append(m+4)
+
+maxval_A=[]
+for i in range(0,len(data20_base)):
+    m= np.where((data20_anes.iloc[i,4:-1])==max(data20_anes.iloc[i,4:-1]))[0][0]
+    maxval_A.append(m+4)
+
+
+plt.plot(maxval_B)
+plt.plot(maxval_A)
+plt.yticks(range(4,19),areas[:-1])

@@ -12,6 +12,7 @@ data=pd.read_pickle('data/WSAS_TIME_DATA_250Hz/wPLI_10_1/final_wpli_all_Left_10_
 pdf = matplotlib.backends.backend_pdf.PdfPages("output_pca.pdf")
 
 participants=['02','05','09','10','11','12','13','18','19','20','22']
+participant='20'
 
 for participant in participants:
     data_base=data.iloc[np.where((data['ID']==participant) & (data['Phase']=='Base'))[0],:]
@@ -109,9 +110,27 @@ plt.title('PARTICIPANT   ' + participant)
 
 
 
+for i in range(0,len(X_B)):
+    plt.axvline(x=i,color='blue',alpha=0.1)
+plt.axvline(x=len(X_B),color='black',alpha=0.7,linewidth =5)
+for i in range(len(X_B),len(X_B)+len(X_B)):
+        plt.axvline(x=i,color='orange',alpha=0.1,linewidth =2 )
+plt.axvline(x=len(X_B)+len(X_B),color='black',alpha=0.7,linewidth =5)
+for i in range(len(X_B)+len(X_B),len(X_B)+len(X_B)+len(X_B)):
+        plt.axvline(x=i,color='green',alpha=0.1)
+plt.plot(np.concatenate([X_B[:,selected],X_A[:,selected],X_R[:,selected]]),color = 'darkslategrey')
+plt.hlines(np.mean(X_B[:,selected]),1,900)
+
 
 plt.plot(X_B[:,selected])
-plt.hlines(np.mean(X_B_20[:,selected])+np.std(X_B_20[:,selected]),1,300)
+#plt.plot(X_A[:,selected])
+plt.hlines(np.mean(X_B[:,selected])+np.std(X_B[:,selected]),1,300)
+plt.xlabel('time')
+plt.ylabel('expression of selected Principal component')
+
+
+
+
 plt.plot(X_A[:,selected])
 plt.plot(X_R[:,selected])
 
