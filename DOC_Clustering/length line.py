@@ -393,3 +393,28 @@ plt.title('PARTICIPANT   ' + participant)
 
 
 
+'''
+#################################
+###        CORRELATION        ###
+#################################
+
+'''
+participant='13'
+
+part_length=full_length.iloc[np.where(full_length['part']==participant)[0],:]
+part_mean=full_means.iloc[np.where(full_means['part']==participant)[0],:]
+
+# set height of bar
+means_all = np.hstack([part_mean.iloc[0,2:],part_mean.iloc[1,2:],part_mean.iloc[2,2:]])
+length_all = np.hstack([part_length.iloc[0,2:],part_length.iloc[1,2:],part_length.iloc[2,2:]])
+
+import seaborn as sns;
+
+ax = sns.regplot(x=list(part_mean.iloc[0,2:]), y=list(part_length.iloc[0,2:]))
+plt.xlabel('Connectivity Mean')
+plt.ylabel('Connectivity Dynamic')
+plt.title('Correlation  Base '+participant)
+
+from scipy.stats import pearsonr
+correl=pearsonr(part_mean.iloc[1,2:],part_length.iloc[1,2:])
+correl
