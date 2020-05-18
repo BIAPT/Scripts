@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 #from import_time_data_mean import *
 
-data=pd.read_pickle('data/WSAS_TIME_DATA_250Hz/wPLI_10_1/final_wpli_all_NEW_1320.pickle')
+data=pd.read_pickle('data/final_dPLI_all_10_1_all.pickle')
 
 data13_base=data.iloc[np.where((data['ID']=='13') & (data['Phase']=='Base'))[0],:]
 data13_anes=data.iloc[np.where((data['ID']=='13') & (data['Phase']=='Anes'))[0],:]
@@ -17,7 +17,7 @@ data20_reco=data.iloc[np.where((data['ID']=='20') & (data['Phase']=='Reco'))[0],
 
 areas=['FC','FP','FO','FT','TO','TC','TP','PO','PC','CO','FF','CC','PP','TT','OO','MEAN']
 part=['13','20']
-phases=['base','anes','reco']
+phases=['Base','Anes','Reco']
 
 full_crossing=pd.DataFrame()
 full_means=pd.DataFrame()
@@ -98,7 +98,7 @@ plt.ylabel('mean wPLI', fontweight='bold')
 plt.xticks([r + barWidth for r in range(len(bars_A))], areas)
 plt.legend()
 plt.title('PARTICIPANT   ' + participant)
-
+plt.ylim(0.5,0.6)
 
 '''
 #################################

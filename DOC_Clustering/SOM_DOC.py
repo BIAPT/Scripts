@@ -8,7 +8,11 @@ from matplotlib import pyplot as plt
 import random
 import pickle
 
-data=pd.read_pickle('data/final_wPLI_clustering.pickle')
+data=pd.read_pickle('data/final_dPLI_all_10_1_all.pickle')
+Y_ID=data.iloc[:,1]
+
+
+data=data[(Y_ID == '20')|(Y_ID == '13')]
 X=data.iloc[:,4:]
 Y_ID=data.iloc[:,1]
 Y_St=data.iloc[:,2]
@@ -23,8 +27,8 @@ from minisom import MiniSom
 
 X_a=np.array(X)
 
-map_dim = 100
-som = MiniSom(map_dim, map_dim, 140, sigma=1.0, random_seed=1)
+map_dim = 50
+som = MiniSom(map_dim, map_dim, 16, sigma=1.0, random_seed=1)
 #som.random_weights_init(W)
 som.train_batch(X_a, num_iteration=len(X)*500, verbose=True)
 
@@ -41,15 +45,20 @@ t[Y_St == 'Anes'] = 1
 t[Y_St == 'Reco'] = 2
 
 c = np.zeros(len(Y_ID), dtype=int)
-c[Y_ID == 'WSAS10'] = 1
-c[Y_ID== 'WSAS11'] = 2
-c[Y_ID == 'WSAS18'] = 3
-c[Y_ID == 'WSAS12'] = 4
-c[Y_ID == 'WSAS05'] = 5
+c[Y_ID == '10'] = 1
+c[Y_ID== '11'] = 1
+c[Y_ID == '18'] = 1
+c[Y_ID == '12'] = 1
+c[Y_ID == '19'] = 0
+c[Y_ID == '09'] = 0
+c[Y_ID == '22'] = 1
+c[Y_ID == '13'] = 1
+c[Y_ID == '05'] = 1
+c[Y_ID == '20'] = 0
 
 # use different colors and markers for each label
 markers = ['o', 's', 'D']
-colors = ['C0', 'C1', 'C2','C3','C4','C5']
+colors = ['C0', 'C1']
 for cnt, xx in enumerate(X_a):
     w = som.winner(xx)  # getting the winner
     # palce a marker on the winning position for the sample xx

@@ -9,7 +9,7 @@ import seaborn as sn
 from sklearn import metrics
 import matplotlib.pyplot as plt
 import random
-from prepareDataset import *
+from prepareDataset_dPLI import *
 
 X=X.iloc[:,empty==0]
 X_Anes=X_Anes.iloc[:,empty==0]
@@ -31,7 +31,7 @@ Logistic Regression
 '''
 from sklearn.linear_model import LogisticRegression
 
-cs=np.arange(1,10,0.1)
+cs=np.arange(1,5,0.1)
 lr_accuracy_Base=[]
 lr_accuracy_Anes=[]
 lr_accuracy_Reco=[]
@@ -73,7 +73,7 @@ FI_LR_Base=[]
 FI_LR_Anes=[]
 FI_LR_Reco=[]
 
-for r in range(0,4):
+for r in range(0,3):
     for c in range (0,4):
         tmp_X_test_Base=X_Base[(Y_ID_Base == Part_reco[r]) | (Y_ID_Base == Part_chro[c])]
         tmp_X_train_Base=X_Base[(Y_ID_Base != Part_reco[r]) & (Y_ID_Base != Part_chro[c])]
@@ -108,22 +108,29 @@ for r in range(0,4):
         cv_LR_Reco.append(metrics.accuracy_score(tmp_Y_test_Reco, P_lr))
         FI_LR_Reco.append(lr.coef_)
 
-right_Anes = np.where(np.array(cv_LR_Anes) > 0.5)[0]
-right_Base = np.where(np.array(cv_LR_Base) > 0.5)[0]
-right_Reco = np.where(np.array(cv_LR_Reco) > 0.5)[0]
+
+right_Anes = np.where(np.array(cv_LR_Anes) > 0.6)[0]
+right_Base = np.where(np.array(cv_LR_Base) > 0.6)[0]
+right_Reco = np.where(np.array(cv_LR_Reco) > 0.6)[0]
 
 FI_LR_Base= list(FI_LR_Base[i] for i in right_Base)
+FI_LR_Anes= list(FI_LR_Anes[i] for i in right_Anes)
+FI_LR_Reco= list(FI_LR_Reco[i] for i in right_Reco)
 
 feat_importances_Base_LR = pd.Series(abs(np.mean(FI_LR_Base[0:],axis=0)[0]), index=X.columns)
-feat_importances_Anes_LR = pd.Series((np.mean(FI_LR_Anes[0:16],axis=0)[0]), index=X.columns)
-feat_importances_Reco_LR = pd.Series((np.mean(FI_LR_Reco[0:16],axis=0)[0]), index=X.columns)
+feat_importances_Anes_LR = pd.Series(abs(np.mean(FI_LR_Anes[0:],axis=0)[0]), index=X.columns)
+feat_importances_Reco_LR = pd.Series(abs(np.mean(FI_LR_Reco[0:],axis=0)[0]), index=X.columns)
 
-feat_importances_Base_LR.nlargest(10).plot(kind='barh')
+plt.subplot(131)
+feat_importances_Base_LR.plot(kind='barh')
 plt.title('Baseline')
-feat_importances_Anes_LR.nlargest(30).plot(kind='barh',color='orange')
+plt.subplot(132)
+feat_importances_Anes_LR.plot(kind='barh',color='orange')
 plt.title('Anesthesia')
-feat_importances_Reco_LR.nlargest(30).plot(kind='barh',color='green')
+plt.subplot(133)
+feat_importances_Reco_LR.plot(kind='barh',color='green')
 plt.title('Recovery')
+
 
 np.mean(cv_LR_Base)
 np.std(cv_LR_Base)
@@ -177,6 +184,7 @@ plt.title('Support Vector Machine')
 plt.legend(['Baseline','Anesthesia','Recovery'])
 plt.show()
 
+
 cv_SVM_Base=[]
 cv_SVM_Anes=[]
 cv_SVM_Reco=[]
@@ -186,7 +194,7 @@ FI_SVM_Anes=[]
 FI_SVM_Reco=[]
 
 
-for r in range(0,4):
+for r in range(0,3):
     for c in range (0,4):
         tmp_X_test_Base=X_Base[(Y_ID_Base == Part_reco[r]) | (Y_ID_Base == Part_chro[c])]
         tmp_X_train_Base=X_Base[(Y_ID_Base != Part_reco[r]) & (Y_ID_Base != Part_chro[c])]
@@ -249,13 +257,27 @@ FI_SVM_Base=pd.DataFrame(FI_SVM_Base)
 FI_SVM_Anes=pd.DataFrame(FI_SVM_Anes)
 FI_SVM_Reco=pd.DataFrame(FI_SVM_Reco)
 
-feat_importances_Base_SVM_b = pd.Series(np.array(abs(np.mean(FI_SVM_Base.iloc[right_Base,:],axis=0))), index=X_train_Base.columns)
-feat_importances_Anes_SVM_b = pd.Series(np.array(abs(np.mean(FI_SVM_Anes.iloc[right_Anes,:],axis=0))), index=X_train_Anes.columns)
-feat_importances_Reco_SVM_b = pd.Series(np.array(abs(np.mean(FI_SVM_Reco.iloc[right_Reco,:],axis=0))), index=X_train_Reco.columns)
+feat_importances_Base_SVM_b = pd.Series(np.array(abs(np.mean(FI_SVM_Base.iloc[right_Base,:],axis=0))), index=X.columns)
+feat_importances_Anes_SVM_b = pd.Series(np.array(abs(np.mean(FI_SVM_Anes.iloc[right_Anes,:],axis=0))), index=X.columns)
+feat_importances_Reco_SVM_b = pd.Series(np.array(abs(np.mean(FI_SVM_Reco.iloc[right_Reco,:],axis=0))), index=X.columns)
 
-feat_importances_Base_SVM = pd.Series(np.array((np.mean(FI_SVM_Base.iloc[right_Base,:],axis=0))), index=X_train_Base.columns)
-feat_importances_Anes_SVM = pd.Series(np.array((np.mean(FI_SVM_Anes.iloc[right_Anes,:],axis=0))), index=X_train_Anes.columns)
-feat_importances_Reco_SVM = pd.Series(np.array((np.mean(FI_SVM_Reco.iloc[right_Reco,:],axis=0))), index=X_train_Reco.columns)
+feat_importances_Base_SVM = pd.Series(np.array((np.mean(FI_SVM_Base.iloc[right_Base,:],axis=0))), index=X.columns)
+feat_importances_Anes_SVM = pd.Series(np.array((np.mean(FI_SVM_Anes.iloc[right_Anes,:],axis=0))), index=X.columns)
+feat_importances_Reco_SVM = pd.Series(np.array((np.mean(FI_SVM_Reco.iloc[right_Reco,:],axis=0))), index=X.columns)
+
+
+plt.subplot(131)
+feat_importances_Base_SVM_b.plot(kind='barh')
+plt.title('Baseline')
+plt.subplot(132)
+feat_importances_Anes_SVM_b.plot(kind='barh',color='orange')
+plt.title('Anesthesia')
+plt.subplot(133)
+feat_importances_Reco_SVM_b.plot(kind='barh',color='green')
+plt.title('Recovery')
+
+
+
 
 plt.figure()
 FC_Anes=np.mean(feat_importances_Anes_SVM_b[0:69])
@@ -316,6 +338,12 @@ feat_importances_Base_SVM.nlargest(10).plot(kind='barh')
 plt.figure()
 feat_importances_Anes_SVM.nsmallest(20).plot(kind='barh',color = 'orange')
 
+plt.figure()
+plt.plot(feat_importances_Base_SVM)
+plt.figure()
+plt.plot(feat_importances_Anes_SVM)
+plt.figure()
+plt.plot(feat_importances_Reco_SVM)
 
 
 
@@ -408,3 +436,54 @@ plt.legend(['Baseline','Anesthesia','Recovery'])
 plt.xlabel('cross validation')
 plt.ylabel('accuracy')
 
+
+
+
+
+# Decision Tree
+from sklearn import tree
+import graphviz
+import os
+#os.environ["PATH"] += os.pathsep + 'C:/Users/User/Anaconda3/pkgs/graphviz-2.38-hfd603c8_2/Library/bin/graphviz/'
+
+
+cv_DT_accuracy = []
+
+
+for r in range(0, 3):
+    for c in range(0, 4):
+        tmp_X_test_Base = X_Base[(Y_ID_Base == Part_reco[r]) | (Y_ID_Base == Part_chro[c])]
+        tmp_X_train_Base = X_Base[(Y_ID_Base != Part_reco[r]) & (Y_ID_Base != Part_chro[c])]
+        tmp_Y_test_Base = Y_out_Base[(Y_ID_Base == Part_reco[r]) | (Y_ID_Base == Part_chro[c])]
+        tmp_Y_train_Base = Y_out_Base[(Y_ID_Base != Part_reco[r]) & (Y_ID_Base != Part_chro[c])]
+
+        clf = tree.DecisionTreeClassifier(criterion='entropy')
+        clf = clf.fit(tmp_X_train_Base,tmp_Y_train_Base)
+        P=clf.predict(tmp_X_test_Base)
+        acc=metrics.accuracy_score(tmp_Y_test_Base, P)
+        cv_DT_accuracy.append(acc)
+
+        dot_data = tree.export_graphviz(clf, out_file=None, feature_names=names, class_names=['Chronic', 'recovered'],
+                                        filled=True, rounded=True, special_characters=True)
+        graph = graphviz.Source(dot_data)
+        graph.render(Part_reco[r]+'_'+Part_chro[c]+'_'+str(acc*100))
+
+
+
+np.mean(cv_DT_accuracy)
+np.std(cv_DT_accuracy)
+plt.plot(cv_DT_accuracy)
+
+'''dot_data = tree.export_graphviz(clf, out_file=None,feature_names=names,class_names=['Chronic','recovered'],
+                                filled=True, rounded=True,special_characters=True)
+graph = graphviz.Source(dot_data)
+graph.view()
+'''
+
+clf = tree.DecisionTreeClassifier(criterion='entropy')
+clf = clf.fit(X_B_A,Y_B_A[0])
+
+dot_data = tree.export_graphviz(clf, out_file=None, feature_names=names, class_names=['Chronic', 'recovered'],
+                                filled=True, rounded=True, special_characters=True)
+graph = graphviz.Source(dot_data)
+graph.render('alldata')
