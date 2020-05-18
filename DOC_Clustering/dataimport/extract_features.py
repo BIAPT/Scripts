@@ -38,7 +38,7 @@ def extract_features (data,getmean=False):
 
     return tofill
 
-def extract_single_features(X_step,channels,selection_1,selection_2,name):
+def extract_single_features(X_step,channels,selection_1,selection_2,name,time):
     if len(X_step.shape) == 3:
         selected_1=[]
         selected_2=[]
@@ -46,13 +46,15 @@ def extract_single_features(X_step,channels,selection_1,selection_2,name):
             try:
                 selected_1.append(np.where(channels==selection_1[i])[0][0])
             except:
-                print("An exception occurred: Electrode" + str(selection_1[i]) +' does not exist in  ' +name)
+                if time == 1:
+                    print("An exception occurred: Electrode" + str(selection_1[i]) +' does not exist in  ' +name)
 
         for i in range(0,len(selection_2)):
             try:
                 selected_2.append(np.where(channels==selection_2[i])[0][0])
             except:
-                print("An exception occurred: Electrode" + str(selection_2[i]) +' does not exist in  ' +name)
+                if time == 1:
+                    print("An exception occurred: Electrode" + str(selection_2[i]) +' does not exist in  ' +name)
 
         X_step=X_step[:,selected_1,:] #[time,horizontal,vertical]
         X_step=X_step[:,:,selected_2]
@@ -69,13 +71,15 @@ def extract_single_features(X_step,channels,selection_1,selection_2,name):
             try:
                 selected_1.append(np.where(channels == selection_1[i])[0][0])
             except:
-                print("An exception occurred: Electrode" + str(selection_1[i]) +' does not exist in  ' +name)
+                if time == 1:
+                    print("An exception occurred: Electrode" + str(selection_1[i]) +' does not exist in  ' +name)
 
         for i in range(0, len(selection_2)):
             try:
                 selected_2.append(np.where(channels == selection_2[i])[0][0])
             except:
-                print("An exception occurred: Electrode" + str(selection_2[i]) +' does not exist in  ' +name)
+                if time == 1:
+                    print("An exception occurred: Electrode" + str(selection_2[i]) +' does not exist in  ' +name)
 
         X_step=X_step[selected_1,:]    #[time,horizontal,vertical]
         X_step=X_step[:,selected_2]
@@ -87,10 +91,10 @@ def extract_single_features(X_step,channels,selection_1,selection_2,name):
         return X_step
 
 
-def get_difference (data):
-    tofill= np.zeros((data.shape[0]-1, data.shape[1]))
+def get_difference(data):
+    tofill = np.zeros((data.shape[0]-1, data.shape[1]))
     for i in range(0,data.shape[0]-1):
-        j=i+1
+        j = i + 1
         tofill[i,:]=data[j]-data[i]
     return  tofill
 

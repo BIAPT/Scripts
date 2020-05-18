@@ -1,4 +1,6 @@
 import scipy.io
+import sys
+sys.path.append('dataimport/')
 import extract_features
 import matplotlib.pyplot as plt
 #plt.use('Qt5Agg')

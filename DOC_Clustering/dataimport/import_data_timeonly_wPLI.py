@@ -1,5 +1,5 @@
 import scipy.io
-import extract_features
+import sys
 import matplotlib.pyplot as plt
 #plt.use('Qt5Agg')
 import numpy as np
@@ -7,15 +7,17 @@ import pandas as pd
 import glob
 import pickle
 
+import os
+print(os.system("pwd"))
+
+#sys.path.append('../')
+from dataimport import extract_features
+#import extract_features
 
 datafiles = [f for f in glob.glob('data/WSAS_TIME_DATA_250Hz/Raw_250' + "**/*.mat", recursive=True)]
 wplifiles = [f for f in glob.glob('data/WSAS_TIME_DATA_250Hz/wPLI_10_1' + "**/*.mat", recursive=True)]
 
-
-
 df_wpli_final=pd.DataFrame()
-
-
 
 for i in range(0,len(wplifiles)):
     part=wplifiles[i]
@@ -30,7 +32,7 @@ for i in range(0,len(wplifiles)):
     freq_steps=1
     time_steps=data.shape[0]
 
-    wpli=np.zeros((time_steps,10*freq_steps+5+5)) # +5 for ID, State, Time, name, average +5 intra regional
+    wpli=np.zeros((time_steps,10*freq_steps+5+4)) # +4 for ID, State, Time, name +5 intra regional
     df_wpli=pd.DataFrame(wpli)
 
 
@@ -58,11 +60,11 @@ for i in range(0,len(wplifiles)):
     LT = ['E38', 'E44', 'E39', 'E40', 'E46', 'E45', 'E50', 'E57']
 
     if ID == '02':
-        LF=['Fp1','AF3','AF7','AFz','Fz','F1','F3','F5','F7','FCz','FC1','FC3','FC5','FT7','FT9']
-        LC=['Cz','C1','C3','C5','CPz','CP1','CP3','CP5']
-        LP=['Pz','P1','P3','P5','P7','POz','PO3','PO7']
-        LO=['Oz','O1']
-        LT=['T7','TP7','TP9']
+        LF=['Fp1','AF3','AF7','AFz','Fz','F1','F3','F5','F7']
+        LC=['Cz','C1','C3','C5','FCz','FC1','FC3','FC5']
+        LP=['Pz','P1','P3','P5','P7','CP1','CP3','CP5','CPz']
+        LO=['POz','PO3','PO7','Oz','O1','PO9']
+        LT=['FT7','FT9','T7','TP7','TP9']
 
 
     for i in range(0,len(recos)):
@@ -75,63 +77,63 @@ for i in range(0,len(wplifiles)):
 
        # Frontal Central Connectivity
 
-        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LF,selection_2=LC,name= name)
+        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LF,selection_2=LC,name= name,time=t)
         # row selection 1
         # col selection 2
         mean_conn=np.mean(conn)
         df_wpli.iloc[t, 4] = mean_conn
 
 
-        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LF,selection_2=LP,name= name)
+        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LF,selection_2=LP,name= name,time=t)
         # row selection 1
         # col selection 2
         mean_conn=np.mean(conn)
         df_wpli.iloc[t, 5] = mean_conn
 
 
-        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LF,selection_2=LO,name= name)
+        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LF,selection_2=LO,name= name,time=t)
         # row selection 1
         # col selection 2
         mean_conn=np.mean(conn)
         df_wpli.iloc[t, 6] = mean_conn
 
-        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LF,selection_2=LT,name= name)
+        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LF,selection_2=LT,name= name,time=t)
         # row selection 1
         # col selection 2
         mean_conn=np.mean(conn)
         df_wpli.iloc[t, 7] = mean_conn
 
-        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LT,selection_2=LO,name= name)
+        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LT,selection_2=LO,name= name,time=t)
         # row selection 1
         # col selection 2
         mean_conn=np.mean(conn)
         df_wpli.iloc[t, 8] = mean_conn
 
-        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LT,selection_2=LC,name= name)
+        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LT,selection_2=LC,name= name,time=t)
         # row selection 1
         # col selection 2
         mean_conn=np.mean(conn)
         df_wpli.iloc[t, 9] = mean_conn
 
-        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LT,selection_2=LP,name= name)
+        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LT,selection_2=LP,name= name,time=t)
         # row selection 1
         # col selection 2
         mean_conn=np.mean(conn)
         df_wpli.iloc[t, 10] = mean_conn
 
-        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LP,selection_2=LO,name= name)
+        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LP,selection_2=LO,name= name,time=t)
         # row selection 1
         # col selection 2
         mean_conn=np.mean(conn)
         df_wpli.iloc[t, 11] = mean_conn
 
-        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LP,selection_2=LC,name= name)
+        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LP,selection_2=LC,name= name,time=t)
         # row selection 1
         # col selection 2
         mean_conn=np.mean(conn)
         df_wpli.iloc[t, 12] = mean_conn
 
-        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LC,selection_2=LO,name= name)
+        conn=extract_features.extract_single_features(data[t],channels=channels,selection_1=LC,selection_2=LO,name= name,time=t)
         # row selection 1
         # col selection 2
         mean_conn=np.mean(conn)
@@ -139,52 +141,40 @@ for i in range(0,len(wplifiles)):
 
 
         # INtraregional
-        conn = extract_features.extract_single_features(data[t], channels=channels, selection_1=LF, selection_2=LF,name=name)
+        conn = extract_features.extract_single_features(data[t], channels=channels, selection_1=LF, selection_2=LF,name=name,time=t)
         # row selection 1
         # col selection 2
         mean_conn = np.mean(conn)
         df_wpli.iloc[t, 14] = mean_conn
 
-        conn = extract_features.extract_single_features(data[t], channels=channels, selection_1=LC, selection_2=LC,name=name)
+        conn = extract_features.extract_single_features(data[t], channels=channels, selection_1=LC, selection_2=LC,name=name,time=t)
         # row selection 1
         # col selection 2
         mean_conn = np.mean(conn)
         df_wpli.iloc[t, 15] = mean_conn
 
-        conn = extract_features.extract_single_features(data[t], channels=channels, selection_1=LP, selection_2=LP,name=name)
+        conn = extract_features.extract_single_features(data[t], channels=channels, selection_1=LP, selection_2=LP,name=name,time=t)
         # row selection 1
         # col selection 2
         mean_conn = np.mean(conn)
         df_wpli.iloc[t, 16] = mean_conn
 
-        conn = extract_features.extract_single_features(data[t], channels=channels, selection_1=LT, selection_2=LT,name=name)
+        conn = extract_features.extract_single_features(data[t], channels=channels, selection_1=LT, selection_2=LT,name=name,time=t)
         # row selection 1
         # col selection 2
         mean_conn = np.mean(conn)
         df_wpli.iloc[t, 17] = mean_conn
 
-        conn = extract_features.extract_single_features(data[t], channels=channels, selection_1=LO, selection_2=LO,name=name)
+        conn = extract_features.extract_single_features(data[t], channels=channels, selection_1=LO, selection_2=LO,name=name,time=t)
         # row selection 1
         # col selection 2
         mean_conn = np.mean(conn)
         df_wpli.iloc[t, 18] = mean_conn
 
-
-        # AVERAGE CONNECTIVITY
-        conn = extract_features.extract_single_features(data[t], channels=channels, selection_1=channels, selection_2=channels, name=name)
-        # row selection 1
-        # col selection 2
-        mean_conn = np.mean(conn)
-        df_wpli.iloc[t, 19] = mean_conn
-
-
-
     df_wpli_final=df_wpli_final.append(df_wpli)
 
-names=['Name','ID','Phase','Time','FC','FP','FO','FT','TO','TC','TP','PO','PC','CO', 'FF','CC','PP','TT','OO','MEAN']
+names=['Name','ID','Phase','Time','FC','FP','FO','FT','TO','TC','TP','PO','PC','CO', 'FF','CC','PP','TT','OO']
 df_wpli_final.columns=names
 
-#np.save("time_resolved_wpli_all.npy", df_wpli_final,allow_pickle=True)
-df_wpli_final.to_pickle('final_wPLI_all_10_1_allWSAS_05MDFA.pickle')
-#data=pd.read_pickle('final_wPLI_clustering.pickle')
+df_wpli_final.to_pickle('NEW_wPLI_all_10_1_left.pickle')
 

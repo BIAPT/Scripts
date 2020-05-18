@@ -8,16 +8,15 @@ import seaborn as sns
 import matplotlib.backends.backend_pdf
 import math
 
-data=pd.read_pickle('data/WSAS_TIME_DATA_250Hz/wPLI_10_1/final_wpli_all_Left_10_1.pickle')
-#data=pd.read_pickle('data/WSAS_TIME_DATA_250Hz/wPLI_10_1/final_wpli_all_NEW_1320.pickle')
+data=pd.read_pickle('data/NEW_wPLI_all_10_1_left.pickle')
 
-#data_correct_MEAN
-data['MEAN']=(np.mean(data.iloc[:,4:-1],axis=1))
-
-areas=['FC','FP','FO','FT','TO','TC','TP','PO','PC','CO','FF','CC','PP','TT','OO','MEAN']
-part=['13','20']
+areas=['FC','FP','FO','FT','TO','TC','TP','PO','PC','CO','FF','CC','PP','TT','OO']
+part=['02','05','09','10','11','12','13','18','19','20','22']
+part_reco=['02','09','19','20']
+part_chro=['05','10','11','12','13','18','22']
 phases=['Base','Anes','Reco']
 
+names = ['part', 'phase', 'FC', 'FP', 'FO', 'FT', 'TO', 'TC', 'TP', 'PO', 'PC', 'CO', 'FF', 'CC', 'PP', 'TT','OO']
 
 full_length=pd.DataFrame()
 full_length_sds=pd.DataFrame()
@@ -32,8 +31,7 @@ for p in part:
         linelength_SD = pd.DataFrame(np.zeros((1,len(areas) + 2)))
         means = pd.DataFrame(np.zeros((1,len(areas) + 2)))
         sds = pd.DataFrame(np.zeros((1,len(areas) + 2)))
-        names = ['part', 'phase', 'FC', 'FP', 'FO', 'FT', 'TO', 'TC', 'TP', 'PO', 'PC', 'CO', 'FF', 'CC', 'PP', 'TT',
-                 'OO', 'MEAN']
+
         linelength.columns=names
         linelength_SD.columns=names
         means.columns=names
@@ -302,7 +300,16 @@ plt.title('Functional Connectivity Mean' )
 
 '''
 
-participant='13'
+#Mean_Chro=\
+
+full_length.iloc[np.where(full_length['part']==part_chro[0])[0],:]
+
+#Length_Chro
+
+
+
+
+participant='02'
 
 part_length=full_length.iloc[np.where(full_length['part']==participant)[0],:]
 part_length_sds=full_length_sds.iloc[np.where(full_length_sds['part']==participant)[0],:]
