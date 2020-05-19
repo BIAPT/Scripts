@@ -13,15 +13,17 @@ for a in areas:
         name=str(a)+'_'+str(f)
         names.append(name)
 
+names=['FC','FP','FO','FT','TO','TC','TP','PO','PC','CO', 'FF','CC','PP','TT','OO']
 
-data=pd.read_pickle('data/final_wPLI_all_10_1_all.pickle')
+
+data=pd.read_pickle('data/NEW_wPLI_all_10_1_left.pickle')
 Y_ID=data.iloc[:,1]
 
-data_chro=data[(Y_ID == 'WSAS13') | (Y_ID == 'WSAS22') | (Y_ID == 'WSAS10') | (Y_ID == 'WSAS18')]
-data_reco=data[(Y_ID == 'WSAS19') | (Y_ID == 'WSAS20') | (Y_ID == 'WSAS02') | (Y_ID == 'WSAS09')]
+data_chro=data[(Y_ID == '13') | (Y_ID == '22') | (Y_ID == '10') | (Y_ID == '18')]
+data_reco=data[(Y_ID == '19') | (Y_ID == '20') | (Y_ID == '02') | (Y_ID == '09')]
 
-Part_chro=['WSAS13','WSAS22','WSAS10', 'WSAS18']
-Part_reco=['WSAS19','WSAS20','WSAS02','WSAS09']
+Part_chro=['13','22','10', '18']
+Part_reco=['19','20','02','09']
 
 data_reco.insert(0, 'outcome', "1")
 data_chro.insert(0, 'outcome', "0")

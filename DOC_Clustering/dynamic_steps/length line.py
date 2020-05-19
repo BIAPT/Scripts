@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 #from import_time_data_mean import *
 import seaborn as sns
-import matplotlib.backends.backend_pdf
+from matplotlib.backends.backend_pdf
 import math
 
 data=pd.read_pickle('data/NEW_wPLI_all_10_1_left.pickle')
@@ -69,6 +69,8 @@ full_length.columns=names
 full_length_sds.columns=names
 full_means.columns=names
 full_sds.columns=names
+
+
 
 '''
 #################################
@@ -295,34 +297,108 @@ plt.title('Functional Connectivity Mean' )
 
 '''
 #################################
-###    PLOT BOTH IN 1       ###
+###    FIND GROUPS            ###
 #################################
 
 '''
 
-#Mean_Chro=\
+Chro_Base_Dyn=pd.DataFrame()
+Chro_Anes_Dyn=pd.DataFrame()
+Chro_Reco_Dyn=pd.DataFrame()
 
-full_length.iloc[np.where(full_length['part']==part_chro[0])[0],:]
+Chro_Base_Means=pd.DataFrame()
+Chro_Anes_Means=pd.DataFrame()
+Chro_Reco_Means=pd.DataFrame()
 
-#Length_Chro
+for p in part_chro:
+    tmp=full_length.iloc[np.where(full_length['part'] == p)[0], :]
+    Chro_Base_Dyn=Chro_Base_Dyn.append(tmp.iloc[np.where(tmp['phase'] == 'Base')[0], :])
+    Chro_Anes_Dyn=Chro_Anes_Dyn.append(tmp.iloc[np.where(tmp['phase'] == 'Anes')[0], :])
+    Chro_Reco_Dyn=Chro_Reco_Dyn.append(tmp.iloc[np.where(tmp['phase'] == 'Reco')[0], :])
+
+    tmp=full_means.iloc[np.where(full_means['part'] == p)[0], :]
+    Chro_Base_Means=Chro_Base_Means.append(tmp.iloc[np.where(tmp['phase'] == 'Base')[0], :])
+    Chro_Anes_Means=Chro_Anes_Means.append(tmp.iloc[np.where(tmp['phase'] == 'Anes')[0], :])
+    Chro_Reco_Means=Chro_Reco_Means.append(tmp.iloc[np.where(tmp['phase'] == 'Reco')[0], :])
 
 
+Reco_Base_Dyn=pd.DataFrame()
+Reco_Anes_Dyn=pd.DataFrame()
+Reco_Reco_Dyn=pd.DataFrame()
+
+Reco_Base_Means=pd.DataFrame()
+Reco_Anes_Means=pd.DataFrame()
+Reco_Reco_Means=pd.DataFrame()
+
+for p in part_reco:
+    tmp=full_length.iloc[np.where(full_length['part'] == p)[0], :]
+    Reco_Base_Dyn=Reco_Base_Dyn.append(tmp.iloc[np.where(tmp['phase'] == 'Base')[0], :])
+    Reco_Anes_Dyn=Reco_Anes_Dyn.append(tmp.iloc[np.where(tmp['phase'] == 'Anes')[0], :])
+    Reco_Reco_Dyn=Reco_Reco_Dyn.append(tmp.iloc[np.where(tmp['phase'] == 'Reco')[0], :])
+
+    tmp=full_means.iloc[np.where(full_means['part'] == p)[0], :]
+    Reco_Base_Means=Reco_Base_Means.append(tmp.iloc[np.where(tmp['phase'] == 'Base')[0], :])
+    Reco_Anes_Means=Reco_Anes_Means.append(tmp.iloc[np.where(tmp['phase'] == 'Anes')[0], :])
+    Reco_Reco_Means=Reco_Reco_Means.append(tmp.iloc[np.where(tmp['phase'] == 'Reco')[0], :])
 
 
-participant='02'
-
-part_length=full_length.iloc[np.where(full_length['part']==participant)[0],:]
-part_length_sds=full_length_sds.iloc[np.where(full_length_sds['part']==participant)[0],:]
-
-part_means=full_means.iloc[np.where(full_means['part']==participant)[0],:]
-part_sds=full_sds.iloc[np.where(full_sds['part']==participant)[0],:]
-
+'''
+#################################
+###    PLOT GROUP RESULT      ###
+#################################
+'''
+plt.figure()
 barWidth = 0.3
 
 # set height of bar
-bars_B = part_means.iloc[0,2:-1]
-bars_A = part_means.iloc[1,2:-1]
-bars_R = part_means.iloc[2,2:-1]
+bars_B = np.mean(np.mean(Reco_Base_Means.iloc[:,2:]))
+bars_A = np.mean(np.mean(Reco_Anes_Means.iloc[:,2:]))
+bars_R = np.mean(np.mean(Reco_Reco_Means.iloc[:,2:]))
+
+# Set position of bar on X axis
+#r1 = np.arange(len(bars_B))
+#r2 = [x + barWidth for x in r1]
+#r3 = [x + barWidth for x in r2]
+
+# Make the plot
+plt.bar(1, bars_B,  width=barWidth,ecolor='lightgrey', label='Reco_Baseline')
+plt.bar(1.4, bars_A,  width=barWidth,ecolor='lightgrey', label='Reco_Anesthesia')
+plt.bar(1.8, bars_R,  width=barWidth,ecolor='lightgrey',label='Reco_Recovery')
+
+
+bars_B = np.mean(np.mean(Chro_Base_Means.iloc[:,2:]))
+bars_A = np.mean(np.mean(Chro_Anes_Means.iloc[:,2:]))
+bars_R = np.mean(np.mean(Chro_Reco_Means.iloc[:,2:]))
+
+# Make the plot
+plt.bar(1, bars_B,  width=barWidth,color='darkblue',ecolor='lightgrey', label='Chronic_Baseline')
+plt.bar(1.4, bars_A,  width=barWidth,color='indianred',ecolor='lightgrey', label='Chronic_Anesthesia')
+plt.bar(1.8, bars_R,  width=barWidth,color='darkgreen',ecolor='lightgrey',label='Chronic_Recovery')
+
+plt.legend()
+
+
+# Add xticks on the middle of the group bars
+plt.xlabel('wPLI region', fontweight='bold')
+plt.ylabel('wPLI', fontweight='bold')
+plt.xticks([r + barWidth for r in range(len(bars_A))], areas)
+#plt.legend()
+plt.title('PARTICIPANT   ' + participant)
+plt.ylim(0,0.20)
+
+
+'''
+#################################
+###    PLOT GROUP RESULT      ###
+#################################
+'''
+plt.figure()
+barWidth = 0.3
+
+# set height of bar
+bars_B = np.mean(Reco_Base_Means.iloc[:,2:])
+bars_A = np.mean(Reco_Anes_Means.iloc[:,2:])
+bars_R = np.mean(Reco_Reco_Means.iloc[:,2:])
 
 # Set position of bar on X axis
 r1 = np.arange(len(bars_B))
@@ -335,15 +411,100 @@ plt.bar(r2, bars_A,  width=barWidth,ecolor='lightgrey', label='Mean_Anesthesia')
 plt.bar(r3, bars_R,  width=barWidth,ecolor='lightgrey',label='Mean_Recovery')
 
 
-bars_B = part_length.iloc[0,2:-1]
-bars_A = part_length.iloc[1,2:-1]
-bars_R = part_length.iloc[2,2:-1]
+bars_B = np.mean(Reco_Base_Dyn.iloc[:,2:])
+bars_A = np.mean(Reco_Anes_Dyn.iloc[:,2:])
+bars_R = np.mean(Reco_Reco_Dyn.iloc[:,2:])
 
 # Make the plot
-plt.bar(r1, bars_B,  width=barWidth,color='darkblue',ecolor='lightgrey', label='Dynamic_Baseline')
-plt.bar(r2, bars_A,  width=barWidth,color='indianred',ecolor='lightgrey', label='Dynamic_Anesthesia')
-plt.bar(r3, bars_R,  width=barWidth,color='darkgreen',ecolor='lightgrey',label='Dynamic_Recovery')
+plt.bar(r1, bars_B,  width=barWidth,color='darkblue',ecolor='lightgrey', label='Dyn_Baseline')
+plt.bar(r2, bars_A,  width=barWidth,color='indianred',ecolor='lightgrey', label='Dyn_Anesthesia')
+plt.bar(r3, bars_R,  width=barWidth,color='darkgreen',ecolor='lightgrey',label='Dyn_Recovery')
 
+# Add xticks on the middle of the group bars
+plt.xlabel('wPLI region', fontweight='bold')
+plt.ylabel('wPLI', fontweight='bold')
+plt.xticks([r + barWidth for r in range(len(bars_A))], areas)
+#plt.legend()
+plt.title('Recovered')
+plt.ylim(0,0.20)
+
+
+'''
+#################################
+###    PLOT GROUP RESULT      ###
+#################################
+'''
+plt.figure()
+barWidth = 0.3
+
+# set height of bar
+bars_B = np.mean(Chro_Base_Means.iloc[:,2:])
+bars_A = np.mean(Chro_Anes_Means.iloc[:,2:])
+bars_R = np.mean(Chro_Reco_Means.iloc[:,2:])
+
+# Set position of bar on X axis
+r1 = np.arange(len(bars_B))
+r2 = [x + barWidth for x in r1]
+r3 = [x + barWidth for x in r2]
+
+# Make the plot
+plt.bar(r1, bars_B,  width=barWidth,ecolor='lightgrey', label='Mean_Baseline')
+plt.bar(r2, bars_A,  width=barWidth,ecolor='lightgrey', label='Mean_Anesthesia')
+plt.bar(r3, bars_R,  width=barWidth,ecolor='lightgrey',label='Mean_Recovery')
+
+
+bars_B = np.mean(Chro_Base_Dyn.iloc[:,2:])
+bars_A = np.mean(Chro_Anes_Dyn.iloc[:,2:])
+bars_R = np.mean(Chro_Reco_Dyn.iloc[:,2:])
+
+# Make the plot
+plt.bar(r1, bars_B,  width=barWidth,color='darkblue',ecolor='lightgrey', label='Dyn_Baseline')
+plt.bar(r2, bars_A,  width=barWidth,color='indianred',ecolor='lightgrey', label='Dyn_Anesthesia')
+plt.bar(r3, bars_R,  width=barWidth,color='darkgreen',ecolor='lightgrey',label='Dyn_Recovery')
+
+# Add xticks on the middle of the group bars
+plt.xlabel('wPLI region', fontweight='bold')
+plt.ylabel('wPLI', fontweight='bold')
+plt.xticks([r + barWidth for r in range(len(bars_A))], areas)
+#plt.legend()
+plt.title('Chronic')
+plt.ylim(0,0.20)
+
+
+'''
+#################################
+###    PLOT GROUP RESULT      ###
+#################################
+'''
+
+barWidth = 0.3
+
+# set height of bar
+bars_B = np.mean(np.mean(Reco_Base_Dyn.iloc[:,2:]))
+bars_A = np.mean(np.mean(Reco_Anes_Dyn.iloc[:,2:]))
+bars_R = np.mean(np.mean(Reco_Reco_Dyn.iloc[:,2:]))
+
+# Set position of bar on X axis
+#r1 = np.arange(len(bars_B))
+#r2 = [x + barWidth for x in r1]
+#r3 = [x + barWidth for x in r2]
+
+# Make the plot
+plt.bar(1, bars_B,  width=barWidth,ecolor='lightgrey', label='Reco_Baseline')
+plt.bar(1.4, bars_A,  width=barWidth,ecolor='lightgrey', label='Reco_Anesthesia')
+plt.bar(1.8, bars_R,  width=barWidth,ecolor='lightgrey',label='Reco_Recovery')
+
+
+bars_B = np.mean(np.mean(Chro_Base_Dyn.iloc[:,2:]))
+bars_A = np.mean(np.mean(Chro_Anes_Dyn.iloc[:,2:]))
+bars_R = np.mean(np.mean(Chro_Reco_Dyn.iloc[:,2:]))
+
+# Make the plot
+plt.bar(1, bars_B,  width=barWidth,color='darkblue',ecolor='lightgrey', label='Chronic_Baseline')
+plt.bar(1.4, bars_A,  width=barWidth,color='indianred',ecolor='lightgrey', label='Chronic_Anesthesia')
+plt.bar(1.8, bars_R,  width=barWidth,color='darkgreen',ecolor='lightgrey',label='Chronic_Recovery')
+
+plt.legend()
 
 
 # Add xticks on the middle of the group bars
@@ -425,3 +586,45 @@ plt.title('Correlation  Base '+participant)
 from scipy.stats import pearsonr
 correl=pearsonr(part_mean.iloc[1,2:],part_length.iloc[1,2:])
 correl
+
+
+
+
+
+
+'''
+#################################
+###   PLOT alll in PDF       ###
+#################################
+'''
+
+pp=matplotlib.backends.backend_pdf.PdfPages("output_dynamic.pdf")
+
+participants=['02','05','09','10','11','12','13','18','19','20','22','99']
+
+for p in part:
+    dynamic=full_length.iloc[np.where(full_length['part']==p)[0],2:]
+    means=full_means.iloc[np.where(full_means['part']==p)[0],2:]
+
+    barWidth = 0.3
+    # set height of bar
+    bars_d = np.mean(dynamic,axis=1)
+    bars_m = np.mean(means,axis=1)
+
+    # Set position of bar on X axis
+    r1 = np.arange(len(bars_d))
+    r2 = [x + barWidth for x in r1]
+
+    figure = plt.figure()
+    # Make the plot
+    plt.bar(r1, bars_m,  width=barWidth,color='firebrick',ecolor='lightgrey', label='Mean')
+    plt.bar(r2, bars_d,  width=barWidth,color='lightseagreen',ecolor='lightgrey', label='Dynamic')
+
+    # Add xticks on the middle of the group bars
+    plt.xticks([r + 0.5*barWidth for r in range(len(bars_13))], ['Baseline','Anesthesia','Recovery'])
+    plt.legend()
+    plt.title('Participant  '+ p )
+    pp.savefig(figure)
+    plt.close()
+
+pp.close()

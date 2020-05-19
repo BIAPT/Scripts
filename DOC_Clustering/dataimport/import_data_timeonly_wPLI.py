@@ -7,12 +7,7 @@ import pandas as pd
 import glob
 import pickle
 
-import os
-print(os.system("pwd"))
-
-#sys.path.append('../')
 from dataimport import extract_features
-#import extract_features
 
 datafiles = [f for f in glob.glob('data/WSAS_TIME_DATA_250Hz/Raw_250' + "**/*.mat", recursive=True)]
 wplifiles = [f for f in glob.glob('data/WSAS_TIME_DATA_250Hz/wPLI_10_1' + "**/*.mat", recursive=True)]

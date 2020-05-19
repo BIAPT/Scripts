@@ -1,5 +1,4 @@
 import matplotlib
-matplotlib.use('Qt5Agg')
 from sklearn.model_selection import train_test_split
 import pandas as pd
 import numpy as np
@@ -8,8 +7,13 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sn
 from sklearn import metrics
 import matplotlib.pyplot as plt
+matplotlib.use('Qt5Agg')
+
 import random
-from prepareDataset_dPLI import *
+import sys
+sys.path.append('../')
+#from dataimport.prepareDataset import *
+from dataimport.prepareDataset_dPLI import *
 
 X=X.iloc[:,empty==0]
 X_Anes=X_Anes.iloc[:,empty==0]
@@ -73,7 +77,7 @@ FI_LR_Base=[]
 FI_LR_Anes=[]
 FI_LR_Reco=[]
 
-for r in range(0,3):
+for r in range(0,4):
     for c in range (0,4):
         tmp_X_test_Base=X_Base[(Y_ID_Base == Part_reco[r]) | (Y_ID_Base == Part_chro[c])]
         tmp_X_train_Base=X_Base[(Y_ID_Base != Part_reco[r]) & (Y_ID_Base != Part_chro[c])]
@@ -90,28 +94,28 @@ for r in range(0,3):
         tmp_Y_test_Reco=Y_out_Reco[(Y_ID_Reco == Part_reco[r]) | (Y_ID_Reco == Part_chro[c])]
         tmp_Y_train_Reco=Y_out_Reco[(Y_ID_Reco != Part_reco[r]) & (Y_ID_Reco != Part_chro[c])]
 
-        lr = LogisticRegression(random_state=0, penalty='l1', C=5)
+        lr = LogisticRegression(random_state=0, penalty='l1', C=4,max_iter=1000)
         lr.fit(tmp_X_train_Base, tmp_Y_train_Base)
         P_lr = lr.predict(tmp_X_test_Base)
         cv_LR_Base.append(metrics.accuracy_score(tmp_Y_test_Base, P_lr))
         FI_LR_Base.append(lr.coef_)
 
-        lr = LogisticRegression(random_state=0, penalty='l1', C=5)
+        lr = LogisticRegression(random_state=0, penalty='l1', C=4,max_iter=1000)
         lr.fit(tmp_X_train_Anes, tmp_Y_train_Anes)
         P_lr = lr.predict(tmp_X_test_Anes)
         cv_LR_Anes.append(metrics.accuracy_score(tmp_Y_test_Anes, P_lr))
         FI_LR_Anes.append(lr.coef_)
 
-        lr = LogisticRegression(random_state=0, penalty='l1', C=5)
+        lr = LogisticRegression(random_state=0, penalty='l1', C=4,max_iter=1000)
         lr.fit(tmp_X_train_Reco, tmp_Y_train_Reco)
         P_lr = lr.predict(tmp_X_test_Reco)
         cv_LR_Reco.append(metrics.accuracy_score(tmp_Y_test_Reco, P_lr))
         FI_LR_Reco.append(lr.coef_)
 
 
-right_Anes = np.where(np.array(cv_LR_Anes) > 0.6)[0]
-right_Base = np.where(np.array(cv_LR_Base) > 0.6)[0]
-right_Reco = np.where(np.array(cv_LR_Reco) > 0.6)[0]
+right_Anes = np.where(np.array(cv_LR_Anes) > 0.5)[0]
+right_Base = np.where(np.array(cv_LR_Base) > 0.5)[0]
+right_Reco = np.where(np.array(cv_LR_Reco) > 0.5)[0]
 
 FI_LR_Base= list(FI_LR_Base[i] for i in right_Base)
 FI_LR_Anes= list(FI_LR_Anes[i] for i in right_Anes)
@@ -121,15 +125,17 @@ feat_importances_Base_LR = pd.Series(abs(np.mean(FI_LR_Base[0:],axis=0)[0]), ind
 feat_importances_Anes_LR = pd.Series(abs(np.mean(FI_LR_Anes[0:],axis=0)[0]), index=X.columns)
 feat_importances_Reco_LR = pd.Series(abs(np.mean(FI_LR_Reco[0:],axis=0)[0]), index=X.columns)
 
-plt.subplot(131)
+plt.subplot(121)
 feat_importances_Base_LR.plot(kind='barh')
-plt.title('Baseline')
-plt.subplot(132)
+plt.title('LR_Baseline')
+plt.subplot(122)
 feat_importances_Anes_LR.plot(kind='barh',color='orange')
 plt.title('Anesthesia')
-plt.subplot(133)
-feat_importances_Reco_LR.plot(kind='barh',color='green')
-plt.title('Recovery')
+
+#plt.subplot(133)
+#feat_importances_Reco_LR.plot(kind='barh',color='green')
+#plt.title('Recovery')
+
 
 
 np.mean(cv_LR_Base)
@@ -147,13 +153,14 @@ plt.plot(cv_LR_Reco)
 plt.legend(['Baseline','Anesthesia','Recovery'])
 plt.xlabel('cross validation')
 plt.ylabel('accuracy')
+plt.title('dPLI_CV')
 
 '''
 #################
 SVM (sklearn)
 ################
 '''
-cs=np.arange(0.3,3,0.1)
+cs=np.arange(0.3,6,0.2)
 
 svm_accuracy_Base=[]
 svm_accuracy_Anes=[]
@@ -194,7 +201,7 @@ FI_SVM_Anes=[]
 FI_SVM_Reco=[]
 
 
-for r in range(0,3):
+for r in range(0,4):
     for c in range (0,4):
         tmp_X_test_Base=X_Base[(Y_ID_Base == Part_reco[r]) | (Y_ID_Base == Part_chro[c])]
         tmp_X_train_Base=X_Base[(Y_ID_Base != Part_reco[r]) & (Y_ID_Base != Part_chro[c])]
@@ -211,19 +218,19 @@ for r in range(0,3):
         tmp_Y_test_Reco=Y_out_Reco[(Y_ID_Reco == Part_reco[r]) | (Y_ID_Reco == Part_chro[c])]
         tmp_Y_train_Reco=Y_out_Reco[(Y_ID_Reco != Part_reco[r]) & (Y_ID_Reco != Part_chro[c])]
 
-        svm_model = svm.LinearSVC(C=1, loss="hinge", max_iter=15000)
+        svm_model = svm.LinearSVC(C=4, loss="hinge", max_iter=15000)
         svm_model.fit(tmp_X_train_Base, tmp_Y_train_Base)
         P_lr = svm_model.predict(tmp_X_test_Base)
         cv_SVM_Base.append(metrics.accuracy_score(tmp_Y_test_Base, P_lr))
         FI_SVM_Base.append(svm_model.coef_.flatten())
 
-        svm_model = svm.LinearSVC(C=1, loss="hinge", max_iter=15000)
+        svm_model = svm.LinearSVC(C=4, loss="hinge", max_iter=15000)
         svm_model.fit(tmp_X_train_Anes, tmp_Y_train_Anes)
         P_lr = svm_model.predict(tmp_X_test_Anes)
         cv_SVM_Anes.append(metrics.accuracy_score(tmp_Y_test_Anes, P_lr))
         FI_SVM_Anes.append(svm_model.coef_.flatten())
 
-        svm_model = svm.LinearSVC(C=1, loss="hinge", max_iter=15000)
+        svm_model = svm.LinearSVC(C=4, loss="hinge", max_iter=15000)
         svm_model.fit(tmp_X_train_Reco, tmp_Y_train_Reco)
         P_lr = svm_model.predict(tmp_X_test_Reco)
         cv_SVM_Reco.append(metrics.accuracy_score(tmp_Y_test_Reco, P_lr))
@@ -245,7 +252,7 @@ plt.plot(cv_SVM_Reco)
 plt.legend(['Baseline','Anesthesia','Recovery'])
 plt.xlabel('cross validation')
 plt.ylabel('accuracy')
-
+plt.title('SVM')
 
 
 right_Anes = np.where(np.array(cv_SVM_Anes) > 0.5)[0]
@@ -266,15 +273,16 @@ feat_importances_Anes_SVM = pd.Series(np.array((np.mean(FI_SVM_Anes.iloc[right_A
 feat_importances_Reco_SVM = pd.Series(np.array((np.mean(FI_SVM_Reco.iloc[right_Reco,:],axis=0))), index=X.columns)
 
 
-plt.subplot(131)
+plt.subplot(121)
 feat_importances_Base_SVM_b.plot(kind='barh')
-plt.title('Baseline')
-plt.subplot(132)
+plt.title('SVM_Baseline')
+plt.subplot(122)
 feat_importances_Anes_SVM_b.plot(kind='barh',color='orange')
 plt.title('Anesthesia')
-plt.subplot(133)
-feat_importances_Reco_SVM_b.plot(kind='barh',color='green')
-plt.title('Recovery')
+
+#plt.subplot(133)
+#feat_importances_Reco_SVM_b.plot(kind='barh',color='green')
+#plt.title('Recovery')
 
 
 
@@ -450,7 +458,7 @@ import os
 cv_DT_accuracy = []
 
 
-for r in range(0, 3):
+for r in range(0, 4):
     for c in range(0, 4):
         tmp_X_test_Base = X_Base[(Y_ID_Base == Part_reco[r]) | (Y_ID_Base == Part_chro[c])]
         tmp_X_train_Base = X_Base[(Y_ID_Base != Part_reco[r]) & (Y_ID_Base != Part_chro[c])]
@@ -474,16 +482,28 @@ np.mean(cv_DT_accuracy)
 np.std(cv_DT_accuracy)
 plt.plot(cv_DT_accuracy)
 
-'''dot_data = tree.export_graphviz(clf, out_file=None,feature_names=names,class_names=['Chronic','recovered'],
-                                filled=True, rounded=True,special_characters=True)
-graph = graphviz.Source(dot_data)
-graph.view()
-'''
 
-clf = tree.DecisionTreeClassifier(criterion='entropy')
-clf = clf.fit(X_B_A,Y_B_A[0])
+cv_DT_accuracy = []
+for r in range(0, 4):
+    for c in range(0, 4):
+        tmp_X_test_Anes = X_Anes[(Y_ID_Anes == Part_reco[r]) | (Y_ID_Anes == Part_chro[c])]
+        tmp_X_train_Anes = X_Anes[(Y_ID_Anes != Part_reco[r]) & (Y_ID_Anes != Part_chro[c])]
+        tmp_Y_test_Anes = Y_out_Anes[(Y_ID_Anes == Part_reco[r]) | (Y_ID_Anes == Part_chro[c])]
+        tmp_Y_train_Anes = Y_out_Anes[(Y_ID_Anes != Part_reco[r]) & (Y_ID_Anes != Part_chro[c])]
 
-dot_data = tree.export_graphviz(clf, out_file=None, feature_names=names, class_names=['Chronic', 'recovered'],
-                                filled=True, rounded=True, special_characters=True)
-graph = graphviz.Source(dot_data)
-graph.render('alldata')
+        clf = tree.DecisionTreeClassifier(criterion='entropy')
+        clf = clf.fit(tmp_X_train_Anes,tmp_Y_train_Anes)
+        P=clf.predict(tmp_X_test_Anes)
+        acc=metrics.accuracy_score(tmp_Y_test_Anes, P)
+        cv_DT_accuracy.append(acc)
+
+        dot_data = tree.export_graphviz(clf, out_file=None, feature_names=names, class_names=['Chronic', 'recovered'],
+                                        filled=True, rounded=True, special_characters=True)
+        graph = graphviz.Source(dot_data)
+        graph.render(Part_reco[r]+'_'+Part_chro[c]+'_'+str(acc*100))
+
+
+
+np.mean(cv_DT_accuracy)
+np.std(cv_DT_accuracy)
+plt.plot(cv_DT_accuracy)
