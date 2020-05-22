@@ -4,10 +4,19 @@ import pandas as pd
 import numpy as np
 
 #set names
-areas=['FC','FP','FO','FT','TO','TC','TP','PO','PC','CO','FF','CC','PP','TT','OO']
-names=areas
+areas=['FC','FP','FO','FT','TO','TC','TP','PO','PC','CO']
+frequencies=np.arange(00.5,35.5,0.5)
+names=[]
 
-data=pd.read_pickle('data/NEW_dPLI_all_10_1_left.pickle')
+for a in areas:
+    for f in frequencies:
+        name=str(a)+'_'+str(f)
+        names.append(name)
+
+names=['FC','FP','FO','FT','TO','TC','TP','PO','PC','CO', 'FF','CC','PP','TT','OO']
+
+
+data=pd.read_pickle('data/NEW_wPLI_all_10_1_left.pickle')
 Y_ID=data.iloc[:,1]
 
 data_chro=data[(Y_ID == '13') | (Y_ID == '22') | (Y_ID == '10') | (Y_ID == '18')]
@@ -55,6 +64,7 @@ Y_out_Reco=data_Reco.iloc[:,0]
 
 
 # which values do never change
+import matplotlib.pyplot as plt
 zerostd=np.where(np.std(X)==0)[0]
 empty=np.zeros(X.shape[1])
 empty[zerostd]=1

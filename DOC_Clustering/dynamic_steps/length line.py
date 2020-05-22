@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 #from import_time_data_mean import *
 import seaborn as sns
-from matplotlib.backends.backend_pdf
+import matplotlib.backends.backend_pdf
 import math
 
 data=pd.read_pickle('data/NEW_wPLI_all_10_1_left.pickle')
