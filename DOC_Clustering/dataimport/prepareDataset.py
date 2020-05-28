@@ -144,8 +144,8 @@ def prepare_Contrast_Dataset(contrast_datafile):
 
     return [X,Y_out,Y_ID]
 
-#wPLIdata='data/NEW_wPLI_all_10_1_left.pickle'
-#dPLIdata='data/NEW_dPLI_all_10_1_left.pickle'
+wPLIdata='data/NEW_wPLI_all_10_1_left.pickle'
+dPLIdata='data/NEW_dPLI_all_10_1_left.pickle'
 
 
 def prepare_Combined_Dataset(wPLIdata,dPLIdata):
@@ -189,7 +189,12 @@ def prepare_Combined_Dataset(wPLIdata,dPLIdata):
     names = names.append('w_' + data_w.columns[4:])
     names = names.append('d_' + data_w.columns[4:])
 
+    from sklearn.preprocessing import StandardScaler
+    scaler = StandardScaler()
+    scaler.fit(data_combined.iloc[:,4:])
+    data_combined.iloc[:,4:] = pd.DataFrame(scaler.transform(data_combined.iloc[:,4:]))
+
     data_combined.columns=names
 
-    data_combined.to_pickle('combined_NEW_wPLI_dPLI_all_10_1_left.pickle')
+    data_combined.to_pickle('combined_norm_NEW_wPLI_dPLI_all_10_1_left.pickle')
 
