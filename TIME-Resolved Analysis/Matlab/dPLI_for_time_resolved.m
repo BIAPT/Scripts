@@ -4,18 +4,18 @@
 % second argument is the path of the folder containing that .set file
 % Here I'm getting it programmatically because my path and your path will
 % be different.
-filepath = '/Users/biapt/Desktop/Time_Resolved_EEG/data/';
+filepath = '/Users/biapt/Desktop/Charlotte_Analysis/Time_Resolved_EEG/data/';
 fileList = dir('*.set');
 
-data_path = '/Users/biapt/Desktop/Time_Resolved_EEG/dPLI_10_1/';
+data_path = '/Users/biapt/Desktop/Charlotte_Analysis/Time_Resolved_EEG/dPLI_10_1_theta/';
 
 for p=1:length(fileList)
     name=fileList(p).name(1:length(fileList(p).name)-4);
     recording = load_set(char(fileList(p).name),'');
     disp(string(fileList(p).name)+" load complete ========================================" )
-    
-    % wPLI
-    frequency_band = [7 13]; % This is in Hz
+      
+    %frequency_band = [7 13]; % This is in Hz
+    frequency_band = [3 8]; % This is in Hzwindow_size = 10; % This is in seconds and will be how we chunk the whole dataset
     window_size = 10; % This is in seconds and will be how we chunk the whole dataset
     number_surrogate = 10; % Number of surrogate wPLI to create
     p_value = 0.05; % the p value to make our test on
@@ -23,7 +23,7 @@ for p=1:length(fileList)
     
     result_dpli = na_dpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
     result_dpli = result_dpli.data.dpli;
-    save(data_path+"/"+name+"dPLI_10_1",'result_dpli')
+    save(data_path+"/"+name+"dPLI_10_1_theta",'result_dpli')
     
 end
 

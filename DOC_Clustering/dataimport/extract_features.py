@@ -39,30 +39,6 @@ def extract_features (data,getmean=False):
     return tofill
 
 def extract_single_features(X_step,channels,selection_1,selection_2,name,time):
-    if len(X_step.shape) == 3:
-        selected_1=[]
-        selected_2=[]
-        for i in range(0,len(selection_1)):
-            try:
-                selected_1.append(np.where(channels==selection_1[i])[0][0])
-            except:
-                if time == 1:
-                    print("An exception occurred: Electrode" + str(selection_1[i]) +' does not exist in  ' +name)
-
-        for i in range(0,len(selection_2)):
-            try:
-                selected_2.append(np.where(channels==selection_2[i])[0][0])
-            except:
-                if time == 1:
-                    print("An exception occurred: Electrode" + str(selection_2[i]) +' does not exist in  ' +name)
-
-        X_step=X_step[:,selected_1,:] #[time,horizontal,vertical]
-        X_step=X_step[:,:,selected_2]
-
-        if selected_1==selected_2:
-            X_step=X_step[~np.eye(X_step.shape[0], dtype=bool)].reshape(X_step.shape[0], -1)
-
-        return X_step
 
     if len(X_step.shape) == 2:
         selected_1 = []
@@ -81,14 +57,13 @@ def extract_single_features(X_step,channels,selection_1,selection_2,name,time):
                 if time == 1:
                     print("An exception occurred: Electrode" + str(selection_2[i]) +' does not exist in  ' +name)
 
-        X_step=X_step[selected_1,:]    #[time,horizontal,vertical]
-        X_step=X_step[:,selected_2]
+        PLI = []
+        for a in selected_1:
+            for b in selected_2:
+                if a != b:
+                    PLI.append(X_step[min(a, b), max(a, b)])
 
-        # for interhemispheric connectivity
-        if selected_1==selected_2:
-            X_step=X_step[~np.eye(X_step.shape[0], dtype=bool)].reshape(X_step.shape[0], -1)
-
-        return X_step
+        return np.mean(PLI)
 
 
 def get_difference(data):
