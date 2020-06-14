@@ -7,19 +7,21 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.backends.backend_pdf
 
-data=pd.read_pickle('data/WSAS_TIME_DATA_250Hz/wPLI_10_1/final_wpli_all_Left_10_1.pickle')
+data=pd.read_pickle('data/NEW_wPLI_all_10_1_left_alpha.pickle')
 
 pdf = matplotlib.backends.backend_pdf.PdfPages("output_pca.pdf")
 
 participants=['02','05','09','10','11','12','13','18','19','20','22']
-participant='20'
+#participant='20'
+
+diff=[]
 
 for participant in participants:
     data_base=data.iloc[np.where((data['ID']==participant) & (data['Phase']=='Base'))[0],:]
     data_anes=data.iloc[np.where((data['ID']==participant) & (data['Phase']=='Anes'))[0],:]
     data_reco=data.iloc[np.where((data['ID']==participant) & (data['Phase']=='Reco'))[0],:]
 
-    areas=['FC','FP','FO','FT','TO','TC','TP','PO','PC','CO','FF','CC','PP','TT','OO','MEAN']
+    areas=['FC','FP','FO','FT','TO','TC','TP','PO','PC','CO','FF','CC','PP','TT','OO']
 
     from sklearn.decomposition import PCA
     pca = PCA()
@@ -33,8 +35,9 @@ for participant in participants:
     A_mean=np.mean(X_A,axis=0)
     R_mean=np.mean(X_R,axis=0)
 
-    difference=((B_mean+A_mean)/2)-A_mean
+    difference=((B_mean+R_mean)/2)-A_mean
     selected=np.where(difference==max(difference))[0][0]
+    diff.append(min(A_mean))
 
     figure = plt.figure()
     plt.plot(B_mean)
@@ -63,7 +66,8 @@ pdf.close()
 
 
 
-
+plt.bar(range(len(diff)),diff)
+plt.xticks(range(len(diff)),participants)
 
 
 
@@ -71,7 +75,7 @@ pdf.close()
 means_B=[]
 means_A=[]
 means_R=[]
-participants=['05','09','10','11','12','13','18','19','20','22']
+participants=['02','05','09','10','11','12','13','18','19','20','22']
 
 
 for participant in participants:
