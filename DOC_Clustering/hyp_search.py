@@ -7,6 +7,7 @@ import sys
 sys.path.append('../')
 import data_LSTM
 import LSTM_1
+import numpy as np
 
 data = pd.read_pickle('data/NEW_wPLI_all_10_1_left_alpha.pickle')
 data=data.query("Phase=='Base'")
@@ -26,19 +27,27 @@ dataset, ID=data_LSTM.prepare_data_LSTM(data=data,
                             stepsize_r=stepsize_r,
                             windowsize=windowsize)
 
+len(np.where(np.array(dataset.labels)==1)[0])
+len(np.where(np.array(dataset.labels)==0)[0])
+
 splits=[int(len(dataset)*0.8), int(len(dataset))-int(len(dataset)*0.8)]
 train_set,dev_set=torch.utils.data.random_split(dataset, splits)
 
 lrs=[0.0001,0.001,0.005,0.01,0.05,0.1,0.5]
+bs=[2,3,4,5,6,7,8,9]
+hd=[2,3,4,5,7,8,9,10]
+
 acc_lrs=[]
 loss_lrs=[]
 
-for lr in lrs:
-    batch_size = 5
-    hidden_dim = 10
-    learning_rate = lr
+#for lr in lrs:
+#for b in bs:
+for h in hd:
+    batch_size = 6
+    hidden_dim = 4 #h
+    learning_rate = 0.01 #lr
     num_layers = 1
-    nr_epochs = 3
+    nr_epochs = 10
 
     correct_values, loss_values, dev_acc, model=LSTM_1.train_LSTM(train_set=train_set,
                                                                   dev_set=dev_set,
@@ -50,16 +59,17 @@ for lr in lrs:
     acc_lrs.append(dev_acc)
     loss_lrs.append(loss_values)
 
-for i in range(len(lrs)):
-    plt.plot(loss_lrs[i])
-plt.legend(lrs)
+
+plt.plot(np.transpose(pd.DataFrame(loss_lrs)))
+plt.legend(hd)
 plt.ylabel('loss')
 plt.xlabel('epochs')
 plt.show()
+#plt.savefig('learning_rate.png')
+plt.savefig('batch_size.png')
 
-for i in range(len(lrs)):
-    plt.plot(acc_lrs[i])
-plt.legend(lrs)
+plt.plot(np.transpose(pd.DataFrame(acc_lrs)))
+plt.legend(hd)
 plt.ylabel('dev_accuracy (30% dev set)')
 plt.xlabel('epochs')
 plt.show()

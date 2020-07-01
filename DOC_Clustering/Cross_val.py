@@ -9,19 +9,30 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 data = pd.read_pickle('data/NEW_wPLI_all_10_1_left_alpha.pickle')
-data=data.query("Phase=='Anes'")
+#data = pd.read_pickle('data/NEW_dPLI_all_10_1_left.pickle')
 
 # ALL Hyperparameters
+## Model Parameters
 batch_size = 5
 hidden_dim = 5
 learning_rate = 0.05
 num_layers = 1
-nr_epochs = 10
+nr_epochs = 6
 Part_chro=['13','22','10', '18','05','12','11']
 Part_reco=['19','20','02','09']
 
+## Data Parameters
+stepsize_c = 20
+windowsize = 20
 
 part = ['13', '18', '05', '11', '19', '02', '20', '22', '12', '10', '09']
+
+#Phase='combined'
+Phase='Base'
+#can be 'Base'
+# can be 'Anes'
+# or 'combined' (=Base and Anes combined in Time)
+
 cv_acc = {}
 cv_pred = {}
 cv_corr = {}
@@ -36,30 +47,32 @@ for p in range(len(part)):
 
     # if participant from recovered group
     if Part_reco.count(part_tst[0]) ==1:
-        stepsize_r = 10 # 80/90 ratio
+        stepsize_r = int(1/2*stepsize_c)
     else:
-        stepsize_r = 13 #80/80 ratio
-
-    stepsize_c = 20
-    windowsize = 20
+        stepsize_r = int(1/2*stepsize_c + 3)
 
     dataset_train, ID_train=data_LSTM.prepare_data_LSTM(data=data_train,
                                 Part_chro=Part_chro,
                                 Part_reco=Part_reco,
                                 stepsize_c=stepsize_c,
                                 stepsize_r=stepsize_r,
-                                windowsize=windowsize)
+                                windowsize=windowsize,
+                                Phase=Phase)
 
-    #len(np.where(np.array(dataset_train.labels)==1)[0])
-    #len(np.where(np.array(dataset_train.labels)==0)[0])
+    len(np.where(np.array(dataset_train.labels)==1)[0])
+    len(np.where(np.array(dataset_train.labels)==0)[0])
 
     dataset_test, ID_test=data_LSTM.prepare_data_LSTM(data=data_test,
                                 Part_chro=Part_chro,
                                 Part_reco=Part_reco,
                                 stepsize_c=stepsize_c,
                                 stepsize_r=stepsize_r,
-                                windowsize=windowsize)
+                                windowsize=windowsize,
+                                Phase=Phase
+                                                      )
 
+    len(np.where(np.array(dataset_test.labels)==1)[0])
+    len(np.where(np.array(dataset_test.labels)==0)[0])
 
     correct_values, loss_values, dev_acc, model=LSTM_1.train_LSTM(train_set=dataset_train,
                                                                   dev_set=False,
@@ -76,7 +89,6 @@ for p in range(len(part)):
     cv_acc[part_tst[0]]=accuracy
     cv_corr[part_tst[0]]=right
     cv_pred[part_tst[0]]=predicted
-
 
 
 # Figure for recovered Patients
@@ -111,10 +123,11 @@ for p in range(len(Part_chro)):
 fig.tight_layout()
 plt.show()
 
-plt.plot(*zip(*sorted(cv_acc.items())))
-plt.show()
 
+#plt.plot(*zip(*sorted(cv_acc.items())))
+#plt.show()
+np.array([cv_acc[k] for k in cv_acc]).mean()
 
-cv_pred['11']
-cv_acc['05']
-cv_corr['11']
+#cv_pred['11']
+#cv_acc['05']
+#cv_corr['11']
