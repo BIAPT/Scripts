@@ -1,12 +1,11 @@
 import matplotlib.pyplot as plt
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 import pandas as pd
 import torch
 torch.manual_seed(1)
 import sys
 sys.path.append('../')
-import data_LSTM
-import LSTM_1
+from LSTM import data_LSTM, LSTM_1
 import numpy as np
 
 data = pd.read_pickle('data/NEW_wPLI_all_10_1_left_alpha.pickle')
@@ -20,12 +19,12 @@ stepsize_r=12
 stepsize_c=20
 windowsize=20
 
-dataset, ID=data_LSTM.prepare_data_LSTM(data=data,
-                            Part_chro=Part_chro,
-                            Part_reco=Part_reco,
-                            stepsize_c=stepsize_c,
-                            stepsize_r=stepsize_r,
-                            windowsize=windowsize)
+dataset, ID= data_LSTM.prepare_data_LSTM(data=data,
+                                         Part_chro=Part_chro,
+                                         Part_reco=Part_reco,
+                                         stepsize_c=stepsize_c,
+                                         stepsize_r=stepsize_r,
+                                         windowsize=windowsize)
 
 len(np.where(np.array(dataset.labels)==1)[0])
 len(np.where(np.array(dataset.labels)==0)[0])
@@ -49,13 +48,13 @@ for h in hd:
     num_layers = 1
     nr_epochs = 10
 
-    correct_values, loss_values, dev_acc, model=LSTM_1.train_LSTM(train_set=train_set,
-                                                                  dev_set=dev_set,
-                                                                  batch_size=batch_size,
-                                                                  hidden_dim=hidden_dim,
-                                                                  learning_rate=learning_rate,
-                                                                  num_layers=num_layers,
-                                                                  nr_epochs=nr_epochs)
+    correct_values, loss_values, dev_acc, model= LSTM_1.train_LSTM(train_set=train_set,
+                                                                   dev_set=dev_set,
+                                                                   batch_size=batch_size,
+                                                                   hidden_dim=hidden_dim,
+                                                                   learning_rate=learning_rate,
+                                                                   num_layers=num_layers,
+                                                                   nr_epochs=nr_epochs)
     acc_lrs.append(dev_acc)
     loss_lrs.append(loss_values)
 

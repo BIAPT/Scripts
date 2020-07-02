@@ -24,7 +24,7 @@ class MyLSTM(nn.Module):
         return tag_pred
 
 
-def train_LSTM (train_set, dev_set, batch_size, hidden_dim, learning_rate, num_layers, nr_epochs):
+def train_LSTM (train_set, dev_set, batch_size, hidden_dim, learning_rate, num_layers, nr_epochs, input_dim):
 
     # Prepare Dataloader
     dataloader_train = DataLoader(train_set, batch_size=batch_size, shuffle=True)
@@ -33,7 +33,7 @@ def train_LSTM (train_set, dev_set, batch_size, hidden_dim, learning_rate, num_l
         dataloader_dev = DataLoader(dev_set, batch_size=len(dev_set), shuffle=False)
 
     # intern parameters
-    feature_size = 15
+    feature_size = input_dim
     target_size = 2
 
     # initialize model
