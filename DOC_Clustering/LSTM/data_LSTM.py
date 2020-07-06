@@ -112,7 +112,8 @@ def prepare_data_LSTM(data,Part_chro,Part_reco,stepsize_c,stepsize_r,windowsize,
     labels.replace(encode_map, inplace=True)
     labels = labels.values.tolist()
 
-    areas = ['FC', 'FP', 'FO', 'FT', 'TO', 'TC', 'TP', 'PO', 'PC', 'CO', 'FF', 'CC', 'PP', 'TT', 'OO']
+    #areas = ['FC', 'FP', 'FO', 'FT', 'TO', 'TC', 'TP', 'PO', 'PC', 'CO', 'FF', 'CC', 'PP', 'TT', 'OO']
+    areas=data.iloc[:,4:].columns
 
     data_by_sample = list(data_sample.groupby('sample'))
     data_by_sample = [dd[1][areas].values for dd in data_by_sample]

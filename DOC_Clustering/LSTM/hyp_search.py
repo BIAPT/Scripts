@@ -8,8 +8,10 @@ sys.path.append('../')
 from LSTM import data_LSTM, LSTM_1
 import numpy as np
 
-data = pd.read_pickle('data/NEW_wPLI_all_10_1_left_alpha.pickle')
-data=data.query("Phase=='Base'")
+data = pd.read_pickle('data/WholeBrain_wPLI_10_1_alpha.pickle')
+
+#data = pd.read_pickle('data/NEW_wPLI_all_10_1_left_alpha.pickle')
+Phase='Base'
 
 part = ['13', '18', '05', '11', '19', '02', '20', '22', '12', '10', '09']
 
@@ -24,7 +26,8 @@ dataset, ID= data_LSTM.prepare_data_LSTM(data=data,
                                          Part_reco=Part_reco,
                                          stepsize_c=stepsize_c,
                                          stepsize_r=stepsize_r,
-                                         windowsize=windowsize)
+                                         windowsize=windowsize,
+                                         Phase=Phase)
 
 len(np.where(np.array(dataset.labels)==1)[0])
 len(np.where(np.array(dataset.labels)==0)[0])
@@ -34,7 +37,7 @@ train_set,dev_set=torch.utils.data.random_split(dataset, splits)
 
 lrs=[0.0001,0.001,0.005,0.01,0.05,0.1,0.5]
 bs=[2,3,4,5,6,7,8,9]
-hd=[2,3,4,5,7,8,9,10]
+hd=[2,3,4,5,7,8,9,10,12,15,20]
 
 acc_lrs=[]
 loss_lrs=[]
@@ -42,9 +45,9 @@ loss_lrs=[]
 #for lr in lrs:
 #for b in bs:
 for h in hd:
-    batch_size = 6
-    hidden_dim = 4 #h
-    learning_rate = 0.01 #lr
+    batch_size = 5
+    hidden_dim = 5
+    learning_rate = 0.1 #lr
     num_layers = 1
     nr_epochs = 10
 
@@ -54,7 +57,8 @@ for h in hd:
                                                                    hidden_dim=hidden_dim,
                                                                    learning_rate=learning_rate,
                                                                    num_layers=num_layers,
-                                                                   nr_epochs=nr_epochs)
+                                                                   nr_epochs=nr_epochs,
+                                                                   input_dim=55)
     acc_lrs.append(dev_acc)
     loss_lrs.append(loss_values)
 
