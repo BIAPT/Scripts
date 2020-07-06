@@ -10,13 +10,15 @@ from tqdm import tqdm
 def prepare_Dataset(datafile):
 
     #set names
-    areas=['FC','FP','FO','FT','TO','TC','TP','PO','PC','CO','FF','CC','PP','TT','OO']
-    names=areas
+
+    data=pd.read_pickle(datafile)
+
+    areas = data.columns[4:]
+    names = areas
 
     names_combined = "w_" + pd.DataFrame(areas)
     names_combined = names_combined.append('d_' + pd.DataFrame(areas))
 
-    data=pd.read_pickle(datafile)
     Y_ID=data.iloc[:,1]
 
     data_chro=data[(Y_ID == '13') | (Y_ID == '22') | (Y_ID == '10') | (Y_ID == '18')]

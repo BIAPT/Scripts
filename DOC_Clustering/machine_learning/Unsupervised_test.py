@@ -1,22 +1,54 @@
 import numpy as np
 import pandas as pd
+import matplotlib
 from matplotlib import pyplot as plt
-from sklearn.datasets.samples_generator import make_blobs
+matplotlib.use('Qt5Agg')
 from sklearn.cluster import KMeans
 from mpl_toolkits.mplot3d import Axes3D
-from sklearn.datasets import make_blobs
+from sklearn.decomposition import PCA
+import sys
+import os
+sys.path.append('../')
+
+data = pd.read_pickle('data/WholeBrain_wPLI_10_1_alpha.pickle')
+X= data.iloc[:,4:]
+
+Part_chro=['13','22','10', '18','05','12','11']
+Part_reco=['19','20','02','09']
 
 
-# Generyate some data in 2d
-X, y = make_blobs(n_samples=1000, centers=7, cluster_std=0.80, random_state=123)
-plt.scatter(X[:,0], X[:,1])
-plt.show()
+data_Base=data.query("Phase=='Base'")
+X_Base= data_Base.iloc[:,4:]
+data_Anes=data.query("Phase=='Anes'")
+X_Anes= data_Anes.iloc[:,4:]
+data_Reco=data.query("Phase=='Reco'")
+X_Reco= data_Reco.iloc[:,4:]
 
-#Generate some data in 3d
-X, y = make_blobs(n_samples=800, n_features=3, centers=4)
+pca = PCA(n_components=3)
+pca.fit(X_Anes)
+X = pca.transform(X_Anes)
+
+
+#Plot the data in 3d
 fig = plt.figure()
 ax = Axes3D(fig)
-ax.scatter(X[:, 0], X[:, 1], X[:, 2])
+ax.scatter(X[:, 0],
+           X[:, 1],
+           X[:, 2],edgecolors='Blue')
+
+
+#Generate some data in 3d
+fig = plt.figure()
+ax = Axes3D(fig)
+ax.scatter(X[np.where(data['Phase']=='Base')[0], 0],
+           X[np.where(data['Phase']=='Base')[0], 1],
+           X[np.where(data['Phase']=='Base')[0], 2],edgecolors='Blue')
+ax.scatter(X[np.where(data['Phase']=='Anes')[0], 0],
+           X[np.where(data['Phase']=='Anes')[0], 1],
+           X[np.where(data['Phase']=='Anes')[0], 2],edgecolors='Red')
+ax.scatter(X[np.where(data['Phase']=='Reco')[0], 0],
+           X[np.where(data['Phase']=='Reco')[0], 1],
+           X[np.where(data['Phase']=='Reco')[0], 2],edgecolors='Yellow')
 plt.show()
 
 # why do we fit only on x and not y or both?
