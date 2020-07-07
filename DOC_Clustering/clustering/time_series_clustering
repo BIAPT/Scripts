@@ -1,0 +1,156 @@
+import matplotlib
+matplotlib.use('Qt5Agg')
+import numpy as np
+import sys
+import os
+import pandas as pd
+sys.path.append('../')
+from matplotlib import pyplot as plt
+import pickle
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
+from os import listdir
+import random
+
+import scipy.cluster.hierarchy as sch
+from scipy import stats
+
+import tensorflow as tf
+from tensorflow.keras.models import *
+from tensorflow.keras.layers import *
+from tensorflow.keras.callbacks import *
+
+#data=pd.read_pickle('data/WholeBrain_wPLI_10_1_alpha.pickle')
+data = pd.read_pickle('data/NEW_wPLI_all_10_1_left_alpha.pickle')
+
+data = data.query("Phase=='Base'")
+areas=data.columns[4:]
+Part=['13','22','10', '18','05','12','11','19','20','02','09']
+
+time_data=np.zeros([len(Part),220,data.shape[1]-4])
+ID=Part
+
+for p in range(len(Part)):
+    tmp = data.query("ID=='{}'".format(Part[p]))
+    time_data[p]=tmp.iloc[:220,4:]
+
+### EXEMPLE OF DATA FOR A SINGLE INDIVIDUAL ###
+
+plt.plot(time_data[1])
+plt.legend(areas)
+plt.title(ID[1]); plt.xlabel('Time')
+
+### STANDARDIZE DATA ###
+for i,s in enumerate(time_data):
+    time_data[i] = (time_data[i] - s.mean(axis=0)) / s.std(axis=0)
+
+
+def get_autoencoder(data):
+    input_layer = Input(shape=(time_data.shape[1], time_data.shape[2]))
+
+    encoder = TimeDistributed(Dense(100, activation='tanh'))(input_layer)
+    encoder = TimeDistributed(Dense(50, activation='tanh'))(encoder)
+    latent = TimeDistributed(Dense(10, activation='tanh'))(encoder)
+    decoder = TimeDistributed(Dense(50, activation='tanh'))(latent)
+    decoder = TimeDistributed(Dense(100, activation='tanh'))(decoder)
+
+    out = TimeDistributed(Dense(55))(decoder)
+
+    autoencoder = Model(inputs=input_layer, outputs=out)
+    autoencoder.compile(optimizer='adam', loss='mse')
+
+    return autoencoder
+
+autoencoder = get_autoencoder(time_data)
+autoencoder.summary()
+
+tf.random.set_random_seed(33)
+os.environ['PYTHONHASHSEED'] = str(33)
+np.random.seed(33)
+random.seed(33)
+
+session_conf = tf.compat.v1.ConfigProto(
+    intra_op_parallelism_threads=1,
+    inter_op_parallelism_threads=1
+)
+sess = tf.compat.v1.Session(
+    graph=tf.compat.v1.get_default_graph(),
+    config=session_conf
+)
+tf.compat.v1.keras.backend.set_session(sess)
+
+
+#es = EarlyStopping(monitor='val_loss', mode='auto', restore_best_weights=True, verbose=1, patience=0)
+
+autoencoder = get_autoencoder(time_data)
+#autoencoder.fit(time_data[:],time_data[:], epochs=400, verbose=2, validation_data=(time_data[1:],time_data[1:]), callbacks=[es])
+autoencoder.fit(time_data[:],time_data[:], epochs=400, verbose=2, validation_data=(time_data[:],time_data[:]))
+
+
+### TRY TO RECONSTRUCT ERRORS ###
+
+predictions = autoencoder.predict([[time_data[3]]])
+mse = np.mean(np.power(time_data[3] - predictions, 2), axis=2)
+
+# PRedict
+plt.figure(figsize=(16,6))
+plt.scatter(range(time_data.shape[1]), mse)
+plt.title('reconstruction error '+ID[3])
+plt.xlabel('time'); plt.ylabel('mse')
+
+# ### COMPUTE CORRELATION MATRIX ###
+df = np.mean(np.power(time_data[:] - autoencoder.predict(time_data[:]), 2), axis=2)
+corr = np.corrcoef(df)
+
+plt.figure(figsize=(6,6))
+plt.imshow(corr)
+plt.xticks(range(len(ID[:])), ID[:])
+plt.yticks(range(len(ID[:])), ID[:])
+np.set_printoptions(False)
+
+
+def KScoeff(df):
+    ks_matrix = np.zeros((len(df), len(df)))
+    for i in range(len(df)):
+        for j in range(i + 1, len(df)):
+            ks_test = stats.ks_2samp(df[i], df[j])
+            ks_matrix[i, j] = ks_test.statistic
+            ks_matrix[j, i] = ks_test.statistic
+
+    return ks_matrix
+
+### COMPUTE KOLMOGOROV SMIRNOV MATRIX ###
+
+df = np.mean(np.power(time_data[:], 2), axis=2)
+ks_matrix = KScoeff(df)
+
+plt.figure(figsize=(6,6))
+plt.imshow(ks_matrix)
+plt.xticks(range(len(ID[:])), ID[:])
+plt.yticks(range(len(ID[:])), ID[:])
+np.set_printoptions(False)
+
+### HIERACHICAL CLUSTERING ###
+
+d = sch.distance.pdist(ks_matrix)
+L = sch.linkage(d, method='ward')
+ind = sch.fcluster(L, d.max(), 'distance')
+dendrogram = sch.dendrogram(L, no_plot=True)
+
+df = [df[i] for i in dendrogram['leaves']]
+labels = [ID[:][i] for i in dendrogram['leaves']]
+ks_matrix = KScoeff(df)
+
+plt.figure(figsize=(6,6))
+plt.imshow(ks_matrix)
+plt.xticks(range(len(ID[:])), labels)
+plt.yticks(range(len(ID[:])), labels)
+np.set_printoptions(False)
+
+### PLOT DENDROGRAM ###
+
+plt.figure(figsize=(8,6))
+dendrogram = sch.dendrogram(L, labels=ID[:])
+plt.axhline(d.max(), c='black')
