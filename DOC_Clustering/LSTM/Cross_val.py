@@ -10,10 +10,17 @@ import os
 
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
-#data = pd.read_pickle('data/WholeBrain_wPLI_10_1_alpha.pickle')
+data = pd.read_pickle('data/WholeBrain_wPLI_10_1_alpha.pickle')
 #data = pd.read_pickle('data/NEW_wPLI_all_10_1_left_theta.pickle')
 #data = pd.read_pickle('data/NEW_wPLI_all_10_1_left_alpha.pickle')
-data = pd.read_pickle('data/NEW_dPLI_all_10_1_left.pickle')
+#data = pd.read_pickle('data/NEW_dPLI_all_10_1_left.pickle')
+
+# normalize data
+#from sklearn.preprocessing import StandardScaler
+#scaler = StandardScaler()
+#scaler.fit(data.iloc[:,4:])
+#data.iloc[:,4:]=scaler.transform(data.iloc[:,4:])
+
 
 # ALL Hyperparameters
 ## Model Parameters
@@ -21,19 +28,19 @@ batch_size = 5
 hidden_dim = 10
 learning_rate = 0.1  # lr
 num_layers = 1
-nr_epochs = 30
-input_dim = 15
+nr_epochs = 10
+input_dim = 55
 Part_chro=['13','22','10', '18','05','12','11']
 Part_reco=['19','20','02','09']
 
 ## Data Parameters
 stepsize_c = 20
-windowsize = 10
+windowsize = 20
 
 part = ['13', '18', '05', '11', '19', '02', '20', '22', '12', '10', '09']
 
-#Phase='combined'
-Phase='Base'
+Phase='combined'
+#Phase='Base'
 #can be 'Base'
 # can be 'Anes'
 # or 'combined' (=Base and Anes combined in Time)

@@ -7,22 +7,21 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.backends.backend_pdf
 
-data=pd.read_pickle('data/WSAS_TIME_DATA_250Hz/wPLI_10_1/final_wpli_all_Left_10_1.pickle')
+data=pd.read_pickle('data/WholeBrain_wPLI_10_1_alpha.pickle')
+areas=data.columns[4:]
 
-pdf = matplotlib.backends.backend_pdf.PdfPages("output_contrast.pdf")
+pdf = matplotlib.backends.backend_pdf.PdfPages("output_contrast_wholebrain.pdf")
 
-participants=['02','05','09','10','11','12','13','18','19','20','22','99']
+participants=['02','05','09','10','11','12','13','18','19','20','22']
 
 for participant in participants:
     data_base=data.iloc[np.where((data['ID']==participant) & (data['Phase']=='Base'))[0],:]
     data_anes=data.iloc[np.where((data['ID']==participant) & (data['Phase']=='Anes'))[0],:]
     data_reco=data.iloc[np.where((data['ID']==participant) & (data['Phase']=='Reco'))[0],:]
 
-    areas=['FC','FP','FO','FT','TO','TC','TP','PO','PC','CO','FF','CC','PP','TT','OO','MEAN']
-
-    corrB = data_base.iloc[:,4:-1].corr()
-    corrA = data_anes.iloc[:,4:-1].corr()
-    corrR = data_reco.iloc[:,4:-1].corr()
+    corrB = data_base.iloc[:,4:].corr()
+    corrA = data_anes.iloc[:,4:].corr()
+    corrR = data_reco.iloc[:,4:].corr()
 
     figure =plt.figure(figsize=(11,3))
     plt.subplot(131)
@@ -45,19 +44,3 @@ for participant in participants:
 
 
 pdf.close()
-
-
-
-plt.plot(data_base['FF'])
-plt.plot(data_base['PP'])
-
-FP_corr_B=np.correlate(data_base['FF'],data_base['PP'],'same')
-FP_corr_A=np.correlate(data_anes['FF'],data_anes['PP'],'same')
-FP_corr_R=np.correlate(data_reco['FF'],data_reco['PP'],'same')
-
-
-plt.plot(FP_corr_B)
-plt.plot(FP_corr_A)
-plt.plot(FP_corr_R)
-plt.legend(['Baseline','Anesthesia','Recovery'])
-plt.title('WSAS 20 Autocottelation of the MEAN')

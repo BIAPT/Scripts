@@ -7,7 +7,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.backends.backend_pdf
 
-data=pd.read_pickle('data/NEW_wPLI_all_10_1_left_alpha.pickle')
+#data=pd.read_pickle('data/NEW_wPLI_all_10_1_left_alpha.pickle')
+data=pd.read_pickle('data/WholeBrain_wPLI_10_1_alpha.pickle')
+areas=data.columns[4:]
 
 pdf = matplotlib.backends.backend_pdf.PdfPages("output_pca.pdf")
 
@@ -20,8 +22,6 @@ for participant in participants:
     data_base=data.iloc[np.where((data['ID']==participant) & (data['Phase']=='Base'))[0],:]
     data_anes=data.iloc[np.where((data['ID']==participant) & (data['Phase']=='Anes'))[0],:]
     data_reco=data.iloc[np.where((data['ID']==participant) & (data['Phase']=='Reco'))[0],:]
-
-    areas=['FC','FP','FO','FT','TO','TC','TP','PO','PC','CO','FF','CC','PP','TT','OO']
 
     from sklearn.decomposition import PCA
     pca = PCA()
@@ -55,7 +55,7 @@ for participant in participants:
     plt.plot(pca.components_[selected])
     plt.xlabel('features')
     plt.ylabel('feature weights')
-    plt.xticks(np.arange(0,16),areas)
+    plt.xticks(np.arange(0,len(areas)+1),areas)
     plt.title('WSAS' + participant + 'component selected: ' + str(selected))
     pdf.savefig(figure)
     plt.close()
