@@ -18,7 +18,16 @@ Y_ID=data.iloc[:,1]
 Y_St=data.iloc[:,2]
 Y_time=data.iloc[:,3]
 
-#data_reco=data[(Y_ID == '19')|(Y_ID == '20')|(Y_ID == '02')|(Y_ID == '09')]
+# random data
+mean = 0
+std = 1
+num_samples = data.shape[0]
+data_random=np.zeros(data.shape)
+
+for i in range(data.shape[1]):
+    data_random[:,i]= np.random.normal(mean, std, size=num_samples)
+
+plt.imshow(np.transpose(data_random))
 
 
 """
@@ -26,9 +35,9 @@ Stability Index
 """
 P=[3,4,5,6,7,8,9,10]     #number of Principal components to iterate
 K=[2,3,4,5,6,7,8,9,10]     #number of K-clusters to iterate
-Rep=20         #number of Repetitions (Mean at the end)
+Rep=10         #number of Repetitions (Mean at the end)
 
-[SI_M_anes ,SI_SD_anes] = stability_measure.compute_stability_index(X,Y_ID, P, K, Rep)
+[SI_M_anes ,SI_SD_anes] = stability_measure.compute_stability_index(data_random,Y_ID, P, K, Rep)
 #[SI_M_reco ,SI_SD_reco] = stability_measure.compute_stability_index(X_reco,Y_ID_reco, P, K, Rep)
 
 
