@@ -13,8 +13,8 @@ import numpy as np
 from sklearn.decomposition import PCA
 import matplotlib.backends.backend_pdf
 
-#part = ['13', '18', '05', '11', '19', '02', '20', '22', '12', '10', '09']
-part = ['09']
+part = ['13', '18', '05', '11', '19', '02', '20', '22', '12', '10', '09']
+#part = ['09']
 
 for p in part:
     pdf = matplotlib.backends.backend_pdf.PdfPages("wholebrain_Part_{}.pdf".format(p))
@@ -34,20 +34,28 @@ for p in part:
         # plot raw connectivity data
         ######################
 
-        fig, ax = plt.subplots(3, 1, sharey=True, figsize=(9,6))
+        if c == 'wPLI':
+            mi=0
+            ma=0.7
+        if c == 'dPLI':
+            mi=0.2
+            ma=0.8
+
+
+        fig, ax = plt.subplots(3, 1, figsize=(9,6))
         fig.suptitle('Part: {} Raw connectivity data: {}'.format(p,c),size=16)
         plt.xlabel("time")
         ax[0].set_title('Baseline')
-        ax[0].imshow(np.transpose(data_p_Base[areas]),vmin=0, vmax=0.7,cmap='jet')
+        ax[0].imshow(np.transpose(data_p_Base[areas]),vmin=mi, vmax=ma,cmap='jet')
         ax[0].xaxis.set_visible(False)
 
         ax[1].set_title('Anesthesia')
-        ax[1].imshow(np.transpose(data_p_Anes[areas]),vmin=0, vmax=0.7,cmap='jet')
+        ax[1].imshow(np.transpose(data_p_Anes[areas]),vmin=mi, vmax=ma,cmap='jet')
         ax[1].xaxis.set_visible(False)
         ax[1].set_ylabel('areas')
 
         ax[2].set_title('Recovery')
-        im=ax[2].imshow(np.transpose(data_p_Reco[areas]),vmin=0, vmax=0.7,cmap='jet')
+        im=ax[2].imshow(np.transpose(data_p_Reco[areas]),vmin=mi, vmax=ma,cmap='jet')
 
         fig.colorbar(im, ax=ax.ravel().tolist())
         pdf.savefig(fig)
@@ -139,23 +147,23 @@ for p in part:
         # plot     distortion: mean sum of squared distances to centers
         ax1 = plt.subplot(1, 3, 1)
         model = KMeans(n_init=1000)
-        visualizer = KElbowVisualizer(model, k=(2,12),timings=False,metric='distortion')
+        visualizer = KElbowVisualizer(model, k=(2,12),timings=False,metric='distortion', ax = ax1)
         visualizer.fit(data_p_Anes[areas])        # Fit the data to the visualizer
-        visualizer.show()
+        #visualizer.show()
 
         # plot     silhouette: mean ratio of intra-cluster and nearest-cluster distance
         ax2 = plt.subplot(1, 3, 2)
         model = KMeans(n_init=1000)
-        visualizer = KElbowVisualizer(model, k=(2,12),timings=False,metric='silhouette')
+        visualizer = KElbowVisualizer(model, k=(2,12),timings=False,metric='silhouette', ax= ax2)
         visualizer.fit(data_p_Anes[areas])        # Fit the data to the visualizer
-        visualizer.show()
+        #visualizer.show()
 
         #plot      calinski_harabasz: ratio of within to between cluster dispersion
         ax3 = plt.subplot(1, 3, 3)
         model = KMeans(n_init=1000)
-        visualizer = KElbowVisualizer(model, k=(2,12),timings=False,metric='calinski_harabasz')
+        visualizer = KElbowVisualizer(model, k=(2,12),timings=False,metric='calinski_harabasz', ax = ax3)
         visualizer.fit(np.array(data_p_Anes[areas]))        # Fit the data to the visualizer
-        visualizer.show()
+        #visualizer.show()
 
         pdf.savefig(fig)
         plt.close()
