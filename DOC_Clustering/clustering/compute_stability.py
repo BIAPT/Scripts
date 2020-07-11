@@ -48,7 +48,7 @@ fig,a =  plt.subplots(2,2)
 plt.setp(a, xticks=[0,1,2,3,4,5,6,7,8,9] , xticklabels=['2','3','4','5','6','7','8','9','10'],
         yticks=[0,1,2,3,4,5,6,7,8], yticklabels= ['3','4','5','6','7','8','9','10'],
          xlabel= 'K-Clusters',ylabel='Principle Components')
-im=a[0][0].imshow(np.transpose(SI_M))
+im=a[0][0].imshow(np.transpose(np.mean(SI,0)))
 a[0][0].set_title('Stability Index Mean: Baseline')
 plt.colorbar(im,ax=a[0,0])
 im=a[0][1].imshow(np.transpose(SI_SD))
