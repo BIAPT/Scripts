@@ -60,13 +60,31 @@ def compute_stability_index(X,Y_ID,P,K,Rep):
                     overlap[maxval[0], :] = -1
                     overlap[:, maxval[1]] = -1
 
-                SI[r, K.index(k), P.index(p)] = 1-common_val/X.shape[0]
+                SI[r, K.index(k), P.index(p)] = 1-common_val/S_test.shape[0]
 
 
     SI_M=np.mean(SI,axis=0)
     SI_SD=np.std(SI,axis=0)
     return SI_M , SI_SD
 
+
+
+def compute_silhouette_score(X,P,K):
+    SIL = np.zeros([len(K), len(P)])
+
+    for p in tqdm(P):
+        pca = PCA(n_components=p)
+        pca.fit(X)
+        X_LD = pca.transform(X)
+
+        for k in K:
+            kmeans = KMeans(n_clusters=k, max_iter=1000, n_init=100)
+            kmeans.fit(X_LD)  # fit the classifier on all X_LD
+            S = kmeans.predict(X_LD)
+            silhouette = silhouette_score(X_LD, S)
+            SIL[K.index(k), P.index(p)] = silhouette
+
+    return SIL
 
 
 

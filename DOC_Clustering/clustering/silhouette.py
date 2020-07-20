@@ -35,36 +35,6 @@ K=[2,3,4,5,6,7,8,9,10]     #number of K-clusters to iterate
 
 SIL=[]
 
-def compute_silhouette_score(X,Y_ID,P,K,Part):
-    tmp = np.zeros([len(Part),len(K), len(P)])
-
-    for r in range(0,len(Part)):
-        p_i = 0
-        X_p=X[Y_ID==Part[r]]
-
-        for p in tqdm(P):
-            pca = PCA(n_components=p)
-            pca.fit(X_p)
-            X_LD = pca.transform(X_p)
-            k_i=0
-
-            for k in K:
-                kmeans = KMeans(n_clusters=k, max_iter=1000, n_init=100)
-                kmeans.fit(X_LD)  # fit the classifier on all X_LD
-                S = kmeans.predict(X_LD)
-                silhouette = silhouette_score(X_LD, S)
-                tmp[r,k_i, p_i] = silhouette
-                k_i = k_i + 1
-
-            # increase p iteration by one
-            p_i=p_i+1
-
-    return tmp
-
-
-SIL.append(compute_silhouette_score(X_chron,Y_ID_chron,P,K,Part_chron))
-SIL.append(compute_silhouette_score(X_reco,Y_ID_reco,P,K,Part_reco))
-
 
 
 fig,a =  plt.subplots(4,2)
