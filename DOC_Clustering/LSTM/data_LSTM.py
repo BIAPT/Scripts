@@ -120,5 +120,5 @@ def prepare_data_LSTM(data,Part_chro,Part_reco,stepsize_c,stepsize_r,windowsize,
 
     dataset = MyDataset(data_by_sample, labels)
 
-    return dataset, ID
+    return data_by_sample, labels, dataset, ID
 
