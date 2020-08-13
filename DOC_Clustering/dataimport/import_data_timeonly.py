@@ -9,15 +9,16 @@ import pandas as pd
 sys.path.append('../')
 from dataimport import extract_features
 
-datafiles = [f for f in glob.glob('../data/WSAS_TIME_DATA_250Hz/Raw_250' + "**/*.mat", recursive=True)]
-wplifiles = [f for f in glob.glob('../data/WSAS_TIME_DATA_250Hz/wPLI_10_1_alpha' + "**/*.mat", recursive=True)]
-
+datadir = 'data/BASELINE_5min_250Hz/'
+datafiles = [os.path.join(datadir, f) for f in os.listdir(datadir) if '.mat' in f]
+wplidir = 'data/dPLI_10_1_alpha/'
+wplifiles = [os.path.join(wplidir, f) for f in os.listdir(wplidir) if '.mat' in f]
 
 df_wpli_final=pd.DataFrame()
 
 ROI = ['LF_LC', 'LF_LP', 'LF_LO', 'LF_LT', 'LT_LO', 'LT_LC', 'LT_LP', 'LP_LO', 'LP_LC', 'LC_LO', 'LF_LF', 'LC_LC',
            'LP_LP', 'LT_LT', 'LO_LO',
-           'RF_RC', 'RF_RP', 'RF_RO', 'RF_RT', 'RT_RO', 'RT_RC', 'RT_RP', 'RP_RO', 'RP_RC', 'RC_RO', 'RF_RF', 'RC_LC',
+           'RF_RC', 'RF_RP', 'RF_RO', 'RF_RT', 'RT_RO', 'RT_RC', 'RT_RP', 'RP_RO', 'RP_RC', 'RC_RO', 'RF_RF', 'RC_RC',
            'RP_RP', 'RT_RT', 'RO_RO',
            'LF_RC', 'LF_RP', 'LF_RO', 'LF_RT', 'LT_RO', 'LT_RC', 'LT_RP', 'LP_RO', 'LP_RC', 'LC_RO',
            'RF_LC', 'RF_LP', 'RF_LO', 'RF_LT', 'RT_LO', 'RT_LC', 'RT_LP', 'RP_LO', 'RP_LC', 'RC_LO',
@@ -32,15 +33,14 @@ names.insert(3, 'Time')
 
 for i in range(0,len(wplifiles)):
     part=wplifiles[i]
-    name=part[45:56]
-    State = part[52:56]
-    ID = part[49:51]
+    name=part[-31:-20]
+    State = part[-24:-20]
+    ID = part[-28:-25]
 
     #load Data
     mat = scipy.io.loadmat(wplifiles[i])
-    data = mat['result_wpli']  # extract the variable "data" (3 cell array)
+    data = mat['result_dpli'] # extract the variable "data" (3 cell array)
     missingel = []
-
     time_steps=data.shape[0]
 
     wpli=np.zeros((time_steps,len(names))) # +4 for ID, State, Time, name +5 intra regional
@@ -58,13 +58,16 @@ for i in range(0,len(wplifiles)):
     #p_value=data_info[3][0][0]
     #step_size=data_info[4][0][0]
 
-    recording = scipy.io.loadmat('../data/WSAS_TIME_DATA_250Hz/Raw_250/'+ 'WSAS'+ID+'_'+State + '_300.mat')
+
+    recording = scipy.io.loadmat( datadir + name + '_5min.mat')
     reco=recording['EEG']
     recos=reco['chanlocs'][0][0][0]
     recos=pd.DataFrame(recos)
+
+
     channels=[]
 
-    # initialize a dict of regions and refering electrodes
+    # initialize a dict of regions and referring electrodes
     regions = {}
 
     regions["LF"] = ['E15', 'E32', 'E22', 'E16', 'E18', 'E23', 'E26', 'E11', 'E19', 'E24', 'E27', 'E33', 'E12', 'E20', 'E28', 'E34']
@@ -79,7 +82,7 @@ for i in range(0,len(wplifiles)):
     regions["RO"] = ['E75', 'E83', 'E90', 'E95', 'E82', 'E89']
     regions["RT"] = ['E121', 'E114', 'E115', 'E109', 'E102', 'E108', 'E101', 'E100']
 
-    if ID == '02':
+    if ID == 'S02':
 
         regions = {}
         regions["LF"] = ['Fp1', 'AF3', 'AF7', 'AFz', 'Fz', 'F1', 'F3', 'F5', 'F7']
@@ -120,5 +123,5 @@ for i in range(0,len(wplifiles)):
 
 df_wpli_final.columns = names
 
-df_wpli_final.to_pickle('WholeBrain_wPLI_10_1_alpha.pickle')
+df_wpli_final.to_pickle('New_Part_WholeBrain_dPLI_10_1_alpha.pickle', protocol=4)
 

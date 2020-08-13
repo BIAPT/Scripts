@@ -13,11 +13,12 @@ import pickle
 import matplotlib.backends.backend_pdf
 
 #pdf = matplotlib.backends.backend_pdf.PdfPages("SI_SIL_wholebrain_wPLI_10_1_alpha.pdf")
-pdf = matplotlib.backends.backend_pdf.PdfPages("SI_SIL_wholebrain_wPLI_30_10_allfrequ.pdf")
+pdf = matplotlib.backends.backend_pdf.PdfPages("SI_SIL_New_Part_wholebrain_wPLI_30_10_allfrequ.pdf")
 
 
 #data=pd.read_pickle('data/WholeBrain_wPLI_10_1_alpha.pickle')
-data=pd.read_pickle('data/F_C_P_wPLI_30_10_allfrequ.pickle')
+#data=pd.read_pickle('data/F_C_P_wPLI_30_10_allfrequ.pickle')
+data=pd.read_pickle('data/New_Part_WholeBrain_wPLI_10_1_alpha.pickle')
 
 data_Anes = data.query("Phase=='Anes'")
 X_Anes=data_Anes.iloc[:,4:]
@@ -37,8 +38,8 @@ Y_ID_BA =data_BA.iloc[:,1]
 mean = 0
 std = 1
 
-data_random= np.random.normal(mean, std, size=X_Anes.shape)
-Y_ID_random = Y_ID_Anes
+data_random= np.random.normal(mean, std, size=X_Base.shape)
+Y_ID_random = Y_ID_Base
 
 
 """

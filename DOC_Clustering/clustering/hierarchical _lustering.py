@@ -8,14 +8,20 @@ import matplotlib.pyplot as plt
 import scipy.cluster.hierarchy as sch
 from scipy import stats
 
-data=pd.read_pickle('data/WholeBrain_wPLI_10_1_alpha.pickle')
-Phase='Anesthesia'
+#data=pd.read_pickle('data/WholeBrain_wPLI_10_1_alpha.pickle')
+data=pd.read_pickle('../data/New_Part_WholeBrain_dPLI_10_1_alpha.pickle')
+Phase='Baseline'
 
 data = data.query("Phase=='Base'")
 areas=data.columns[4:]
-Part=['13','22','10', '18','05','12','11','19','20','02','09']
+#Part=['13','22','10', '18','05','12','11','19','20','02','09']
 
-max_len=190
+
+Part = ['S02', 'S05', 'S07', 'S09', 'S10', 'S11', 'S12', 'S13', 'S15','S16','S17',
+        'S18', 'S19', 'S20', 'S22', 'S23',
+        'W03', 'W04', 'W08', 'W22', 'W28','W31', 'W34', 'W36']
+
+max_len=220
 time_data=np.zeros([len(Part),max_len,data.shape[1]-4])
 ID=Part
 
@@ -40,7 +46,7 @@ def KScoeff(df):
 
 import matplotlib.backends.backend_pdf
 
-name = "Hierarchical_clustering_dPLI_"+Phase+".pdf"
+name = "New_Part_Hierarchical_clustering_dPLI_"+Phase+".pdf"
 pdf = matplotlib.backends.backend_pdf.PdfPages(name)
 
 for i in range(len(areas)):
@@ -76,5 +82,4 @@ for i in range(len(areas)):
     plt.close()
 
 pdf.close()
-
 

@@ -8,25 +8,33 @@ import pandas as pd
 from sklearn.cluster import KMeans
 import matplotlib.backends.backend_pdf
 
-data=pd.read_pickle('data/WholeBrain_wPLI_10_1_alpha.pickle')
+data=pd.read_pickle('../data/New_Part_WholeBrain_dPLI_10_1_alpha.pickle')
 #data=pd.read_pickle('data/F_C_P_wPLI_30_10_allfrequ.pickle')
 
-Phase=['Base','Anes','Both']
+#Phase=['Base','Anes','Both']
+Phase=['Base']
 
 #Part = ['WSAS13', 'WSAS18', 'WSAS05', 'WSAS11', 'WSAS22', 'WSAS12', 'WSAS10', 'WSAS09', 'WSAS19', 'WSAS02', 'WSAS20']
 #Part_nonr = ['WSAS13', 'WSAS18', 'WSAS05', 'WSAS11', 'WSAS22', 'WSAS12', 'WSAS10']
 #Part_reco=['WSAS02', 'WSAS09', 'WSAS19', 'WSAS20']
 
-Part = ['13', '18', '05', '11', '22', '12', '10', '09', '19', '02', '20']
-Part_nonr = ['13', '18', '05', '11', '22', '12', '10']
-Part_reco=['02', '09', '19', '20']
+#Part = ['13', '18', '05', '11', '22', '12', '10', '09', '19', '02', '20']
+#Part_nonr = ['13', '18', '05', '11', '22', '12', '10']
+#Part_reco=['02', '09', '19', '20']
+
+Part = ['S02', 'S05', 'S07', 'S09', 'S10', 'S11 ', 'S12', 'S13', 'S15','S16','S17',
+        'S18', 'S19', 'S20', 'S22', 'S23',
+        'W03', 'W04', 'W08', 'W22', 'W28','W31', 'W34', 'W36']
+Part_nonr = ['S05', 'S10', 'S11', 'S12', 'S13', 'S15', 'S16', 'S17',
+             'S18',  'S22', 'W03', 'W04', 'W08', 'W28', 'W31', 'W34', 'W36']
+Part_reco=['S02', 'S07', 'S09', 'S19', 'S20', 'W22']
 
 #KS=[3,4]
 KS=[5,6]
 
 
 for p in Phase:
-    pdf = matplotlib.backends.backend_pdf.PdfPages("FCP_Cluster_{}_K5_K6_wholebraind_alpha.pdf".format(p))
+    pdf = matplotlib.backends.backend_pdf.PdfPages("New_Part_Cluster_{}_dPLI_K5_K6_wholebraind_alpha.pdf".format(p))
 
     if p=='Both':
         data_phase=data.query("Phase!='Reco'")
@@ -162,8 +170,8 @@ for p in Phase:
             pdf.savefig(fig)
             plt.close()
 
-        fig, ax = plt.subplots(7, 1, figsize=(5, 20))
-        fig.suptitle('Non-recovered_{}; {}_Clusters_wholeBrain_alpha'.format(p, k), size=16)
+        fig, ax = plt.subplots(len(Part_nonr), 1, figsize=(5, 40))
+        fig.suptitle('Non-recovered_{}; \n {}_Clusters_wholeBrain_alpha'.format(p, k), size=16)
 
         for t in range(0,len(Part_nonr)):
             part=Part_nonr[t]
@@ -180,8 +188,8 @@ for p in Phase:
         pdf.savefig(fig)
         plt.close()
 
-        fig, ax = plt.subplots(4, 1, figsize=(5, 15))
-        fig.suptitle('Recovered_{}; {}_Clusters_wholeBrain_alpha'.format(p, k), size=16)
+        fig, ax = plt.subplots(len(Part_reco), 1, figsize=(5, 15))
+        fig.suptitle('Recovered_{}; \n {}_Clusters_wholeBrain_alpha'.format(p, k), size=16)
 
         for t in range(0,len(Part_reco)):
             part=Part_reco[t]
@@ -199,5 +207,6 @@ for p in Phase:
         plt.close()
 
     pdf.close()
+    print('finished')
 
 
