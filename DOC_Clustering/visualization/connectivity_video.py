@@ -7,9 +7,10 @@ matplotlib.use('Qt5Agg')
 from nilearn import plotting
 import time
 from tqdm import tqdm
+import pickle
 
 Phase = 'Base'
-Part = 'S09'
+Part = 'S19'
 
 data = pd.read_pickle('data/New_Part_WholeBrain_wPLI_10_1_alpha.pickle')
 X=data.query("Phase=='{}'".format(Phase))
@@ -29,9 +30,6 @@ for t in range(len(X_conn)):
 
     for i in regions:
         for a in regions:
-            if a==i=='RC':
-                # ERROR IN DF NAMES: RC_RC DOES NOT EXIST
-                tmp[i + '_' + a] = 0
             try:
                 conn_tmp.loc[i, a] = tmp[i + '_' + a]
             except:
@@ -50,7 +48,7 @@ for t, conn_mat_t in enumerate(tqdm(conn_matrix)):
                              edge_cmap=colormap, colorbar=True, edge_threshold=None,
                              node_color=colormap(norm(conn_mat_t.diagonal())),
                              display_mode='lzr')
-    plt.suptitle('WSAS {}_{} '.format(Part,Phase))
+    plt.suptitle('WSAS {}_{} '.format(Part[1:],Phase))
     plt.savefig('video_images/'+str(t)+".png")
     plt.close()
 

@@ -7,16 +7,37 @@ from sklearn.decomposition import PCA
 import pandas as pd
 from sklearn.cluster import KMeans
 import matplotlib.backends.backend_pdf
+from sklearn import preprocessing
 
-data=pd.read_pickle('../data/New_Part_WholeBrain_dPLI_10_1_alpha.pickle')
-#data=pd.read_pickle('data/F_C_P_wPLI_30_10_allfrequ.pickle')
+data=pd.read_pickle('data/New_Part_WholeBrain_wPLI_10_1_alpha.pickle')
+
+# select wanted data
+data=data[data['ID'].str.contains("S")]
+data.shape
+
+"""
+
+data=data[-data['ID'].str.contains("S16")]
+data.shape
+
+data_phase = data.query("Phase=='{}'".format('Base'))
+X = data_phase.iloc[:, 4:]
+X=preprocessing.normalize(X)
+
+pca = PCA(n_components=7 )
+pca.fit(X)
+X7 = pca.transform(X)
+
+# PLot explained Variance
+fig = plt.figure()
+plt.plot(np.cumsum(pca.explained_variance_ratio_))
+plt.xlabel('number of components')
+plt.ylabel('cumulative explained variance')
+"""
+
 
 #Phase=['Base','Anes','Both']
 Phase=['Base']
-
-#Part = ['WSAS13', 'WSAS18', 'WSAS05', 'WSAS11', 'WSAS22', 'WSAS12', 'WSAS10', 'WSAS09', 'WSAS19', 'WSAS02', 'WSAS20']
-#Part_nonr = ['WSAS13', 'WSAS18', 'WSAS05', 'WSAS11', 'WSAS22', 'WSAS12', 'WSAS10']
-#Part_reco=['WSAS02', 'WSAS09', 'WSAS19', 'WSAS20']
 
 #Part = ['13', '18', '05', '11', '22', '12', '10', '09', '19', '02', '20']
 #Part_nonr = ['13', '18', '05', '11', '22', '12', '10']
@@ -29,12 +50,19 @@ Part_nonr = ['S05', 'S10', 'S11', 'S12', 'S13', 'S15', 'S16', 'S17',
              'S18',  'S22', 'W03', 'W04', 'W08', 'W28', 'W31', 'W34', 'W36']
 Part_reco=['S02', 'S07', 'S09', 'S19', 'S20', 'W22']
 
+
+Part = ['S02', 'S05', 'S07', 'S09', 'S10', 'S11 ', 'S12', 'S13', 'S15','S16','S17',
+        'S18', 'S19', 'S20', 'S22', 'S23']
+Part_nonr = ['S05', 'S10', 'S11', 'S12', 'S13', 'S15', 'S16', 'S17',
+             'S18',  'S22']
+Part_reco=['S02', 'S07', 'S09', 'S19', 'S20']
+
 #KS=[3,4]
 KS=[5,6]
 
 
 for p in Phase:
-    pdf = matplotlib.backends.backend_pdf.PdfPages("New_Part_Cluster_{}_dPLI_K5_K6_wholebraind_alpha.pdf".format(p))
+    pdf = matplotlib.backends.backend_pdf.PdfPages("WSAS_Part_Cluster_{}_wPLI_12C_K5_K6_wholebraind_alpha.pdf".format(p))
 
     if p=='Both':
         data_phase=data.query("Phase!='Reco'")
@@ -92,7 +120,7 @@ for p in Phase:
     """
         K_means 7 PC
     """
-    pca = PCA(n_components=7)
+    pca = PCA(n_components=12)
     pca.fit(X)
     X7 = pca.transform(X)
 
