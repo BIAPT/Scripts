@@ -18,7 +18,8 @@ pdf = matplotlib.backends.backend_pdf.PdfPages("SI_SIL_New_Part_wholebrain_wPLI_
 
 #data=pd.read_pickle('data/WholeBrain_wPLI_10_1_alpha.pickle')
 #data=pd.read_pickle('data/F_C_P_wPLI_30_10_allfrequ.pickle')
-data=pd.read_pickle('data/New_Part_WholeBrain_wPLI_10_1_alpha.pickle')
+#data=pd.read_pickle('data/New_Part_WholeBrain_wPLI_10_1_alpha.pickle')
+data=pd.read_pickle('data/Healthy_Part_WholeBrain_wPLI_10_1_alpha.pickle')
 
 data_Anes = data.query("Phase=='Anes'")
 X_Anes=data_Anes.iloc[:,4:]
@@ -54,7 +55,8 @@ Rep=10        #number of Repetitions (Mean at the end)
 [SI_M_Base ,SI_SD_Base] = stability_measure.compute_stability_index(X_Base, Y_ID_Base, P, K, Rep)
 [SI_M_BA ,SI_SD_BA] = stability_measure.compute_stability_index(X_BA, Y_ID_BA, P, K, Rep)
 
-
+plt.figure()
+plt.show()
 fig,a =  plt.subplots(4,2)
 plt.setp(a, xticks=[0,1,2,3,4,5,6,7,8,9,10] , xticklabels=['2','3','4','5','6','7','8','9','10'],
         yticks=[0,1,2,3,4,5,6,7,8], yticklabels= ['3','4','5','6','7','8','9','10'],
@@ -156,6 +158,7 @@ fig.set_figheight(3)
 fig.set_figwidth(20)
 pdf.savefig(fig)
 
+plt.show()
 
 pdf.close()
 
