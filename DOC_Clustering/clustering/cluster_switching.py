@@ -8,9 +8,10 @@ import pandas as pd
 from sklearn.cluster import KMeans
 import matplotlib.backends.backend_pdf
 
-data=pd.read_pickle('data/WholeBrain_wPLI_10_1_alpha.pickle')
+data=pd.read_pickle('data/New_Part_WholeBrain_wPLI_10_1_alpha.pickle')
 
-Phase=['Base','Anes','Both']
+#Phase=['Base','Anes','Both']
+Phase=['Base']
 
 Part = ['13', '18', '05', '11', '22', '12', '10', '09', '19', '02', '20']
 Part_nonr = ['13', '18', '05', '11', '22', '12', '10']
@@ -18,7 +19,7 @@ Part_reco=['02', '09', '19', '20']
 
 KS=[5,6]
 
-pdf = matplotlib.backends.backend_pdf.PdfPages("Switch_Cluster_K5_K6_wholebraind_alpha.pdf")
+pdf = matplotlib.backends.backend_pdf.PdfPages("All_Part_wPLI_Switch_Cluster_K5_K6_wholebraind_alpha.pdf")
 
 for p in Phase:
     if p=='Both':
@@ -44,7 +45,7 @@ for p in Phase:
         kmc.fit(X7)
         P_kmc=kmc.predict(X7)
 
-        fig, ax = plt.subplots(7, 1, figsize=(5, 20))
+        fig, ax = plt.subplots(len(Part_nonr), 1, figsize=(5, 20))
         fig.suptitle('Non-recovered_{}; {}_Clusters\nwholeBrain_alpha'.format(p, k), size=16)
 
         for t in range(0,len(Part_nonr)):
@@ -67,7 +68,7 @@ for p in Phase:
         pdf.savefig(fig)
         plt.close()
 
-        fig, ax = plt.subplots(4, 1, figsize=(5, 15))
+        fig, ax = plt.subplots(len(Part_reco), 1, figsize=(5, 15))
         fig.suptitle('Recovered_{}; {}_Clusters\nwholeBrain_alpha'.format(p, k), size=16)
 
         for t in range(0,len(Part_reco)):

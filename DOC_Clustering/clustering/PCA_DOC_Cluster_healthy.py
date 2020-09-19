@@ -10,60 +10,23 @@ import matplotlib.backends.backend_pdf
 from sklearn import preprocessing
 from clustering import create_image
 from scipy import stats
-data=pd.read_pickle('data/New_Part_WholeBrain_wPLI_10_1_alpha.pickle')
+data=pd.read_pickle('data/HEALTHY_Part_WholeBrain_wPLI_10_1_alpha.pickle')
 import seaborn as sns
 
-# select wanted data
-#data=data[data['ID'].str.contains("S")]
+Phase = ['Base']
+Part = np.unique(data['ID'])
 
-#Phase=['Base','Anes','Both']
-Phase=['Base']
-
-#Part = ['13', '18', '05', '11', '22', '12', '10', '09', '19', '02', '20']
-#Part_nonr = ['13', '18', '05', '11', '22','23', '12', '10']
-#Part_reco=['02', '09', '19', '20']
-
-Part = ['S02', 'S05', 'S07', 'S09', 'S10', 'S11', 'S12', 'S13', 'S15','S16','S17',
-        'S18', 'S19', 'S20', 'S22', 'S23',
-        'W03', 'W04', 'W08', 'W22', 'W28','W31', 'W34', 'W36']
-Part_nonr = ['S05', 'S10', 'S11', 'S12', 'S13', 'S15', 'S16', 'S17',
-             'S18', 'S22', 'S23', 'W04', 'W08', 'W28', 'W31', 'W34', 'W36']
-Part_reco=['S02', 'S07', 'S09', 'S19', 'S20', 'W03', 'W22']
-"""
-#Part = ['W03', 'W04', 'W08', 'W22', 'W28','W31', 'W34', 'W36']
-#Part_nonr = [ 'W04', 'W08', 'W28', 'W31', 'W34', 'W36']
-#Part_reco=['W03','W22']
-
-
-Part = ['S02', 'S05', 'S07', 'S09', 'S10', 'S11 ', 'S12', 'S13', 'S15','S16','S17',
-        'S18', 'S19', 'S20', 'S22', 'S23']
-Part_nonr = ['S05', 'S10', 'S11', 'S12', 'S13', 'S15', 'S16', 'S17',
-             'S18', 'S22', 'S23']
-Part_reco=['S02', 'S07', 'S09', 'S19', 'S20']
-"""
-
-#KS=[3,4]
 KS=[5,6]
 
-
 for p in Phase:
-    pdf = matplotlib.backends.backend_pdf.PdfPages("All_Part_Cluster_{}_wPLI_K5_K6_wholebraind_alpha.pdf".format(p))
+    pdf = matplotlib.backends.backend_pdf.PdfPages("Healthy_Part_Cluster_{}_wPLI_K5_K6_wholebraind_alpha.pdf".format(p))
 
-    if p=='Both':
-        data_phase=data.query("Phase!='Reco'")
-        X=data_phase.iloc[:,4:]
-
-    else:
-        data_phase=data.query("Phase=='{}'".format(p))
-        X=data_phase.iloc[:,4:]
-
-    #names=X.columns
-    #X = pd.DataFrame(preprocessing.scale(X))
-    #X.columns = names
+    data_phase = data.query("Phase=='Base'")
+    X = data_phase.iloc[:,4:]
 
     # Assign outcome
     Y_out=np.zeros(len(X))
-    Y_out[data_phase['ID'].isin(Part_reco)] = 1
+    Y_out[data_phase['ID'].isin(Part)] = 3
 
     """
         PCA - all_participants
@@ -74,10 +37,8 @@ for p in Phase:
 
     fig = plt.figure(figsize=(6,6))
     ax = Axes3D(fig)
-    n= np.where(Y_out==1)
-    ax.scatter(X3[n, 0], X3[n, 1],X3[n, 2],color='red',label="Recovered Patients")
-    n= np.where(Y_out==0)
-    ax.scatter(X3[n, 0], X3[n, 1],X3[n, 2],color='blue',label="Non-Recovered Patients")
+    n= np.where(Y_out==3)
+    ax.scatter(X3[n, 0], X3[n, 1],X3[n, 2],color='green',label="Healthy Adults")
     plt.title('{}_PCA_allPart_wholeBrain_alpha'.format(p))
     plt.legend(loc='lower right')
     pdf.savefig(fig)
@@ -87,23 +48,17 @@ for p in Phase:
     fig.suptitle('{}_PCA_allPart_wholeBrain_alpha'.format(p), size=16)
 
     ax[0].set_title('PC 0 and 1')
-    n = np.where(Y_out == 1)
-    ax[0].scatter(X3[n, 0], X3[n, 1], color='red', label="Recovered Patients")
-    n = np.where(Y_out == 0)
-    ax[0].scatter(X3[n, 0], X3[n, 1], color='blue', label="Non-Recovered Patients")
+    n = np.where(Y_out == 3)
+    ax[0].scatter(X3[n, 0], X3[n, 1], color='green', label="Healthy Adults")
 
     ax[1].set_title('PC 1 and 2')
-    n = np.where(Y_out == 1)
-    ax[1].scatter(X3[n, 1], X3[n, 2], color='red', label="Recovered Patients")
-    n = np.where(Y_out == 0)
-    ax[1].scatter(X3[n, 1], X3[n, 2], color='blue', label="Non-Recovered Patients")
+    n = np.where(Y_out == 3)
+    ax[1].scatter(X3[n, 1], X3[n, 2], color='green', label="Healthy Adults")
 
     ax[2].set_title('PC 0 and 2')
-    n = np.where(Y_out == 1)
-    ax[2].scatter(X3[n, 0], X3[n, 2], color='red', label="Recovered Patients")
-    n = np.where(Y_out == 0)
-    ax[2].scatter(X3[n, 0], X3[n, 2], color='blue', label="Non-Recovered Patients")
-    plt.legend(loc='lower right')
+    n = np.where(Y_out == 3)
+    ax[2].scatter(X3[n, 0], X3[n, 2], color='green', label="Healthy Adults")
+
     pdf.savefig(fig)
     plt.close()
 
@@ -131,10 +86,8 @@ for p in Phase:
         # visualize in 3D
         fig = plt.figure(figsize=(6,6))
         ax = Axes3D(fig)
-        n = np.where(Y_out==1)[0]
-        ax.scatter(X3[n, 0], X3[n, 1],X3[n, 2],marker='o',c=P_kmc[n],label="Recovered Patients")
-        n= np.where(Y_out==0)[0]
-        ax.scatter(X3[n, 0], X3[n, 1],X3[n, 2],marker='x',c=P_kmc[n],label="Non-Recovered Patients")
+        n = np.where(Y_out==3)[0]
+        ax.scatter(X3[n, 0], X3[n, 1],X3[n, 2],marker='o',c=P_kmc[n],label="Healthy adults")
         plt.title('{}_{}_Clusters_allPart_wholeBrain_alpha'.format(p,str(k)))
         plt.legend(loc='lower right')
         pdf.savefig(fig)
@@ -144,22 +97,16 @@ for p in Phase:
         fig.suptitle('{}_{}_Clusters_allPart_wholeBrain_alpha'.format(p,str(k)), size=16)
 
         ax[0].set_title('PC 0 and 1')
-        n = np.where(Y_out == 1)[0]
-        ax[0].scatter(X3[n, 0], X3[n, 1], marker='o', c=P_kmc[n], label="Recovered Patients")
-        n = np.where(Y_out == 0)[0]
-        ax[0].scatter(X3[n, 0], X3[n, 1], marker='x', c=P_kmc[n], label="Non-Recovered Patients")
+        n = np.where(Y_out == 3)[0]
+        ax[0].scatter(X3[n, 0], X3[n, 1], marker='o', c=P_kmc[n], label="Healthy adults")
 
         ax[1].set_title('PC 1 and 2')
-        n = np.where(Y_out == 1)[0]
-        ax[1].scatter(X3[n, 1], X3[n, 2], marker='o', c=P_kmc[n], label="Recovered Patients")
-        n = np.where(Y_out == 0)[0]
-        ax[1].scatter(X3[n, 1], X3[n, 2], marker='x', c=P_kmc[n], label="Non-Recovered Patients")
+        n = np.where(Y_out == 3)[0]
+        ax[1].scatter(X3[n, 1], X3[n, 2], marker='o', c=P_kmc[n], label="Healthy adults")
 
         ax[2].set_title('PC 0 and 2')
-        n = np.where(Y_out == 1)[0]
-        ax[2].scatter(X3[n, 0], X3[n, 2], marker='o', c=P_kmc[n], label="Recovered Patients")
-        n = np.where(Y_out == 0)[0]
-        ax[2].scatter(X3[n, 0], X3[n, 2], marker='x', c=P_kmc[n], label="Non-Recovered Patients")
+        n = np.where(Y_out == 3)[0]
+        ax[2].scatter(X3[n, 0], X3[n, 2], marker='o', c=P_kmc[n], label="Healthy adults")
         plt.legend(loc='lower right')
         pdf.savefig(fig)
         plt.close()
@@ -186,29 +133,11 @@ for p in Phase:
             pdf.savefig(fig)
             plt.close()
 
-        fig, ax = plt.subplots(len(Part_nonr), 1, figsize=(5, 40))
-        fig.suptitle('Non-recovered_{}; \n {}_Clusters_wholeBrain_alpha'.format(p, k), size=16)
+        fig, ax = plt.subplots(len(Part), 1, figsize=(5, 40))
+        fig.suptitle('Healthy adults_{}; \n {}_Clusters_wholeBrain_alpha'.format(p, k), size=16)
 
-        for t in range(0,len(Part_nonr)):
-            part=Part_nonr[t]
-            part_cluster = P_kmc[data_phase['ID'] == part]
-
-            piedata = []
-            clusternames = []
-            for i in range(k):
-                piedata.append(list(part_cluster).count(i))
-                clusternames.append('c ' + str(i))
-
-            ax[t].pie(piedata, labels=clusternames, startangle=90)
-            ax[t].set_title('Participant: '+part)
-        pdf.savefig(fig)
-        plt.close()
-
-        fig, ax = plt.subplots(len(Part_reco), 1, figsize=(5, 15))
-        fig.suptitle('Recovered_{}; \n {}_Clusters_wholeBrain_alpha'.format(p, k), size=16)
-
-        for t in range(0,len(Part_reco)):
-            part=Part_reco[t]
+        for t in range(0,len(Part)):
+            part=Part[t]
             part_cluster = P_kmc[data_phase['ID'] == part]
 
             piedata = []
@@ -233,14 +162,8 @@ for p in Phase:
 
         for s in range(k):
             c = 0
-            for t in Part_reco:
-                occurence.loc[c,'group'] = "R"
-                occurence.loc[c,str(s)] = (len(np.where((P_kmc == s) & (data_phase['ID'] == t))[0]))\
-                                          /len(np.where(data_phase['ID'] == t)[0])
-
-                c += 1
-            for t in Part_nonr:
-                occurence.loc[c,'group'] = "N"
+            for t in Part:
+                occurence.loc[c,'group'] = "H"
                 occurence.loc[c,str(s)] = (len(np.where((P_kmc == s) & (data_phase['ID'] == t))[0]))\
                                           /len(np.where(data_phase['ID'] == t)[0])
 
@@ -280,11 +203,7 @@ for p in Phase:
 
         c=0
         for t in Part:
-            if  np.isin(t,Part_reco):
-                dynamic.loc[c, 'group'] = "R"
-
-            elif np.isin(t,Part_nonr):
-                dynamic.loc[c, 'group'] = "N"
+            dynamic.loc[c, 'group'] = "H"
 
             part_cluster = P_kmc[data_phase['ID'] == t]
 
@@ -350,5 +269,7 @@ for p in Phase:
 
     pdf.close()
     print('finished')
+
+    np.save('kmc','healthy_kmc')
 
 
