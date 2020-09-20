@@ -8,8 +8,9 @@ import pandas as pd
 from sklearn.cluster import KMeans
 import matplotlib.backends.backend_pdf
 from clustering import create_image
-data=pd.read_pickle('data/New_Part_WholeBrain_wPLI_10_1_alpha.pickle')
+data=pd.read_pickle('data/New_Part_WholeBrain_dPLI_10_1_alpha.pickle')
 import seaborn as sns
+import pickle
 
 #kmc = np.load('kmc.npy')
 #kmc = kmc.astype(KMeans)
@@ -27,7 +28,7 @@ Part_reco=['S02', 'S07', 'S09', 'S19', 'S20', 'W03', 'W22']
 KS=[5,6]
 
 for p in Phase:
-    pdf = matplotlib.backends.backend_pdf.PdfPages("Comparison_Healthy_DOC_Cluster_{}_wPLI_K5_K6_wholebraind_alpha.pdf".format(p))
+    pdf = matplotlib.backends.backend_pdf.PdfPages("Comparison_Healthy_DOC_Cluster_{}_dPLI_K5_K6_wholebraind_alpha.pdf".format(p))
 
     data_phase = data.query("Phase=='Base'")
     X = data_phase.iloc[:,4:]
@@ -39,18 +40,21 @@ for p in Phase:
     """
         PCA - all_participants
     """
-    pca = PCA(n_components=3)
-    pca.fit(X)
+    pca = pickle.load(open("healthy_pca3.pkl", "rb"))
+    #pca = PCA(n_components=3)
+    #pca.fit(X)
     X3 = pca.transform(X)
 
     """
         K_means 7 PC
     """
-    pca = PCA(n_components=7)
-    pca.fit(X)
+    #pca = PCA(n_components=7)
+    #pca.fit(X)
+    pca = pickle.load(open("healthy_pca7.pkl", "rb"))
     X7 = pca.transform(X)
 
     for k in KS:
+        kmc = pickle.load(open("kmeans_helathy_K{}.pkl".format(k), "rb"))
         P_kmc=kmc.predict(X7)
 
         # visualize in 3D

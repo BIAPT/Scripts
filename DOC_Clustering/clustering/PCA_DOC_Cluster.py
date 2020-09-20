@@ -10,7 +10,7 @@ import matplotlib.backends.backend_pdf
 from sklearn import preprocessing
 from clustering import create_image
 from scipy import stats
-data=pd.read_pickle('data/New_Part_WholeBrain_wPLI_10_1_alpha.pickle')
+data=pd.read_pickle('data/New_Part_WholeBrain_dPLI_10_1_alpha.pickle')
 import seaborn as sns
 
 # select wanted data
@@ -47,7 +47,7 @@ KS=[5,6]
 
 
 for p in Phase:
-    pdf = matplotlib.backends.backend_pdf.PdfPages("All_Part_Cluster_{}_wPLI_K5_K6_wholebraind_alpha.pdf".format(p))
+    pdf = matplotlib.backends.backend_pdf.PdfPages("All_Part_Cluster_{}_dPLI_K5_K6_wholebraind_alpha.pdf".format(p))
 
     if p=='Both':
         data_phase=data.query("Phase!='Reco'")
