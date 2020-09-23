@@ -10,7 +10,8 @@ import matplotlib.backends.backend_pdf
 from sklearn import preprocessing
 from clustering import create_image
 from scipy import stats
-data=pd.read_pickle('data/New_Part_WholeBrain_dPLI_10_1_alpha.pickle')
+#data=pd.read_pickle('data/New_Part_WholeBrain_dPLI_10_1_alpha.pickle')
+data=pd.read_pickle('data/WSAS_WholeBrain_wPLI_10_1_alpha.pickle')
 import seaborn as sns
 
 # select wanted data
@@ -18,11 +19,12 @@ import seaborn as sns
 
 #Phase=['Base','Anes','Both']
 Phase=['Base']
+#Phase=['Anes']
 
-#Part = ['13', '18', '05', '11', '22', '12', '10', '09', '19', '02', '20']
-#Part_nonr = ['13', '18', '05', '11', '22','23', '12', '10']
-#Part_reco=['02', '09', '19', '20']
-
+Part = ['13', '18', '05', '11', '22', '12', '10', '09', '19', '02', '20']
+Part_nonr = ['13', '18', '05', '11', '22', '12', '10']
+Part_reco=['02', '09', '19', '20']
+"""
 Part = ['S02', 'S05', 'S07', 'S09', 'S10', 'S11', 'S12', 'S13', 'S15','S16','S17',
         'S18', 'S19', 'S20', 'S22', 'S23',
         'W03', 'W04', 'W08', 'W22', 'W28','W31', 'W34', 'W36']
@@ -34,7 +36,7 @@ Part_reco=['S02', 'S07', 'S09', 'S19', 'S20', 'W03', 'W22']
 #Part_nonr = [ 'W04', 'W08', 'W28', 'W31', 'W34', 'W36']
 #Part_reco=['W03','W22']
 
-
+"""
 Part = ['S02', 'S05', 'S07', 'S09', 'S10', 'S11 ', 'S12', 'S13', 'S15','S16','S17',
         'S18', 'S19', 'S20', 'S22', 'S23']
 Part_nonr = ['S05', 'S10', 'S11', 'S12', 'S13', 'S15', 'S16', 'S17',
@@ -42,12 +44,14 @@ Part_nonr = ['S05', 'S10', 'S11', 'S12', 'S13', 'S15', 'S16', 'S17',
 Part_reco=['S02', 'S07', 'S09', 'S19', 'S20']
 """
 
+
 #KS=[3,4]
 KS=[5,6]
 
 
 for p in Phase:
-    pdf = matplotlib.backends.backend_pdf.PdfPages("All_Part_Cluster_{}_dPLI_K5_K6_wholebraind_alpha.pdf".format(p))
+    #pdf = matplotlib.backends.backend_pdf.PdfPages("All_Part_Cluster_{}_dPLI_K5_K6_wholebraind_alpha.pdf".format(p))
+    pdf = matplotlib.backends.backend_pdf.PdfPages("WSAS_Cluster_{}_wPLI_K5_K6_wholebraind_alpha.pdf".format(p))
 
     if p=='Both':
         data_phase=data.query("Phase!='Reco'")

@@ -18,12 +18,16 @@ def plot_connectivity(X_conn):
 
         for i in regions:
             for a in regions:
-                try:
-                    conn_tmp.loc[i, a] = tmp[i + '_' + a]
-                except:
-                    conn_tmp.loc[i, a] = tmp[a + '_' + i]
+                # only because of error
+                if i == 'RC' and a == 'RC':
+                    conn_tmp.loc[i, a] = tmp['LC' + '_' + 'LC']
+                else:
+                    try:
+                        conn_tmp.loc[i, a] = tmp[i + '_' + a]
+                    except:
+                        conn_tmp.loc[i, a] = tmp[a + '_' + i]
 
-        conn_matrix = np.array(conn_tmp)
+    conn_matrix = np.array(conn_tmp)
 
     #plotting.plot_matrix(conn_matrix)
     #plotting.show()

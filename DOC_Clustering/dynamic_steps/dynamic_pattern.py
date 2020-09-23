@@ -8,8 +8,8 @@ import numpy as np
 import matplotlib.backends.backend_pdf
 import seaborn as sns
 
-healthy_data=pd.read_pickle('data/HEALTHY_Part_WholeBrain_dPLI_10_1_alpha.pickle')
-doc_data=pd.read_pickle('data/New_Part_WholeBrain_dPLI_10_1_alpha.pickle')
+healthy_data=pd.read_pickle('data/HEALTHY_Part_WholeBrain_wPLI_10_1_alpha.pickle')
+doc_data=pd.read_pickle('data/New_Part_WholeBrain_wPLI_10_1_alpha.pickle')
 
 data=pd.DataFrame(np.row_stack((doc_data,healthy_data)))
 data.columns=healthy_data.columns
@@ -26,7 +26,7 @@ Part_nonr = ['S05', 'S10', 'S11', 'S12', 'S13', 'S15', 'S16', 'S17',
              'S18', 'S22', 'S23', 'W04', 'W08', 'W28', 'W31', 'W34', 'W36']
 Part_reco=['S02', 'S07', 'S09', 'S19', 'S20', 'W03', 'W22']
 
-pdf = matplotlib.backends.backend_pdf.PdfPages("All_Part_wholebrain_dPLI_Pattern.pdf")
+pdf = matplotlib.backends.backend_pdf.PdfPages("All_Part_wholebrain_wPLI_Pattern.pdf")
 areas = data.columns[4:]
 
 
@@ -104,9 +104,9 @@ for p in Part:
     if Part_reco.__contains__(p) :
         unique.loc[c, 'group'] = "R"
     elif Part_heal.__contains__(p) :
-        unique.loc[c, 'group'] = "N"
-    elif Part_nonr.__contains__(p) :
         unique.loc[c, 'group'] = "H"
+    elif Part_nonr.__contains__(p) :
+        unique.loc[c, 'group'] = "N"
 
     unique.loc[c, "unique_max"] = 100-(unique_max.shape[0]/ max_Base.shape[0])*100
     unique.loc[c, "unique_range"] = 100-(unique_range.shape[0]/ range_Base.shape[0])*100

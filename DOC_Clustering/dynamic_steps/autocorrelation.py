@@ -11,7 +11,7 @@ from statsmodels.graphics import tsaplots
 part = ['09']
 
 for p in part:
-    pdf = matplotlib.backends.backend_pdf.PdfPages("Autocorrelation_dPLI_Part_{}.pdf".format(p))
+    pdf = matplotlib.backends.backend_pdf.PdfPages("Autocorrelation_wPLI_Part_{}.pdf".format(p))
 
     connectivity=['dPLI']
     #connectivity=['wPLI','dPLI']
