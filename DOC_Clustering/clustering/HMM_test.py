@@ -8,7 +8,6 @@ sys.path.append('../')
 from clustering import markovchain
 import numpy as np
 
-
 healthy_data=pd.read_pickle('data/HEALTHY_Part_WholeBrain_wPLI_10_1_alpha.pickle')
 doc_data=pd.read_pickle('data/New_Part_WholeBrain_wPLI_10_1_alpha.pickle')
 
@@ -39,11 +38,11 @@ X_HEA=X.iloc[np.where(Y_out==3)]
 X_HEA.shape
 
 # create HMM
-rremodel = hmm.GaussianHMM(n_components=2, covariance_type="full", n_iter=100)
-rremodel.fit(X_HEA)
-HZH = rremodel.predict(X_HEA)
-HZD = rremodel.predict(X_DOC)
-rremodel.score(X)
+rremodel = hmm.GaussianHMM(n_components=3, covariance_type="full", n_iter=100)
+rremodel.fit(X_HEA[0:10])
+HZH = rremodel.predict(X_HEA[0:10])
+#HZD = rremodel.predict(X_DOC)
+#rremodel.score(X)
 
 rremodel.transmat_
 
@@ -51,21 +50,28 @@ mc = markovchain.MarkovChain(one_step_array, ['1', '2'])
 mc = markovchain.MarkovChain(rremodel.transmat_ , ['1', '2'])
 mc.draw("markov-chain-two-states.png")
 
+transitions = HZH
+n = 2
+
 def onestep_transition_matrix(transitions,n_states):
     n = n_states
 
     M = [[0]*n for _ in range(n)]
 
     for (i,j) in zip(transitions,transitions[1:]):
-        M[i-1][j-1] += 1
+        M[i][j] += 1
 
     #now convert to probabilities:
     for row in M:
         s = sum(row)
         if s > 0:
             row[:] = [f/s for f in row]
+            #row[:] = [f/len(transitions) for f in row]
     return M
 
-one_step_array = np.array(onestep_transition_matrix(HZH,2))
+np.array(onestep_transition_matrix(HZH,3))
+np.array(v2onestep_transition_matrix(HZH,2))
+rremodel.transmat_
+
 
 sample = [1,1,2,2,1,3,2,1,2,3,1,2,3,1,2,3,1,2,1,2]
