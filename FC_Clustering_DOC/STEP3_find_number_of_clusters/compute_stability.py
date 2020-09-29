@@ -21,7 +21,7 @@ std = np.std(X)
 
 data_random= np.random.normal(mean, std, size=X.shape)
 Y_ID_random = data['ID']
-
+Y_ID = data['ID']
 
 """
 Stability Index
@@ -31,9 +31,7 @@ K=[2,3,4,5,6,7,8,9,10]     #number of K-clusters to iterate
 Rep=10        #number of Repetitions (Mean at the end)
 
 [SI_M_rand ,SI_SD_rand] = stability_measure.compute_stability_index(data_random, Y_ID_random, P, K, Rep)
-[SI_M_Anes ,SI_SD_Anes] = stability_measure.compute_stability_index(X_Anes, Y_ID_Anes, P, K, Rep)
-[SI_M_Base ,SI_SD_Base] = stability_measure.compute_stability_index(X_Base, Y_ID_Base, P, K, Rep)
-[SI_M_BA ,SI_SD_BA] = stability_measure.compute_stability_index(X_BA, Y_ID_BA, P, K, Rep)
+[SI_M_B ,SI_SD_B] = stability_measure.compute_stability_index(X, Y_ID, P, K, Rep)
 
 plt.figure()
 plt.show()
