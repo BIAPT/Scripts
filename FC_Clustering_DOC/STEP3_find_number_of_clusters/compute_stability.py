@@ -6,41 +6,21 @@ import sys
 import os
 import pandas as pd
 sys.path.append('../')
-from clustering import stability_measure
+from helper_functions import stability_measure
 from matplotlib import pyplot as plt
 import random
 import pickle
 import matplotlib.backends.backend_pdf
+from helper_functions.General_Information import *
 
-#pdf = matplotlib.backends.backend_pdf.PdfPages("SI_SIL_wholebrain_wPLI_10_1_alpha.pdf")
-pdf = matplotlib.backends.backend_pdf.PdfPages("SI_SIL_New_Part_wholebrain_wPLI_30_10_allfrequ.pdf")
-
-
-#data=pd.read_pickle('data/WholeBrain_wPLI_10_1_alpha.pickle')
-#data=pd.read_pickle('data/F_C_P_wPLI_30_10_allfrequ.pickle')
-#data=pd.read_pickle('data/New_Part_WholeBrain_wPLI_10_1_alpha.pickle')
-data=pd.read_pickle('data/Healthy_Part_WholeBrain_wPLI_10_1_alpha.pickle')
-
-data_Anes = data.query("Phase=='Anes'")
-X_Anes=data_Anes.iloc[:,4:]
-Y_ID_Anes=data_Anes.iloc[:,1]
-
-data_Base = data.query("Phase=='Base'")
-X_Base=data_Base.iloc[:,4:]
-Y_ID_Base=data_Base.iloc[:,1]
-
-data_BA = data.query("Phase!='Reco'")
-X_BA =data_BA.iloc[:,4:]
-Y_ID_BA =data_BA.iloc[:,1]
-#Y_St=data.iloc[:,2]
-#Y_time=data.iloc[:,3]
+pdf = matplotlib.backends.backend_pdf.PdfPages("SI_SIL_New_group_wholebrain_wPLI_30_10_allfrequ.pdf")
 
 # random data
-mean = 0
-std = 1
+mean = np.mean(X)
+std = np.std(X)
 
-data_random= np.random.normal(mean, std, size=X_Base.shape)
-Y_ID_random = Y_ID_Base
+data_random= np.random.normal(mean, std, size=X.shape)
+Y_ID_random = data['ID']
 
 
 """

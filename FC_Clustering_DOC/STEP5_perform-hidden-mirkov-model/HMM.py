@@ -1,47 +1,50 @@
 import matplotlib
 matplotlib.use('Qt5Agg')
-import pandas as pd
 from hmmlearn import hmm
-import matplotlib.pyplot as plt
 import sys
 sys.path.append('../')
-import numpy as np
 import matplotlib
 matplotlib.use('Qt5Agg')
-import numpy as np
 from matplotlib import pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from sklearn.decomposition import PCA
-import pandas as pd
-from sklearn.cluster import KMeans
 import matplotlib.backends.backend_pdf
 import seaborn as sns
 from helper_functions import visualize
 from helper_functions.General_Information import *
 import helper_functions.process_properties as prop
 
-pdf = matplotlib.backends.backend_pdf.PdfPages("HMM_Combined_Part_Cluster_Base_wPLI_K5_K6_wholebraind_alpha.pdf")
+pdf = matplotlib.backends.backend_pdf.PdfPages("HMM_New_groups_Base_wPLI_K5_K6_wholebraind_alpha.pdf")
 
 
 for k in KS:
+    k
     """
         Hidden Markov Model 
     """
     # create HMM
-    hmm = hmm.GaussianHMM(n_components=k, covariance_type="full", n_iter=100)
-    hmm.fit(X)
-    hmm.score(X)
+    scores = []
+    models = []
 
-    P_hmm = hmm.predict(X)
+    for i in range(10):
+        model = hmm.GaussianHMM(n_components=k, covariance_type="full", n_iter=100)
+        model.fit(X)
+        scores.append(model.score(X))
+        models.append(model)
 
-    #tpm = prop.get_transition_matrix()
+    # select model with highest score
+    model = models[np.where(scores == max(scores))[0][0]]
+
+    if model.monitor_.converged == False:
+        print('Model not Converged Error')
+        break
+
+    P_hmm = model.predict(X)
 
     for part in AllPart["Part"]:
 
         part_cluster = P_hmm[data['ID'] == part]
         visualize.plot_pie_and_distribution(pdf, part, part_cluster, k)
 
-    for group in ['Part_nonr', 'Part_reco','Part_heal']:
+    for group in ['Part_nonr', 'Part_ncmd', 'Part_reco','Part_heal']:
         fig, ax = plt.subplots(len(AllPart["{}".format(group)]), 1, figsize=(5, 40))
         fig.suptitle('{}; \n {}_Clusters_wholeBrain_alpha'.format(group, k), size=16)
         c = 0
@@ -107,6 +110,29 @@ for k in KS:
     plt.title("switch state probablilty [%]")
     pdf.savefig()
     plt.close()
+
+    """
+        Phase Transition
+    """
+    # groupwise Phase Transition
+    visualize.plot_group_TPM(P_hmm,Y_out,k,pdf)
+
+    # individual Phase Transition
+    for group in ['Part_nonr', 'Part_ncmd', 'Part_reco','Part_heal']:
+        fig, ax = plt.subplots(len(AllPart["{}".format(group)]),1, figsize=(5, 50))
+        fig.suptitle('{}; \n {}_Clusters_wholeBrain_alpha'.format(group, k), size=16)
+        c = 0
+        for part in AllPart["{}".format(group)]:
+            part_cluster = P_hmm[data['ID'] == part]
+            TPM_part = prop.get_transition_matrix(part_cluster, k)
+            sns.heatmap(TPM_part, annot=True, cbar=False, ax=ax[c], fmt='.1g')
+            ax[c].set_title('Participant: '+part)
+            c +=1
+        pdf.savefig(fig)
+        plt.close()
+
+    # group averaged Phase Transition
+    visualize.plot_group_averaged_TPM(AllPart,P_hmm,Y_out,k,pdf,data)
 
 pdf.close()
 print('finished')

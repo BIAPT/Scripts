@@ -9,7 +9,7 @@ from helper_functions import visualize
 from helper_functions.General_Information import *
 import helper_functions.process_properties as prop
 
-pdf = matplotlib.backends.backend_pdf.PdfPages("Combined_Part_Cluster_Base_wPLI_K5_K6_wholebraind_alpha.pdf")
+pdf = matplotlib.backends.backend_pdf.PdfPages("KMC_New_groups_Base_wPLI_K5_K6_wholebraind_alpha.pdf")
 
 
 """
@@ -43,7 +43,7 @@ for k in KS:
         visualize.plot_pie_and_distribution(pdf, part, part_cluster, k)
 
 
-    for group in ['Part_nonr', 'Part_reco','Part_heal']:
+    for group in ['Part_nonr','Part_ncmd', 'Part_reco','Part_heal']:
         fig, ax = plt.subplots(len(AllPart["{}".format(group)]), 1, figsize=(5, 40))
         fig.suptitle('{}; \n {}_Clusters_wholeBrain_alpha'.format(group, k), size=16)
         c = 0
@@ -109,6 +109,29 @@ for k in KS:
     plt.title("switch state probablilty [%]")
     pdf.savefig()
     plt.close()
+
+    """
+        Phase Transition
+    """
+    # groupwise Phase Transition
+    visualize.plot_group_TPM(P_kmc,Y_out,k,pdf)
+
+    # individual Phase Transition
+    for group in ['Part_nonr', 'Part_ncmd','Part_reco','Part_heal']:
+        fig, ax = plt.subplots(len(AllPart["{}".format(group)]),1, figsize=(5, 50))
+        fig.suptitle('{}; \n {}_Clusters_wholeBrain_alpha'.format(group, k), size=16)
+        c = 0
+        for part in AllPart["{}".format(group)]:
+            part_cluster = P_kmc[data['ID'] == part]
+            TPM_part = prop.get_transition_matrix(part_cluster, k)
+            sns.heatmap(TPM_part, annot=True, cbar=False, ax=ax[c], fmt='.1g')
+            ax[c].set_title('Participant: '+part)
+            c +=1
+        pdf.savefig(fig)
+        plt.close()
+
+    # group averaged Phase Transition
+    visualize.plot_group_averaged_TPM(AllPart,P_kmc,Y_out,k,pdf,data)
 
 pdf.close()
 print('finished')

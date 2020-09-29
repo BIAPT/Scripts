@@ -14,23 +14,27 @@ def calculate_occurence(AllPart,k,P_kmc,data):
     for s in range(k):
         c = 0
         for t in AllPart["Part_reco"]:
-            occurence.loc[c,'group'] = "R"
+            occurence.loc[c,'group'] = "Reco"
             occurence.loc[c,str(s)] = (len(np.where((P_kmc == s) & (data['ID'] == t))[0]))\
                                       /len(np.where(data['ID'] == t)[0])
-
             c += 1
+
         for t in AllPart["Part_nonr"]:
-            occurence.loc[c,'group'] = "N"
+            occurence.loc[c,'group'] = "Nonr"
             occurence.loc[c,str(s)] = (len(np.where((P_kmc == s) & (data['ID'] == t))[0]))\
                                       /len(np.where(data['ID'] == t)[0])
+            c += 1
 
+        for t in AllPart["Part_ncmd"]:
+            occurence.loc[c,'group'] = "NCMD"
+            occurence.loc[c,str(s)] = (len(np.where((P_kmc == s) & (data['ID'] == t))[0]))\
+                                      /len(np.where(data['ID'] == t)[0])
             c += 1
 
         for t in AllPart["Part_heal"]:
-            occurence.loc[c,'group'] = "H"
+            occurence.loc[c,'group'] = "Heal"
             occurence.loc[c,str(s)] = (len(np.where((P_kmc == s) & (data['ID'] == t))[0]))\
                                       /len(np.where(data['ID'] == t)[0])
-
             c += 1
 
     return occurence
@@ -43,13 +47,16 @@ def calculate_dynamics(AllPart, P_kmc, data):
 
     for t in AllPart["Part"]:
         if  np.isin(t,AllPart["Part_reco"]):
-            dynamic.loc[c, 'group'] = "R"
+            dynamic.loc[c, 'group'] = "Reco"
 
         elif np.isin(t,AllPart["Part_nonr"]):
-            dynamic.loc[c, 'group'] = "N"
+            dynamic.loc[c, 'group'] = "Nonr"
+
+        elif np.isin(t,AllPart["Part_ncmd"]):
+            dynamic.loc[c, 'group'] = "NCMD"
 
         elif np.isin(t,AllPart["Part_heal"]):
-            dynamic.loc[c, 'group'] = "H"
+            dynamic.loc[c, 'group'] = "Heal"
 
         part_cluster = P_kmc[data['ID'] == t]
         switch = len(np.where(np.diff(part_cluster)!=0)[0])/len(part_cluster)
@@ -71,13 +78,16 @@ def calculate_dwell_time(AllPart, P_kmc, data,k):
     c=0
     for t in AllPart["Part"]:
         if  np.isin(t,AllPart["Part_reco"]):
-            dwelltime.loc[c, 'group'] = "R"
+            dwelltime.loc[c, 'group'] = "Reco"
 
         elif np.isin(t,AllPart["Part_nonr"]):
-            dwelltime.loc[c, 'group'] = "N"
+            dwelltime.loc[c, 'group'] = "Nonr"
+
+        elif np.isin(t,AllPart["Part_ncmd"]):
+            dwelltime.loc[c, 'group'] = "NCMD"
 
         elif np.isin(t,AllPart["Part_heal"]):
-            dwelltime.loc[c, 'group'] = "H"
+            dwelltime.loc[c, 'group'] = "Heal"
 
         part_cluster = P_kmc[data['ID'] == t]
 

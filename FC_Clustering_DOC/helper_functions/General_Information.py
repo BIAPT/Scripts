@@ -19,11 +19,14 @@ AllPart["Part"] = ['S02', 'S05', 'S07', 'S09', 'S10', 'S11', 'S12', 'S13', 'S15'
                     'S18', 'S19', 'S20', 'S22', 'S23',
                     'W03', 'W04', 'W08', 'W22', 'W28', 'W31', 'W34', 'W36',
                     'A03', 'A05', 'A06', 'A07', 'A10', 'A11', 'A12', 'A15', 'A17']
-AllPart["Part_heal"] = ['A03', 'A05', 'A06', 'A07', 'A10', 'A11', 'A12', 'A15', 'A17']
-AllPart["Part_nonr"] = ['S05', 'S10', 'S11', 'S12', 'S13', 'S15', 'S16', 'S17',
-                         'S18', 'S22', 'S23', 'W04', 'W08', 'W28', 'W31', 'W34', 'W36']
-AllPart["Part_reco"] = ['S02', 'S07', 'S09', 'S19', 'S20', 'W03', 'W22']
 
+AllPart["Part_heal"] = ['A03', 'A05', 'A06', 'A07', 'A10', 'A11', 'A12', 'A15', 'A17']
+
+AllPart["Part_nonr"] = ['S05', 'S10', 'S11', 'S12', 'S13', 'S15', 'S16', 'S17', 'S18', 'S22', 'S23', 'W04', 'W36']
+
+AllPart["Part_ncmd"] = ['S19', 'W03', 'W08', 'W28', 'W31', 'W34']
+
+AllPart["Part_reco"] = ['S02', 'S07', 'S09', 'S20',  'W22']
 
 data = get_data()
 
@@ -32,11 +35,12 @@ X = data.iloc[:, 4:]
 
 # Assign outcome
 Y_out = np.zeros(len(X))
-Y_out[data['ID'].isin(AllPart["Part_reco"])] = 1
+Y_out[data['ID'].isin(AllPart["Part_ncmd"])] = 1
+Y_out[data['ID'].isin(AllPart["Part_reco"])] = 2
 Y_out[data['ID'].isin(AllPart["Part_heal"])] = 3
 
 # number of Clusters/ Phases to explore
-KS=[5]
+KS=[5,6]
 
 
 
