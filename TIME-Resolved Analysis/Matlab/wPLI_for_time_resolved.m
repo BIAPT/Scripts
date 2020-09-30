@@ -5,7 +5,8 @@
 % Here I'm getting it programmatically because my path and your path will
 % be different.
 %filepath = '/Users/BIAPT/Documents/Time-Resolved-dPLI/DOC/BASELINE_5min_250Hz/';
-filepath = '/Users/BIAPT/Documents/Time-Resolved-wPLI/MDFA/Baseline_5min_250Hz/';
+%filepath = '/Users/BIAPT/Documents/Time-Resolved-wPLI/MDFA/Baseline_5min_250Hz/';
+
 fileList = dir('*.set');
 
 data_path = '/Users/BIAPT/Documents/Time-Resolved-wPLI/MDFA/dPLI_10_1_alpha';

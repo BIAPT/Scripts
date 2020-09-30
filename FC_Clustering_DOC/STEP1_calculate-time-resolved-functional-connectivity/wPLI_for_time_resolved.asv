@@ -25,8 +25,8 @@ for p=1:length(fileList)
     step_size = 10;
     
     result_wpli = na_wpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
-    result_wpli = result_wpli.data.wpli;
-    save(data_path+"/"+name+"_wPLI_10_1_alpha",'result_wpli')
+    result_wpli = result_wpli.data.dpli;
+    save(data_path+"/"+name+"_dPLI_10_1_alpha",'result_dpli')
     
 end
 

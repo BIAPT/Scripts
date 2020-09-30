@@ -12,7 +12,7 @@ from dataimport import extract_features
 #datadir = 'data/BASELINE_5min_250Hz/'
 datadir = 'data/HEALTHY_5min_250Hz/'
 datafiles = [os.path.join(datadir, f) for f in os.listdir(datadir) if '.mat' in f]
-wplidir = 'data/Healthy_wPLI_10_1_alpha/'
+wplidir = 'data/Healthy_dPLI_10_1_alpha/'
 wplifiles = [os.path.join(wplidir, f) for f in os.listdir(wplidir) if '.mat' in f]
 
 df_wpli_final=pd.DataFrame()
@@ -45,7 +45,7 @@ for i in range(0,len(wplifiles)):
 
     #load Data
     mat = scipy.io.loadmat(wplifiles[i])
-    data = mat['result_wpli'] # extract the variable "data" (3 cell array)
+    data = mat['result_dpli'] # extract the variable "data" (3 cell array)
     missingel = []
     time_steps=data.shape[0]
 
@@ -147,5 +147,5 @@ for i in range(0,len(wplifiles)):
 
 df_wpli_final.columns = names
 
-df_wpli_final.to_pickle('Healthy_Part_WholeBrain_wPLI_10_1_alpha.pickle', protocol=4)
+df_wpli_final.to_pickle('Healthy_Part_WholeBrain_dPLI_10_1_alpha.pickle', protocol=4)
 

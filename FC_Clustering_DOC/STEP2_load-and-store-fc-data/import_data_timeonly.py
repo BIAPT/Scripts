@@ -1,18 +1,14 @@
 import scipy.io
-#plt.use('Qt5Agg')
 import numpy as np
-import pandas as pd
-import glob
 import sys
 import os
 import pandas as pd
 sys.path.append('../')
-from dataimport import extract_features
+from helper_functions import extract_features
 
-#datadir = 'data/BASELINE_5min_250Hz/'
-datadir = 'data/HEALTHY_5min_250Hz/'
+datadir = 'data/BASELINE_5min_250Hz/'
 datafiles = [os.path.join(datadir, f) for f in os.listdir(datadir) if '.mat' in f]
-wplidir = 'data/Healthy_wPLI_10_1_alpha/'
+wplidir = 'data/wPLI_10_10_alpha/'
 wplifiles = [os.path.join(wplidir, f) for f in os.listdir(wplidir) if '.mat' in f]
 
 df_wpli_final=pd.DataFrame()
@@ -33,15 +29,10 @@ names.insert(3, 'Time')
 
 
 for i in range(0,len(wplifiles)):
-    #part=wplifiles[i]
-    #name=part[-31:-20]
-    #State = part[-24:-20]
-    #ID = part[-28:-25]
-
-    part=wplifiles[i]
-    name=part[-26:-20]
-    State = "Base"
-    ID = part[-23:-20]
+    part = wplifiles[i]
+    name = part[-31:-20]
+    State = part[-24:-20]
+    ID = part[-28:-25]
 
     #load Data
     mat = scipy.io.loadmat(wplifiles[i])
@@ -65,8 +56,7 @@ for i in range(0,len(wplifiles)):
     #step_size=data_info[4][0][0]
 
 
-    #recording = scipy.io.loadmat( datadir + name + '_5min.mat')
-    recording = scipy.io.loadmat( datadir + name + ' eyes closed 1 resampled.mat')
+    recording = scipy.io.loadmat( datadir + name + '_5min.mat')
     reco=recording['EEG']
     recos=reco['chanlocs'][0][0][0]
     recos=pd.DataFrame(recos)
@@ -147,5 +137,5 @@ for i in range(0,len(wplifiles)):
 
 df_wpli_final.columns = names
 
-df_wpli_final.to_pickle('Healthy_Part_WholeBrain_wPLI_10_1_alpha.pickle', protocol=4)
+df_wpli_final.to_pickle('33_Part_WholeBrain_wPLI_10_10_alpha.pickle', protocol=4)
 
