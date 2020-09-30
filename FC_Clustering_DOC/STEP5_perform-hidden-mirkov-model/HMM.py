@@ -68,7 +68,7 @@ for k in KS:
     Cluster Occurence
     """
     occurence = prop.calculate_occurence(AllPart,k,P_hmm,data)
-    occurence_melt=pd.melt(occurence, id_vars=['group'], value_vars=['0','1','2','3','4'],
+    occurence_melt=pd.melt(occurence, id_vars=['group'], value_vars=[str(i) for i in np.arange(k)],
                            value_name="occurence", var_name="State")
 
     sns.boxplot(x="State", y="occurence", hue="group",
@@ -81,7 +81,7 @@ for k in KS:
     Dwell Time
     """
     dwelltime = prop.calculate_dwell_time(AllPart, P_hmm, data, k)
-    dwelltime_melt = pd.melt(dwelltime, id_vars=['group'], value_vars=['0', '1', '2', '3', '4'],
+    dwelltime_melt = pd.melt(dwelltime, id_vars=['group'], value_vars=[str(i) for i in np.arange(k)],
                                  value_name="dwell_time", var_name="State")
 
     sns.boxplot(x="State", y="dwell_time", hue="group",

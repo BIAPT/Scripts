@@ -8,7 +8,7 @@ def calculate_occurence(AllPart,k,P_kmc,data):
     names=["group"]
     for i in range(k):
         names.append(str(i))
-    occurence.columns=names
+    occurence.columns = names
 
     # compute the time spent in one phase
     for s in range(k):

@@ -40,7 +40,7 @@ Y_out[data['ID'].isin(AllPart["Part_reco"])] = 2
 Y_out[data['ID'].isin(AllPart["Part_heal"])] = 3
 
 # number of Clusters/ Phases to explore
-KS=[5,6]
+KS=[5, 6, 7, 8]
 
 
 
