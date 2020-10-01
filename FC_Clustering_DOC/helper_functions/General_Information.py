@@ -4,12 +4,13 @@ import numpy as np
 
 def get_data():
     # import data
-    healthy_data = pd.read_pickle('data/HEALTHY_Part_WholeBrain_wPLI_10_1_alpha.pickle')
-    doc_data = pd.read_pickle('data/New_Part_WholeBrain_wPLI_10_1_alpha.pickle')
+    #healthy_data = pd.read_pickle('data/HEALTHY_Part_WholeBrain_wPLI_10_1_alpha.pickle')
+    #doc_data = pd.read_pickle('data/New_Part_WholeBrain_wPLI_10_1_alpha.pickle')
+    data = pd.read_pickle('data/33_Part_WholeBrain_wPLI_10_10_alpha.pickle')
 
     # combine both sets
-    data = pd.DataFrame(np.row_stack((doc_data, healthy_data)))
-    data.columns = healthy_data.columns
+    #data = pd.DataFrame(np.row_stack((doc_data, healthy_data)))
+    #data.columns = healthy_data.columns
     data = data.query("Phase=='Base'")
     return data
 

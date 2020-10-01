@@ -9,7 +9,7 @@ from helper_functions import visualize
 from helper_functions.General_Information import *
 import helper_functions.process_properties as prop
 
-pdf = matplotlib.backends.backend_pdf.PdfPages("KMC_New_groups_Base_wPLI_K5_K6_wholebraind_alpha.pdf")
+pdf = matplotlib.backends.backend_pdf.PdfPages("KMC_33_Part_Prog_wPLI_10_10_K5_K6_alpha.pdf")
 
 
 """
