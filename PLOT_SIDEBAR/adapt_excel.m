@@ -3,40 +3,27 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%     Choose following variables: 
-%part="WSAS_19"
-part="WSAS_22"
 
+part="NET-ICU-002-MG"
 
-%20 missing_el_baseline=["E013","E006","E112","E105","E106","E007","E111","E080",...
-%    "E118","E055","E061","E062","E079"]
+missing_el_baseline = ["E006","E011","E005","E016","E112","E105","E010","E004",...
+    "E118","E111","E104","E103","E110","E117","E124","E003","E123","E116",...
+    "E109","E122","E144", "E126", "E125", "E127", "E095", "E055", "E078", "E079"]
+missing_el_inter = ["E006","E011","E005","E016","E112","E105","E010","E004",...
+    "E118","E111","E104","E103","E110","E117","E124","E003","E123","E116",...
+    "E109","E122","E144", "E126", "E125", "E127", "E055", "E048"]
+missing_el_post = ["E006","E011","E005","E016","E112","E105","E010","E004",...
+    "E118","E111","E104","E103","E110","E117","E124","E003","E123","E116",...
+    "E109","E122","E144", "E126", "E125", "E127", "E055", "E048"]
 
-%20 missing_el_anesthesia=["E013","E006","E112","E105","E106","E007","E005","E111","E118",...
-%    "E012","E020","E079","E080","E087"]
-
-%20 missing_el_recovery=["E013","E006","E112","E105","E106","E007","E111","E118",...
-%    "E054"]
-missing_el_baseline=[]
-missing_el_anesthesia=[]
-missing_el_recovery=[]
-
-
-
-missing_el_baseline=["E010","E003","E004","E005","E118","E124","E123","E117",...
-    "E094","E088","E127","E128","E043","E048","E049","E055","E035","E044","E029"]
-
-missing_el_anesthesia=["E010","E003","E004","E005","E118","E124","E123","E117",...
-    "E094","E088","E127","E128","E048","E049","E044","E043"]
-
-missing_el_recovery=["E010","E003","E004","E005","E118","E124","E123","E117",...
-    "E094","E088","E127","E128","E043","E048","E049"]
 
 %%%%%%%%%%%%%%%%%%%%%%   START         %%%%%%%%%%%%%%%%%%%%
-folder = 'C:\Users\User\Documents\1_MASTER\LAB\DOC\Data\'+part
+folder = 'C:\Users\BIAPT\Desktop\'+part
 cd(folder)
 
-expath="C:\Users\User\Documents\1_MASTER\LAB\DOC\Material\Electrode number and region.xlsx"
-[~,~,el_left]=xlsread(expath,"Left");
-[~,~,el_right]=xlsread(expath,"Right");
+expath = "C:\Users\BIAPT\Desktop\Material\Electrode number and region.xlsx"
+[~,~,el_left]=xlsread(expath,"LEFT");
+[~,~,el_right]=xlsread(expath,"RIGHT");
 
 %%%% BASELINE
 for i = 1:length(missing_el_baseline)
@@ -55,56 +42,56 @@ end
 
 el_left=table(el_left,'VariableNames',{'Left'});
 el_right=table(el_right,'VariableNames',{'Right'});
-filename =folder+'\' +part+'_electrodes_baseline.xlsx';
+filename =folder+'\' +part+'_electrodes_sedon1.xlsx';
 writetable(el_left,filename);
 writetable(el_right,filename,'sheet',2)
 
-%%%% Anesthesia
-[~,~,el_left]=xlsread(expath,"Left");
-[~,~,el_right]=xlsread(expath,"Right");
+%%%% Interruption
+[~,~,el_left]=xlsread(expath,"LEFT");
+[~,~,el_right]=xlsread(expath,"RIGHT");
 
-for i = 1:length(missing_el_anesthesia)
-    match=length(find(not(cellfun('isempty',(strfind(el_left(:,1), missing_el_anesthesia(i)))))))
+for i = 1:length(missing_el_inter)
+    match=length(find(not(cellfun('isempty',(strfind(el_left(:,1), missing_el_inter(i)))))))
     if match==1
-        item=find(not(cellfun('isempty',(strfind(el_left(:,1), missing_el_anesthesia(i))))))
+        item=find(not(cellfun('isempty',(strfind(el_left(:,1),missing_el_inter(i))))))
         el_left(item,:)=[]
     end
     
-    match=length(find(not(cellfun('isempty',(strfind(el_right(:,1), missing_el_anesthesia(i)))))))
+    match=length(find(not(cellfun('isempty',(strfind(el_right(:,1), missing_el_inter(i)))))))
     if match==1
-        item=find(not(cellfun('isempty',(strfind(el_right(:,1), missing_el_anesthesia(i))))))
+        item=find(not(cellfun('isempty',(strfind(el_right(:,1), missing_el_inter(i))))))
         el_right(item,:)=[]
     end
 end
 
 el_left=table(el_left,'VariableNames',{'Left'})
 el_right=table(el_right,'VariableNames',{'Right'})
-filename =folder+'\' +part+'_electrodes_anesthesia.xlsx';
+filename =folder+'\' +part+'_electrodes_sedoff.xlsx';
 writetable(el_left,filename)
 writetable(el_right,filename,'sheet',2)
 
 
 %%%% Recovery
-[~,~,el_left]=xlsread(expath,"Left");
-[~,~,el_right]=xlsread(expath,"Right");
+[~,~,el_left]=xlsread(expath,"LEFT");
+[~,~,el_right]=xlsread(expath,"RIGHT");
 
-for i = 1:length(missing_el_recovery)
-    match=length(find(not(cellfun('isempty',(strfind(el_left(:,1), missing_el_recovery(i)))))))
+for i = 1:length(missing_el_post)
+    match=length(find(not(cellfun('isempty',(strfind(el_left(:,1), missing_el_post(i)))))))
     if match==1
-        item=find(not(cellfun('isempty',(strfind(el_left(:,1), missing_el_recovery(i))))))
+        item=find(not(cellfun('isempty',(strfind(el_left(:,1), missing_el_post(i))))))
         el_left(item,:)=[]
     end
     
-    match=length(find(not(cellfun('isempty',(strfind(el_right(:,1), missing_el_recovery(i)))))))
+    match=length(find(not(cellfun('isempty',(strfind(el_right(:,1), missing_el_post(i)))))))
     if match==1
-        item=find(not(cellfun('isempty',(strfind(el_right(:,1), missing_el_recovery(i))))))
+        item=find(not(cellfun('isempty',(strfind(el_right(:,1), missing_el_post(i))))))
         el_right(item,:)=[]
     end
 end
 
 el_left=table(el_left,'VariableNames',{'Left'})
 el_right=table(el_right,'VariableNames',{'Right'})
-filename =folder+'\' +part+'_electrodes_recovery.xlsx';
+filename =folder+'\' +part+'_electrodes_sedon2.xlsx';
 writetable(el_left,filename)
 writetable(el_right,filename,'sheet',2)
 

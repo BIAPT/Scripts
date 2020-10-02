@@ -10,8 +10,8 @@ exceldir = {uigetfile('*.xlsx')};
 %%%%%%%%%%%%%%%%%%%%%%   START         %%%%%%%%%%%%%%%%%%%%
 cd(imagefolder)
 
-[~,~,el_left]=xlsread(string(exceldir),"LEFT");
-[~,~,el_right]=xlsread(string(exceldir),"RIGHT");
+[~,~,el_left]=xlsread(string(exceldir),1);
+[~,~,el_right]=xlsread(string(exceldir),2);
 E = dir;
 E = E(ismember({E.name}, {'LEFT', 'RIGHT'}));
     
@@ -39,7 +39,7 @@ for i = 1:numel(E)
             upper=[0.7 0.65 0.6 0.55];
             for l=1:length(lower)
                 for im=1:length(imgfiles)
-                    mod_im=imgfiles(im).folder+"\"+(imgfiles(im).name)
+                    mod_im = imgfiles(im).folder+"\"+(imgfiles(im).name)
                     modify_images(mod_im,lower(l),upper(l),electrodes,l)
                 end
             end

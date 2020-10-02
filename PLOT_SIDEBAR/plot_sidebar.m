@@ -3,15 +3,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%     Choose following variables: 
-%part="WSAS_19"
-part="WSAS_23"
-
-
-
+part= "NET-ICU-002-MG"
 
 %%%%%%%%%%%%%%%%%%%%%%   START         %%%%%%%%%%%%%%%%%%%%
-addpath("C:\Users\User\Documents\1_MASTER\LAB\DOC")
-folder=("C:\Users\User\Documents\1_MASTER\LAB\DOC\Data\"+part)
+folder = 'C:\Users\BIAPT\Desktop\'+part
 cd(folder)
 
 D = dir;
