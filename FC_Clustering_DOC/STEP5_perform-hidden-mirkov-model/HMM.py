@@ -11,9 +11,17 @@ import seaborn as sns
 from helper_functions import visualize
 from helper_functions.General_Information import *
 import helper_functions.process_properties as prop
+from sklearn.decomposition import PCA
 
-pdf = matplotlib.backends.backend_pdf.PdfPages("HMM_33_Part_Prog_wPLI_10_10_K5_K6_alpha.pdf")
+pdf = matplotlib.backends.backend_pdf.PdfPages("HMM_33_Part_Prog_{}_10_1_K6_alpha.pdf".format(mode))
 
+
+"""
+    HMM 7 PC
+"""
+pca = PCA(n_components=PC)
+pca.fit(X)
+X7 = pca.transform(X)
 
 for k in KS:
     k
@@ -26,8 +34,8 @@ for k in KS:
 
     for i in range(10):
         model = hmm.GaussianHMM(n_components=k, covariance_type="full", n_iter=100)
-        model.fit(X)
-        scores.append(model.score(X))
+        model.fit(X7)
+        scores.append(model.score(X7))
         models.append(model)
 
     # select model with highest score
@@ -37,7 +45,7 @@ for k in KS:
         print('Model not Converged Error')
         break
 
-    P_hmm = model.predict(X)
+    P_hmm = model.predict(X7)
 
     for part in AllPart["Part"]:
 
@@ -73,7 +81,7 @@ for k in KS:
 
     sns.boxplot(x="State", y="occurence", hue="group",
                      data=occurence_melt)
-    plt.title('Cluster_Occurence_K-Means')
+    plt.title('Cluster_Occurence_HMM')
     pdf.savefig()
     plt.close()
 
@@ -86,14 +94,14 @@ for k in KS:
 
     sns.boxplot(x="State", y="dwell_time", hue="group",
                      data=dwelltime_melt)
-    plt.title('Dwell_Time_K-Means')
+    plt.title('Dwell_Time_HMM')
     pdf.savefig()
     plt.close()
 
     for s in range(k):
             # create average connectivity image
             X_conn=np.mean(X.iloc[np.where(P_hmm == s)[0]])
-            visualize.plot_connectivity(X_conn)
+            visualize.plot_connectivity(X_conn, mode= mode)
             pdf.savefig()
             plt.close()
 

@@ -20,6 +20,31 @@ ROI = ['LF_LC', 'LF_LP', 'LF_LO', 'LF_LT', 'LT_LO', 'LT_LC', 'LT_LP', 'LP_LO', '
            'LF_RC', 'LF_RP', 'LF_RO', 'LF_RT', 'LT_RO', 'LT_RC', 'LT_RP', 'LP_RO', 'LP_RC', 'LC_RO',
            'RF_LC', 'RF_LP', 'RF_LO', 'RF_LT', 'RT_LO', 'RT_LC', 'RT_LP', 'RP_LO', 'RP_LC', 'RC_LO',
            'LF_RF', 'LC_RC', 'LP_RP', 'LT_RT', 'LO_RO']
+"""
+ROI = ['LF_LC', 'LF_LP', 'LF_LO', 'LF_LT',
+       'LT_LO', 'LT_LC', 'LT_LP',
+       'LP_LO', 'LP_LC',
+       'LC_LO',
+       'LF_LF', 'LC_LC', 'LP_LP', 'LT_LT', 'LO_LO',
+
+       'RF_RC', 'RF_RP', 'RF_RO', 'RF_RT',
+       'RT_RO', 'RT_RC', 'RT_RP',
+       'RP_RO', 'RP_RC',
+       'RC_RO',
+       'RF_RF', 'RC_RC', 'RP_RP', 'RT_RT', 'RO_RO',
+
+       'LF_RC', 'LF_RP', 'LF_RO', 'LF_RT',
+       'LT_RO', 'LT_RC', 'LT_RP',
+       'LP_RO','LP_RC',
+       'LC_RO',
+
+       'RF_LC', 'RF_LP', 'RF_LO', 'RF_LT',
+       'RT_LO', 'RT_LC', 'RT_LP',
+       'RP_LO', 'RP_LC',
+       'RC_LO',
+
+       'LF_RF', 'LC_RC', 'LP_RP', 'LT_RT', 'LO_RO']
+"""
 
 names = ROI.copy()
 names.insert(0, 'Name')

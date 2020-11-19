@@ -1,17 +1,27 @@
-%% Loading a .set file
-% This will allow to load a .set file into a format that is amenable to analysis
-% The first argument is the name of the .set you want to load and the
-% second argument is the path of the folder containing that .set file
-% Here I'm getting it programmatically because my path and your path will
-% be different.
-%filepath = '/Users/BIAPT/Documents/Time-Resolved-dPLI/DOC/BASELINE_5min_250Hz/';
+% Charlotte Maschke 11.11.2020
+%% Generate time-resolved weighted Phase Lag Index
+% this code is optimized to be run on multiple cores, for example on ComputeCanada
+
+%% Please adapt the following paths to your location: 
+INPUT_DIR = "/home/lotte/projects/def-sblain/lotte/DOC_cluster/data/BASELINE_5min_250Hz/";
+OUTPUT_DIR = "/home/lotte/projects/def-sblain/lotte/DOC_cluster/results/graphs/";
+NEUROALGO_PATH = "/home/lotte/projects/def-sblain/lotte/DOC_cluster/NeuroAlgo";
+addpath(genpath(NEUROALGO_PATH)); % Add NA library to our path so that we can use it
+
+% This list contains all participant IDs
+P_IDS = {'MDFA03', 'MDFA05', 'MDFA06', 'MDFA07', 'MDFA10', 'MDFA11', 'MDFA12', 'MDFA15', 'MDFA17',...
+    'WSAS02', 'WSAS05', 'WSAS07', 'WSAS09', 'WSAS10', 'WSAS11', 'WSAS12', 'WSAS13','WSAS15','WSAS16','WSAS17',...
+    'WSAS18', 'WSAS19', 'WSAS20', 'WSAS22','WSAS23',...
+    'AOMW03','AOMW04','AOMW08','AOMW22','AOMW28','AOMW31','AOMW34','AOMW36'};
+
 filepath = '/Users/BIAPT/Documents/GitHub/Scripts/FC_Clustering_DOC/data/BASELINE_5min_250Hz/';
 fileList = dir(fullfile(filepath, '*.set'));
-%fileList = filepath('*.set');
-
 data_path = '/Users/BIAPT/Documents/GitHub/Scripts/FC_Clustering_DOC/data/wPLI_10_10_alpha';
 
-for p=1:length(fileList)
+
+%for s = 1:len(step_size)
+
+parfor p=1:length(fileList)
     name = fileList(p).name(1:length(fileList(p).name)-4);
     recording = load_set(fullfile(filepath, char(fileList(p).name)),'');
     disp(string(fileList(p).name)+" load complete ========================================" )
