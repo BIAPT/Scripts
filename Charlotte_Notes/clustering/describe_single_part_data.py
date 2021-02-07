@@ -14,7 +14,7 @@ from sklearn.decomposition import PCA
 import matplotlib.backends.backend_pdf
 
 part = ['13', '18', '05', '11', '19', '02', '20', '22', '12', '10', '09']
-#part = ['09']
+
 
 for p in part:
     pdf = matplotlib.backends.backend_pdf.PdfPages("wholebrain_Part_{}.pdf".format(p))
