@@ -165,3 +165,5 @@ DOC_Clustering/RESULTS
 *.wmv
 *.pkl
 *.ogv
+*.csv
+*.fif

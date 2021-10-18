@@ -75,11 +75,13 @@ if __name__ == '__main__':
 
     # load power spectral data
     PSD_B = pickle.load(open("{}/{}/PSD_{}_{}.pkl".format(args.input_dir, cond_B, args.method, cond_B), "rb"))
+    PSD_B_ID = PSD_B[-1]
 
     if nr_cond == 2:
         PSD_A = pickle.load(open("{}/{}/PSD_{}_{}.pkl".format(args.input_dir, cond_A, args.method, cond_A), "rb"))
+        PSD_A_ID = PSD_A[-1]
 
-    for p, p_id in enumerate(P_IDS):
+    for p_id in P_IDS:
 
         # imput raw data (needed later for plotting only)
         input_fname = "{}/{}_{}.set".format(args.data_dir, p_id, cond_B)
@@ -93,10 +95,12 @@ if __name__ == '__main__':
             keep_A = np.isin(ch_A,ch_B)
             keep_B = np.isin(ch_B,ch_A)
 
-        # select individual PSD values
-        psd_B_p = PSD_B[p]
+        # select individual PSD values, depending on ID
+        index_id = np.where(PSD_B_ID == p_id)[0][0]
+        psd_B_p = PSD_B[index_id]
         if nr_cond == 2:
-            psd_A_p = PSD_A[p]
+            index_id = np.where(PSD_A_ID == p_id)[0][0]
+            psd_A_p = PSD_A[index_id]
 
         # only use defined frequency band
         index_toselect = np.where((freqs_B >= frequency_range[0]) & (freqs_B <= frequency_range[1]))[0]
@@ -187,12 +191,6 @@ if __name__ == '__main__':
             fig.suptitle(p_id + "__" + 'Base - Anes ')
             pdf.savefig(fig)
             plt.close()
-
-        """
-        ### Until Here
-        """
-        # Aperiodic parameters
-        #        offset_Base_lin.append(lm_B.intercept_)
 
     pdf.close()
 

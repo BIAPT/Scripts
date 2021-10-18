@@ -16,6 +16,7 @@ from fooof import FOOOF
 import pandas as pd
 import numpy as np
 import argparse
+import pickle
 import mne
 import os
 
@@ -23,6 +24,8 @@ import os
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Calculate the aperiodic signal portion using different Models.')
+    parser.add_argument('data_dir', type=str, action='store',
+                        help='folder name containing the data in .fdt and .set format')
     parser.add_argument('input_dir', type=str, action='store',
                         help='folder name containing the data in .fdt and .set format')
     parser.add_argument('patient_information', type=str, action='store',
@@ -34,19 +37,24 @@ if __name__ == '__main__':
                         help='The freqency band to calculate the aperiodic signal on. For example 1 20')
     parser.add_argument('--method', nargs=1, action='store', default='Multitaper', choices=('Multitaper','Welch'),
                         help='The method used for Spectral decomposition in Step 1')
+    parser.add_argument('--electrode', '-el', nargs=1, action='store', default=['all'],
+                        help='On which electrode should the alperiodic slope be computed '
+                             'default is all)')
     args = parser.parse_args()
+    electrode = args.electrode
 
     nr_cond = len(args.conditions)
     frequency_range = [int(args.frequency_range[0]), int(args.frequency_range[1])]
 
     # make ouput directory
-    output_dir = os.path.join(args.input_dir, 'aperiodic_signal_sites_and_out')
+    output_dir = os.path.join(args.input_dir, 'aperiodic_signal')
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     # prepare output pdf
-    pdf = pltpdf.PdfPages("{}/aperiodic_signal_{}_{}.pdf".format(output_dir, frequency_range[0],frequency_range[1]))
+    pdf = pltpdf.PdfPages("{}/aperiodic_signal_{}_{}_{}.pdf".format(output_dir, frequency_range[0],
+                                                                    frequency_range[1], electrode))
 
     # load patient info
     info = pd.read_csv(args.patient_information,sep = '\t')
@@ -59,29 +67,88 @@ if __name__ == '__main__':
     exponent_Base_fooof = []
     offset_Base_lin = []
     exponent_Base_lin = []
+    missing_ID_B = []
+    missing_ID_A = []
 
-    offset_Anes_fooof = []
-    exponent_Anes_fooof = []
-    offset_Anes_lin = []
-    exponent_Anes_lin = []
+    # define empty DataFrames to save Anesthesia data
+    if nr_cond == 2:
+        offset_Anes_fooof = []
+        exponent_Anes_fooof = []
+        offset_Anes_lin = []
+        exponent_Anes_lin = []
 
-    # Plot PSD for both conditions
     cond_B = str(args.conditions[0])
     if nr_cond == 2:
         cond_A = str(args.conditions[1])
 
-    # load power spectral data and frequency
-    datapath = os.path.join(args.input_dir, cond_B, 'Power_spectra_{}_{}.txt'.format(args.method, cond_B))
-    psd_B = pd.read_csv(datapath, sep=' ')
-    psd_B = psd_B[psd_B['ID'].isin(P_IDS)]
+    # load power spectral data
+    PSD_B = pickle.load(open("{}/{}/PSD_{}_{}.pkl".format(args.input_dir, cond_B, args.method, cond_B), "rb"))
+    PSD_B_ID = PSD_B[-1]
 
     if nr_cond == 2:
-        datapath = os.path.join(args.input_dir, cond_A, 'Power_spectra_{}_{}.txt'.format(args.method, cond_A))
-        psd_A = pd.read_csv(datapath, sep=' ')
-        psd_A = psd_A[psd_A['ID'].isin(P_IDS)]
+        PSD_A = pickle.load(open("{}/{}/PSD_{}_{}.pkl".format(args.input_dir, cond_A, args.method, cond_A), "rb"))
+        PSD_A_ID = PSD_A[-1]
 
+    # prepare empty dataframe for PSD per patient and selected average
+    psd_B = []
+    if nr_cond == 2:
+        psd_A = []
 
-    # frequency is the same in both conditions
+    for p_id in P_IDS:
+        # select individual PSD values, depending on ID
+        index_id = np.where(PSD_B_ID == p_id)[0][0]
+        psd_B_p = PSD_B[index_id]
+        if nr_cond == 2:
+            index_id = np.where(PSD_A_ID == p_id)[0][0]
+            psd_A_p = PSD_A[index_id]
+
+        if  electrode[0] == 'all':
+            psd_B.append(psd_B_p.mean(0).mean(0))
+            if nr_cond == 2:
+                psd_A.append(psd_A_p.mean(0).mean(0))
+
+        else:
+            # imput raw data (needed later for selection of the electrode)
+            input_fname = "{}/{}_{}.set".format(args.data_dir, p_id, cond_B)
+            raw_B = mne.io.read_raw_eeglab(input_fname)
+
+            # If this electrode is in the given EEG set:
+            if np.isin(np.array(raw_B.info.ch_names),electrode).any():
+                select_ch = np.where(np.array(raw_B.info.ch_names) == electrode)[0][0]
+                # average over time
+                psd_B_p = psd_B_p.mean(0)
+                psd_B.append(psd_B_p[select_ch,:])
+            else:
+                missing_ID_B.append(p_id)
+
+            if nr_cond == 2:
+                # imput raw data (needed later for selection of the electrode)
+                input_fname = "{}/{}_{}.set".format(args.data_dir, p_id, cond_A)
+                raw_A = mne.io.read_raw_eeglab(input_fname)
+
+                # If this electrode is in the given EEG set:
+                if np.isin(np.array(raw_A.info.ch_names), electrode).any():
+                    select_ch = np.where(np.array(raw_A.info.ch_names) == electrode)[0][0]
+                    # average over time
+                    psd_A_p = psd_A_p.mean(0)
+                    psd_A.append(psd_A_p[select_ch, :])
+                else:
+                    missing_ID_A.append(p_id)
+
+    psd_B = pd.DataFrame(psd_B)
+    IDS_B = P_IDS[np.invert(np.isin(P_IDS,missing_ID_B))]
+    psd_B['ID'] = IDS_B.reset_index(drop = True)
+    outcome_B = outcome[np.invert(np.isin(P_IDS,missing_ID_B))].reset_index(drop = True)
+    group_B = group[np.invert(np.isin(P_IDS,missing_ID_B))].reset_index(drop = True)
+
+    if nr_cond == 2:
+        psd_A = pd.DataFrame(psd_A)
+        IDS_A = P_IDS[np.invert(np.isin(P_IDS, missing_ID_A))]
+        psd_A['ID'] = IDS_A.reset_index(drop=True)
+        outcome_A = outcome[np.invert(np.isin(P_IDS,missing_ID_A))].reset_index(drop = True)
+        group_A = group[np.invert(np.isin(P_IDS,missing_ID_A))].reset_index(drop = True)
+
+    # load frequencies
     datapath = os.path.join(args.input_dir, cond_B, 'Frequency_{}_{}.txt'.format(args.method, cond_B))
     freqs_B = pd.read_csv(datapath, sep=' ', header=None)
     freqs_B = np.squeeze(freqs_B)
@@ -104,23 +171,25 @@ if __name__ == '__main__':
 
     # plot PSD according to outcome:
 
-    fig = plot_cat_curves(np.log10(psd_B.drop(columns=['ID'])), freqs_B, outcome, group,
-                    title='{} PSD'.format(args.conditions[0]), lx='Frequency', ly='Log(Power)')
+    fig = plot_cat_curves(np.log10(psd_B.drop(columns=['ID'])), freqs_B, outcome_B, group_B,
+                    title='{} PSD_el_{}\nmissimg_{}'.format(args.conditions[0],electrode,missing_ID_B),
+                          lx='Frequency', ly='Log(Power)')
+    plt.tight_layout()
     pdf.savefig(fig)
     plt.close(fig)
 
-    fig = plot_cat_curves(np.log10(psd_B.drop(columns=['ID'])), np.log10(freqs_B), outcome, group,
+    fig = plot_cat_curves(np.log10(psd_B.drop(columns=['ID'])), np.log10(freqs_B), outcome_B, group_B,
                     title='{} PSD'.format(args.conditions[0]), lx='Log(Frequency)', ly='Log(Power)')
     pdf.savefig(fig)
     plt.close(fig)
 
     if nr_cond == 2:
-        fig = plot_cat_curves(np.log10(psd_A.drop(columns=['ID'])), freqs_A, outcome, group,
+        fig = plot_cat_curves(np.log10(psd_A.drop(columns=['ID'])), freqs_A, outcome_A, group_A,
                               title='{} PSD'.format(args.conditions[1]), lx='Frequency', ly='Log(Power)')
         pdf.savefig(fig)
         plt.close(fig)
 
-        fig = plot_cat_curves(np.log10(psd_A.drop(columns=['ID'])), np.log10(freqs_A), outcome, group,
+        fig = plot_cat_curves(np.log10(psd_A.drop(columns=['ID'])), np.log10(freqs_A), outcome_A, group_A,
                               title='{} PSD'.format(args.conditions[1]), lx='Log(Frequency)', ly='Log(Power)')
         pdf.savefig(fig)
         plt.close(fig)
@@ -128,7 +197,7 @@ if __name__ == '__main__':
     """
     #   Calculate Aperiodic signal
     """
-    for p_id in P_IDS:
+    for p_id in P_IDS[np.invert(np.isin(P_IDS,missing_ID_B))]:
         psds_B_id = psd_B.query("ID == '{}'".format(p_id))
         psds_B_id = psds_B_id.drop(columns=['ID'])
 
@@ -191,6 +260,8 @@ if __name__ == '__main__':
             offset_Anes_lin.append(lm_A.intercept_)
             exponent_Anes_lin.append(lm_A.coef_[0])
 
+    # reduce info by the missing data
+    info = info[np.invert(np.isin(P_IDS,missing_ID_B))]
 
     toplot = pd.DataFrame()
     toplot['ID'] = info['Patient']
@@ -239,6 +310,8 @@ if __name__ == '__main__':
 
     if len(np.unique(toplot['Group'])) > 1:
         plot_group_correlations(data=toplot, start=5, category='outcome', group=group, pdf=pdf)
+
+    toplot.to_csv("{}/aperiodic_signal_{}_{}.csv".format(output_dir, frequency_range[0],frequency_range[1]))
 
     pdf.close()
 

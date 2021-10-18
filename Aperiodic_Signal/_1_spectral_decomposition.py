@@ -20,7 +20,7 @@ if __name__ == '__main__':
                         help='folder name where to save the power spectra')
     parser.add_argument('patient_information', type=str, action='store',
                         help='path to txt with information about participants')
-    parser.add_argument('condition', type=str, action='store',
+    parser.add_argument('--condition', '-cond', type=str, action='store',
                         help='The "task" or condition you want to analyze')
     args = parser.parse_args()
 
@@ -49,28 +49,32 @@ if __name__ == '__main__':
         """
         1)    IMPORT DATA
         """
-        try:
-            input_fname = args.input_dir + "/{}_{}.set".format(p_id, args.condition)
-            raw = mne.io.read_raw_eeglab(input_fname)
-        except FileNotFoundError:
-            input_fname = args.input_dir + "/{}_task-{}_eeg.set".format(p_id, args.condition)
-            raw = mne.io.read_raw_eeglab(input_fname)
+        input_fname = args.input_dir + "/sub-{}/eeg/epochs_{}_{}.fif".format(p_id, p_id, args.condition)
+        raw_epochs = mne.read_epochs(input_fname)
+
+        #try:
+            #input_fname = args.input_dir + "/{}_{}.set".format(p_id, args.condition)
+            #raw = mne.io.read_raw_eeglab(input_fname)
+        #except FileNotFoundError:
+        #    input_fname = args.input_dir + "/{}_task-{}_eeg.set".format(p_id, args.condition)
+        #    raw = mne.io.read_raw_eeglab(input_fname)
 
         #downsample data
-        raw_downsampled = raw.copy().resample(sfreq=250)
+        #raw_downsampled = raw.copy().resample(sfreq=250)
 
-        # show the duration of your signal
-        raw_len = raw_downsampled.times[-1]
+        # show the duration of your signal (number of epochs)
+        #raw_len = raw_epochs.times[-1]
+        raw_len = len(raw_epochs)
 
         #crop data if necessary
         if raw_len > 5 * 60:
-            if args.condition == 'Base':
+            if args.condition == 'Base_5min':
                 # choose first 5 min
                 raw_cropped = raw_downsampled.copy().crop(tmax=(5*60))
-            if args.condition == 'Anes':
+            if args.condition == 'Anes_5min':
                 # choose last 5 min
                 raw_cropped = raw_downsampled.copy().crop(tmin=raw_len-(5*60))
-            if args.condition == 'Reco':
+            if args.condition == 'Reco_5min':
                 # choose last 5 min
                 raw_cropped = raw_downsampled.copy().crop(tmin=raw_len-(5*60))
             if args.condition == "sedon1":
@@ -82,6 +86,8 @@ if __name__ == '__main__':
             if args.condition == "sedon2":
                 # choose last 5 min
                 raw_cropped = raw_downsampled.copy().crop(tmin=raw_len-(5*60))
+            else:
+                raw_cropped = raw_downsampled.copy()
         else:
             raw_cropped = raw_downsampled.copy()
 
@@ -115,6 +121,10 @@ if __name__ == '__main__':
                               lx='Frequency (Hz)', ly='Power Spectral Density (dB)')
         pdf.savefig(fig)
         plt.close(fig)
+
+    # Add IDs at the end of the list
+    power_spectra_mt.append(P_IDS)
+    power_spectra_welch.append(P_IDS)
 
     with open('{}/PSD_Welch_{}.pkl'.format(output_dir,args.condition), 'wb') as f:
         pickle.dump(power_spectra_welch, f)
