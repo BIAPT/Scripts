@@ -15,7 +15,7 @@ wpli_input_path = strcat(output_path,filesep,'wpli',filesep,participant,filesep,
 load(wpli_input_path);
 wpli_matrix = result_wpli.data.avg_wpli;
 channels_location = result_wpli.metadata.channels_location;
-threshold_range = 0.90:-0.01:0.01; % More connected to less connected
+threshold_range = 0.90:-0.01:0.01;   % More connected to less connected
 
 % Here we need to filter the non_scalp channels
 [wpli_matrix,channels_location] = filter_non_scalp(wpli_matrix,channels_location);

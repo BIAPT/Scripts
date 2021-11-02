@@ -39,7 +39,8 @@ for p = 1:length(participants)
         load(wpli_state_filename);
         load(power_state_filename);
         load(motif_state_filename);
-        ppt_location = result_dpli.metadata.channels_location;
+        ppt_location = result_dpli.metadata.channels_location; 
+        %dpli and wpli have non-scalp channels, run together
 
         %Rename channels 
         for i = 1:length(ppt_location)
@@ -92,12 +93,70 @@ for p = 1:length(participants)
         %Replace channel location file in dpli and wpli result structure
         result_dpli.metadata.channels_location = ppt_location;
         result_wpli.metadata.channels_location = ppt_location;
-        result_td.metadata.channels_location = ppt_location;
-        result_motif.channels_location = ppt_location;
+        
         save(dpli_state_filename, 'result_dpli');
         save(wpli_state_filename, 'result_wpli');
+        
+        %motif and power channel location file have non-scalp filtered out,
+        %run together
+   
+        ppt_location = [];
+        ppt_location = result_motif.channels_location; 
+      
+
+        %Rename channels 
+        for i = 1:length(ppt_location)
+            t_label = ppt_location(i).labels;
+            if strcmp(t_label,'Fp2')
+                ppt_location(i).labels = 'E9';
+            elseif strcmp(t_label,'Fz')
+                ppt_location(i).labels = 'E11';
+            elseif strcmp(t_label,'Fp1')
+                ppt_location(i).labels = 'E22';
+            elseif strcmp(t_label,'F3')
+                ppt_location(i).labels = 'E24';
+            elseif strcmp(t_label,'F7')
+                ppt_location(i).labels = 'E33';
+            elseif strcmp(t_label,'C3')
+                ppt_location(i).labels = 'E36';
+            elseif strcmp(t_label,'T7')
+                ppt_location(i).labels = 'E45';
+            elseif strcmp(t_label,'P3')
+                ppt_location(i).labels = 'E52';
+            elseif strcmp(t_label,'LM')
+                ppt_location(i).labels = 'E57';
+            elseif strcmp(t_label,'P7')
+                ppt_location(i).labels = 'E58';
+            elseif strcmp(t_label,'Pz')
+                ppt_location(i).labels = 'E62';
+            elseif strcmp(t_label,'O1')
+                ppt_location(i).labels = 'E70';
+            elseif strcmp(t_label,'Oz')
+                ppt_location(i).labels = 'E75';
+            elseif strcmp(t_label,'O2')
+                ppt_location(i).labels = 'E83';
+            elseif strcmp(t_label,'P4')
+                ppt_location(i).labels = 'E92';
+            elseif strcmp(t_label,'P8')
+                ppt_location(i).labels = 'E96';
+            elseif strcmp(t_label,'RM')
+                ppt_location(i).labels = 'E100';
+            elseif strcmp(t_label,'C4')
+                ppt_location(i).labels = 'E104';
+            elseif strcmp(t_label,'T8')
+                ppt_location(i).labels = 'E108';
+            elseif strcmp(t_label,'F8')
+                ppt_location(i).labels = 'E122';
+            elseif strcmp(t_label,'F4')
+                ppt_location(i).labels = 'E124';
+            end
+        end
+        
+        result_td.metadata.channels_location = ppt_location;
+        result_motif.channels_location = ppt_location;
         save(power_state_filename, 'result_td');
         save(motif_state_filename, 'result_motif');
+        
     end
 end
 

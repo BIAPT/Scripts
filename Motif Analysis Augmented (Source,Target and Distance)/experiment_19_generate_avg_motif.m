@@ -10,10 +10,10 @@ setup_experiments % see this file to edit the experiments
 
 %% Setup the variables
 num_motif = 13;
-motif_folder = '/home/yacine/Documents/motif_analysis_output/motif';
+motif_folder = 'D:\Motif analysis\MDFA\Results\Alpha\motif';
 [avg_motif_path] = mkdir_if_not_exist(motif_folder, 'AVERAGE');
 participants = {'MDFA03','MDFA05','MDFA06','MDFA07','MDFA10','MDFA11','MDFA12','MDFA15','MDFA17'};
-states = {'BASELINE', 'IF5', 'EMF5', 'EML30','EML10','EML5', 'EC3', 'RECOVERY'};
+states = {'BASELINE','EMF5','EC3','RECOVERY'};
 
 %% Iterate over the state
 for s = 1:length(states)

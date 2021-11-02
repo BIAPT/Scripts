@@ -78,7 +78,7 @@ for p = 1:length(participants)
         if power_param.average
             
             if(isstruct(avg_data.location) == 0)
-                avg_data.location = recording.channels_location; %assumes first participant in average has all 129 channels
+                avg_data.location = result_td.data.filt_location; %assumes first participant in average has all 129 channels
             end
             
             for e_i=1:length(avg_data.location)

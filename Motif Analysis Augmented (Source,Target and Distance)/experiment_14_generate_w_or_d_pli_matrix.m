@@ -2,7 +2,7 @@
     Yacine Mahdid 2020-01-08
     This script will calculate the wpli and the dpli matrices (at alpha)
     that are needed to run the subsequent analysis. The parameters for the
-    analysis can be  found in this script
+    analysis can be  found in thi  s script
 
     * Warning: This experiment use the setup_experiments.m script to 
     load variables. Therefore if you are trying to edit this code and you

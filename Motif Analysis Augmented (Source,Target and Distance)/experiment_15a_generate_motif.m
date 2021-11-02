@@ -2,8 +2,7 @@
     Yacine Mahdid 2020-01-08
     This script will calculate the motif on the dpli matrices at
     alpha generated previously in the experiment 14. It will save them at
-    the same place as the pli matrices. This script use the augmented
-    version of the motif analysis which will calculate the distance and the
+    the same place as the pli matrices. This  alculate the distance and the
     sink information.
 
     * Warning: This experiment use the setup_experiments.m script to 
@@ -47,7 +46,7 @@ for p = 1:length(participants)
         % Filter the channels location to match the filtered motifs
         [phase_lead_matrix,channels_location] = filter_non_scalp(phase_lead_matrix,channels_location);
         
-        % Calculate motif with 3 connection
+        % Calculate mot`  if with 3 connection
         [frequency, source, target, distance] = motif_3(phase_lead_matrix, ... 
                                                 channels_location, motif_param.number_rand_network, ...
                                                 motif_param.bin_swaps, motif_param.weight_frequency);

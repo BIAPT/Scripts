@@ -43,7 +43,7 @@ for p = 1:length(participants)
         [wpli_matrix,channels_location] = filter_non_scalp(wpli_matrix,channels_location);
         
         % Binarize the network
-        t_network = threshold_matrix(wpli_matrix, graph_param.threshold);
+        t_network = threshold_matrix(wpli_matrix, graph_param.threshold(p));
         b_network = binarize_matrix(t_network);
         
         % Find average path length
@@ -81,7 +81,7 @@ for p = 1:length(participants)
         global_random_clustering_coef = total_random_clustering_coef/graph_param.number_surrogate;
         
         % Normalize network properties against random network and save into
-        % structure and into disk
+        % structure and into disk 
         result_graph = struct();
         result_graph.channels_location = channels_location;
         result_graph.wpli_matrix = wpli_matrix;
@@ -89,7 +89,7 @@ for p = 1:length(participants)
         result_graph.clustering_coef = nanmean(clustering_coef) / global_random_clustering_coef; % normalized clustering coefficient
         result_graph.geff = geff / rgeff;  % global efficiency
         result_graph.bsw = result_graph.clustering_coef*result_graph.geff;
-        result_graph.mod = mod; % Note: modularity doesn't need to be normalized against random networks
+        result_gr  aph.mod = mod; % Note: modularity doesn't need to be normalized against random networks
         
         save(graph_state_filename, 'result_graph');
         

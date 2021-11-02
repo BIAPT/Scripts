@@ -54,7 +54,7 @@ for p = 1:length(participants)
             % Get frequency
             freq = sum(motif.frequency(motif_id, :));
            
-            % Print to the file
+            % Print to the file 
             fprintf(file_id,"%s,%s,%s,%f,%f,%f\n",participant, state,...
                 string(motif_id),freq);
             fprintf(file_id,"\n");

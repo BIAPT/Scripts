@@ -18,7 +18,7 @@ hubs_folder = 'D:\DOC\Motif analysis\Results\Alpha\hubs';
 ppt_name_1 = 'WSAS13';
 ppt_state_1 = '_Pre_5min';
 
-ppt_name_2 = 'AVERAGE';
+ppt_name_2 = 'MDFA17';
 ppt_state_2 = 'BASELINE';
 
 %% loading the data
@@ -37,9 +37,22 @@ disp(message)
 vector_1 = normalize(ppt_data_1.degree);
 vector_2 = normalize(ppt_data_2.degree);
 
+% Get the anterior data points
+vector_1_anterior = get_anterior(vector_1, ppt_data_1.channels_location); %use the patient channel locations (< 99 chans)
+vector_2_anterior = get_anterior(vector_2, ppt_data_1.channels_location);
+
+% Get the posterior data points
+vector_1_posterior = get_posterior(vector_1, ppt_data_1.channels_location);
+vector_2_posterior = get_posterior(vector_2, ppt_data_1.channels_location);
+
 if (sum(vector_1) ~= 0 && sum(vector_2) ~=0)
     cosine_similarity = vector_cosine_similarity(vector_1,vector_2); 
-    disp(strcat("Hubs:  Cosine similarity = ", string(cosine_similarity)))
+    cos_anterior = vector_cosine_similarity(vector_1_anterior, vector_2_anterior);
+    cos_posterior = vector_cosine_similarity(vector_1_posterior, vector_2_posterior);
+    disp(strcat("Hubs:  Cosine similarity (whole brain) = ", string(cosine_similarity)))
+    disp(strcat("Hubs:  Cosine similarity (anterior) = ", string(cos_anterior)))
+    disp(strcat("Hubs:  Cosine similarity (posterior) = ", string(cos_posterior)))
+    disp(strcat("Hubs:  Cosine similarity (anterior-posterior average) = ", string(mean([cos_anterior cos_posterior]))))
 end
 
 
@@ -94,4 +107,44 @@ function [ppt_data_1, ppt_data_2] = equalize(ppt_data_1, ppt_data_2)
     end
     
     ppt_data_2.degree(index_to_remove) = [];
+end
+
+function [sifted_vector] = get_anterior(vector, channels_location)
+%   GET_ANTERIOR getter function to fetch only the part of the vector that are
+%   in the anterior part of the brain
+%   vector: motif frequency count vector of length number of channels
+%   channels_location: chanlocs data structure with channel information
+%
+%   sifted_vector: is the motif frequency count vector minus the channels
+%   location who didn't meet the threshold.
+
+    sifted_vector = []; 
+    for i = 1:length(vector)
+        
+        % Every channels that are anterior to the center line of the
+        % headset is defined as anterior
+        if(channels_location(i).X > -0.001)
+            sifted_vector = [sifted_vector, vector(i)];
+        end
+    end
+end
+
+function [sifted_vector] = get_posterior(vector, channels_location)
+%   GET_POSTERIOR getter function to fetch only the part of the vector that are
+%   in the posterior part of the brain
+%   vector: motif frequency count vector of length number of channels
+%   channels_location: chanlocs data structure with channel information
+%
+%   sifted_vector: is the motif frequency count vector minus the channels
+%   location who didn't meet the threshold.
+
+    sifted_vector = [];
+    for i = 1:length(vector)
+        
+        % Every channels that are in the below the center line of the
+        % headset is defined as posterior
+        if(channels_location(i).X < 0.001)
+            sifted_vector = [sifted_vector, vector(i)];
+        end
+    end
 end

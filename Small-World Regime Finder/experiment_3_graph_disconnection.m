@@ -3,28 +3,21 @@
 % the 'small-world regime range' as defined in Basset et al (2008). 
 
 % modified by Yacine Mahdid 2019-12-12
-%
-% Experiment Variables
+% modified by Danielle Nadin 2020-02-25 adapt for Motif Analysis Augmented pipeline
 
-filename = 'MDFA17_BASELINE.set';
-filepath = 'C:\Users\biapt\Desktop\motif fix\mdfa17_data';
-recording = load_set(filename, filepath);
+clear;
+setup_experiments % see this file to edit the experiments
+participant = 'WSAS07';
+state = '_Pre_5min';
 
-
-% wPLI Properties
-frequency_band = [8 13]; % This is in Hz
-window_size = 10; % This is in seconds and will be how we chunk the whole dataset
-number_surrogate = 20; % Number of surrogate wPLI to create
-p_value = 0.05; % the p value to make our test on
-step_size = window_size;
-result_wpli = na_wpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
-
-pli_matrix = result_wpli.data.avg_wpli;
-channels_location = recording.channels_location;
+%Import wpli data
+wpli_input_path = strcat(output_path,filesep,'wpli',filesep,participant,filesep,state,'_wpli');
+wpli_matrix = result_wpli.data.avg_wpli;
+channels_location = result_wpli.metadata.channels_location;
 threshold_range = 0.90:-0.01:0.01; % More connected to less connected
 
 % Here we need to filter the non_scalp channels
-[pli_matrix,channels_location] = filter_non_scalp(pli_matrix,channels_location);
+[wpli_matrix,channels_location] = filter_non_scalp(wpli_matrix,channels_location);
 
 %loop through thresholds
 for j = 1:length(threshold_range) 
@@ -32,7 +25,7 @@ for j = 1:length(threshold_range)
     disp(strcat("Doing the threshold : ", string(current_threshold)));
     
     % Thresholding and binarization using the current threshold
-    t_network = threshold_matrix(pli_matrix, current_threshold);
+    t_network = threshold_matrix(wpli_matrix, current_threshold);
     b_network = binarize_matrix(t_network);
     
     % check if the binary network is disconnected

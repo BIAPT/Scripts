@@ -20,7 +20,7 @@ motif_folder = 'D:\DOC\Motif analysis\Results\Alpha\motif';
 ppt_name_1 = 'WSAS13';
 ppt_state_1 = '_Pre_5min';
 
-ppt_name_2 = 'AVERAGE';
+ppt_name_2 = 'MDFA17';
 ppt_state_2 = 'BASELINE';
 
 %% loading the data
@@ -36,7 +36,7 @@ ppt_data_2 = data.result_motif;
 message = strcat("Participant: ",ppt_name_1," at ", ppt_state_1, " against ", ppt_name_2, " at ", ppt_state_2);
 disp(message)
 for m = 1:num_motif
-    vector_1 = normalize(ppt_data_1.frequency(m,:));
+    vector_1 =normalize(ppt_data_1.frequency(m,:));
     vector_2 = normalize(ppt_data_2.frequency(m,:));
     
     % Get the anterior data points

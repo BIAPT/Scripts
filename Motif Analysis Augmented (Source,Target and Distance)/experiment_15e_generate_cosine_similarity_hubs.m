@@ -44,7 +44,7 @@ for p = 1:length(participants)
             state = states{s};
             
             % Load the baseline data
-            base_filename = strcat('_Pre_5min_hubs.mat');
+            base_filename = strcat('BASELINE_hubs.mat');
             base_location = strcat(hubs_data_path, filesep, participant, filesep, base_filename);
             data = load(base_location);
             base_hubs = data.result_hubs;

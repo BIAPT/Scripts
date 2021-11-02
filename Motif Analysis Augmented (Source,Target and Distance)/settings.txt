@@ -1,2 +1,2 @@
-raw_data_path=/home/yacine/Documents/consciousness_data
-output_path=/home/yacine/Documents/motif_analysis_output
+raw_data_path=D:\Motif analysis\MDFA\Cleaned data (.set)
+output_path=D:\Motif analysis\MDFA\Results\Alpha

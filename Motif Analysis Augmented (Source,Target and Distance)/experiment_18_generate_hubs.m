@@ -54,7 +54,7 @@ for p = 1:length(participants)
         [wpli_matrix,channels_location] = filter_non_scalp(wpli_matrix,channels_location);
         
         % Binarize the network
-        t_network = threshold_matrix(wpli_matrix, hubs_param.threshold);
+        t_network = threshold_matrix(wpli_matrix, hubs_param.threshold(p));
         b_network = binarize_matrix(t_network);
         
         % Calculate node degree

@@ -12,10 +12,10 @@ clear % to keep only what is needed for this experiment
 setup_experiments % see this file to edit the experiments
 
 %% Setup the variables
-hubs_folder = 'D:\Motif analysis\MDFA\Results\Delta\hubs';
+hubs_folder = 'D:\Motif analysis\MDFA\Results\Alpha\hubs';
 [avg_hubs_path] = mkdir_if_not_exist(hubs_folder, 'AVERAGE');
 participants = {'MDFA03','MDFA05','MDFA06','MDFA07','MDFA10','MDFA11','MDFA12','MDFA15','MDFA17'};
-states = {' eyes closed 1', ' emergence first 5 min', ' eyes closed 3'};
+states = {'BASELINE','IF5','EMF5','EML30','EML10','EML5','EC3','RECOVERY'};
 
 %% Iterate over the state
 for s = 1:length(states)
@@ -42,23 +42,23 @@ for s = 1:length(states)
             num_channel_ppt = length(ppt_hubs.channels_location);
             total_ppt_hubs.num_participant = zeros(1,num_channel_ppt);
             
+        else
             total_ppt_hubs = add_hubs(total_ppt_hubs, ppt_hubs);
-            
-            
         end
-        
-        % Averaging the hubs
-        result_hubs = average_hubs(total_ppt_hubs);
-        
-        % Saving the hubs
-        hubs_state_filename = strcat(avg_hubs_path,filesep,state,'_hubs.mat');
-        save(hubs_state_filename, 'result_hubs');
     end
-end
+    % Averaging the hubs
+    result_hubs = average_hubs(total_ppt_hubs);
     
+    % Saving the hubs
+    hubs_state_filename = strcat(avg_hubs_path,filesep,state,'_hubs.mat');
+    save(hubs_state_filename, 'result_hubs');
+   
+    
+end
+
     %% Helper functions
     function total_ppt_hubs = add_hubs(total_ppt_hubs, ppt_hubs)
-    % TOTAL_PPT_HUBS will sum a participant motif to the grand total
+    % TOTAL_PPT_HUBS will sum a participant hubs to the grand total
     % This is using channels location to know where to sum the data
     
     ppt_location = ppt_hubs.channels_location; % we make a copy so we can delete from here
